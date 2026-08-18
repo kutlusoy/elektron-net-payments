@@ -1,5 +1,14 @@
 # Elektron Net Payments
 
+- **Version:** 0.1 (draft)
+- **Date:** August 18, 2026
+- **Audience:** Marketplace operators, plugin developers, integrators
+- **Reference implementation:** [`elektron-net`](https://github.com/kutlusoy/elektron-net), treat as ground truth for anything this doc references
+- **Consumer:** [`osclass-escrow`](./osclass-escrow), part of this repository
+- **See also:** [`elektron-net-mempool`](https://github.com/kutlusoy/elektron-net-mempool) for chain/watcher data
+
+---
+
 Multi-platform payment plugin suite for Elektron Net. This repository bundles trustless escrow integrations for third-party e-commerce platforms, starting with Osclass.
 
 ## Overview
@@ -26,13 +35,51 @@ elektron-net-payments/
 
 Each platform integration lives in its own subdirectory and depends on the shared library rather than duplicating escrow logic. This keeps the core escrow behavior consistent across every plugin in the suite, and makes it straightforward to add support for additional platforms later.
 
-## How it works (high level)
+## Trustless by design
 
-1. A buyer places an order on a supported marketplace platform.
-2. The plugin generates a fresh 2-of-2 multisig address for that specific order.
-3. The buyer sends payment to the escrow address. A watcher daemon monitors the chain and updates the order status once the payment is detected.
-4. Once the buyer confirms receipt of the goods, both parties sign and the funds are released to the seller.
-5. If the buyer never confirms, or the seller never delivers, the applicable CLTV timeout path allows the affected party to reclaim or release the funds without needing the other party's cooperation.
+At no point does the server, the plugin, or the platform operator hold or have access to a private key belonging to the buyer or the seller. Only public keys and unsigned or partially signed transactions ever pass through the system. Funds can only move if the buyer and seller sign together, or if a timeout path is used, and that logic is enforced by the escrow script itself, not by a party that has to be trusted.
+
+## How it works, step by step
+
+### 1. One-time wallet setup (buyer and seller)
+
+- Buyer and seller each connect an Elektron Net wallet to the marketplace account. This can be a browser extension, a desktop wallet, or a companion mobile wallet.
+- The wallet shares only its public key with the plugin. The private key never leaves the user's device.
+- This is a one-time step. It does not need to be repeated for future orders.
+
+### 2. Order placed
+
+- The buyer places an order on the marketplace as usual, with no extra steps compared to a normal checkout.
+- The plugin automatically generates a fresh 2-of-2 multisig escrow address for this specific order, built from the buyer's and the seller's public keys. This happens instantly and requires no action from either party.
+
+### 3. Payment
+
+- The buyer is shown the escrow address and amount, typically as a QR code, and pays from their wallet like any other Elektron Net payment.
+- A watcher daemon monitors the chain in the background and updates the order status automatically once the payment is detected and confirmed. Neither party needs to check anything manually.
+
+### 4. Delivery and confirmation
+
+- The seller ships or delivers the goods or service as agreed.
+- Once the buyer receives it and is satisfied, they confirm this in the marketplace with a single action.
+- That confirmation triggers the plugin to build a release transaction (a PSBT, or partially signed transaction) that pays the funds to the seller.
+
+### 5. Signing the release
+
+- The buyer's wallet prompts them to sign the release transaction. This is one click or one scan, similar to approving a payment.
+- The partially signed transaction is passed to the seller's wallet, which signs it as well.
+- Once both signatures are present, the transaction is complete and is broadcast to the network automatically. No manual broadcasting step is needed.
+
+### 6. If something goes wrong
+
+- If the seller never delivers, the buyer can reclaim the funds themselves once the buyer-side timeout (CLTV) has passed, without needing the seller's signature or cooperation.
+- If the buyer receives the goods but never confirms and never responds, the seller can claim the funds themselves once the longer seller-side timeout has passed, without needing the buyer's signature or cooperation.
+- These fallback paths are built into the escrow script from the start. Nobody needs to request them or set them up manually, and no arbiter or support ticket is required.
+
+### What stays simple for participants
+
+- No private keys are ever typed into the marketplace, the plugin, or any web form.
+- No manual address generation, no copying of scripts, no command line steps.
+- The only actions either party ever takes are: connect a wallet once, pay an address, and approve a signature when it matters (confirming receipt, or releasing funds). Everything else, including address generation, payment detection, PSBT construction, and broadcasting, is handled automatically by the plugin and the watcher daemon.
 
 ## Status
 
