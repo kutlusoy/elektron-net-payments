@@ -3,6 +3,7 @@
     "description": "Platform-agnostic escrow core for the Elektron Net Payments plugin suite (timeout policy, order state machine, chain-data access, PSBT relay, i18n catalog). Consumed by osclass-escrow and future platform adapters.",
     "type": "library",
     "license": "MIT",
+    "version": "0.1.0",
     "require": {
         "php": ">=8.0",
         "bitwasp/bitcoin": "^1.0"
