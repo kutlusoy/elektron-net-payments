@@ -108,6 +108,9 @@ msgstr "Liberación automática disponible a partir del {date} si el comprador n
 msgid "Buyer confirmed receipt. Waiting for the seller's wallet to sign the release."
 msgstr "El comprador confirmó la recepción. Esperando a que el monedero del vendedor firme la liberación."
 
+msgid "Too close to the automatic refund date to safely start a release now. Please contact support."
+msgstr "Demasiado cerca de la fecha de reembolso automático para iniciar una liberación de forma segura ahora. Por favor, contacte con soporte."
+
 msgid "Funds released to the seller."
 msgstr "Fondos liberados al vendedor."
 

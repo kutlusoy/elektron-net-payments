@@ -51,19 +51,23 @@ function elektron_escrow_chain_data(): FallbackChainDataProvider
 }
 
 /**
- * The bitwasp Network matching the configured network. Only 'mainnet' has
- * a known bech32 HRP so far (see ElektronNetworkFactory's docblock).
+ * The bitwasp Network matching the configured network. All three values
+ * PaymentsConfig accepts ('mainnet', 'testnet', 'regtest') have confirmed
+ * bech32 parameters, verified against elektron-net's own
+ * src/kernel/chainparams.cpp (see ElektronNetworkFactory's docblock).
  */
 function elektron_escrow_network(): Network
 {
-    $network = elektron_escrow_config()->network();
-
-    if ($network !== 'mainnet') {
-        throw new RuntimeException(
-            "Elektron Net's testnet/regtest bech32 parameters are not confirmed yet; " .
-            "only 'mainnet' is supported until they are (see ElektronNetworkFactory)."
-        );
+    switch (elektron_escrow_config()->network()) {
+        case 'mainnet':
+            return ElektronNetworkFactory::mainnet();
+        case 'testnet':
+            return ElektronNetworkFactory::testnet();
+        case 'regtest':
+            return ElektronNetworkFactory::regtest();
+        default:
+            // Unreachable: PaymentsConfig's constructor already rejects any
+            // other value before this function can be called.
+            throw new RuntimeException('Unknown network.');
     }
-
-    return ElektronNetworkFactory::mainnet();
 }

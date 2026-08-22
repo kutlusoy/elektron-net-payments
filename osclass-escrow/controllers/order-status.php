@@ -2,6 +2,7 @@
 
 use ElektronNet\Payments\Core\Escrow\OrderStateMachine;
 use ElektronNet\Payments\Core\Escrow\OrderStatus;
+use ElektronNet\Payments\Core\Escrow\TimeoutPolicy;
 
 /**
  * Route: elektron-escrow/order?order=<id>
@@ -31,7 +32,19 @@ $isBuyer = $userId === (int) $order['fk_i_buyer_id'];
 if ($isBuyer && Params::getParam('confirm_receipt') === '1' && Params::getParam('CSRFName') !== '') {
     osc_csrf_check();
 
-    if (OrderStateMachine::canTransition($order['status'], OrderStatus::RELEASE_PENDING_SELLER_SIGNATURE)) {
+    if (!OrderStateMachine::canTransition($order['status'], OrderStatus::RELEASE_PENDING_SELLER_SIGNATURE)) {
+        // Nothing to do: wrong status for this action (e.g. a stale page,
+        // double submit, or a terminal order). No error shown, matching
+        // this action's existing silent-no-op behavior for that case.
+    } elseif (!TimeoutPolicy::canSafelyStartRelease((int) $order['buyer_refund_locktime'], time())) {
+        // See TimeoutPolicy::canSafelyStartRelease's docblock: refused, not
+        // merely warned about, because "confirm receipt" has no on-chain
+        // effect -- the buyer's own refund path stays spendable by the
+        // buyer alone from T1 onward no matter what this plugin's database
+        // says, so starting a release this close to T1 could tell the
+        // seller funds are coming while the buyer can still reclaim them.
+        osc_add_flash_error_message(elektron_escrow_t('order.confirm_receipt.too_close_to_refund'));
+    } else {
         $orderDao->updateByPrimaryKey(
             ['status' => OrderStatus::RELEASE_PENDING_SELLER_SIGNATURE, 'dt_mod_date' => date('Y-m-d H:i:s')],
             $orderId

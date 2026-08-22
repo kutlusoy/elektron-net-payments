@@ -108,6 +108,9 @@ msgstr "Automatische vrijgave beschikbaar vanaf {date} als de koper niet reageer
 msgid "Buyer confirmed receipt. Waiting for the seller's wallet to sign the release."
 msgstr "Koper heeft ontvangst bevestigd. Wachten tot de wallet van de verkoper de vrijgave ondertekent."
 
+msgid "Too close to the automatic refund date to safely start a release now. Please contact support."
+msgstr "Te dicht bij de automatische terugbetalingsdatum om nu veilig een vrijgave te starten. Neem contact op met de ondersteuning."
+
 msgid "Funds released to the seller."
 msgstr "Tegoed vrijgegeven aan de verkoper."
 

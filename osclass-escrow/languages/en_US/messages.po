@@ -108,6 +108,9 @@ msgstr "Automatic release available from {date} if the buyer does not respond."
 msgid "Buyer confirmed receipt. Waiting for the seller's wallet to sign the release."
 msgstr "Buyer confirmed receipt. Waiting for the seller's wallet to sign the release."
 
+msgid "Too close to the automatic refund date to safely start a release now. Please contact support."
+msgstr "Too close to the automatic refund date to safely start a release now. Please contact support."
+
 msgid "Funds released to the seller."
 msgstr "Funds released to the seller."
 

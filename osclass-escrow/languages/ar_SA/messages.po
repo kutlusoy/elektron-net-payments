@@ -108,6 +108,9 @@ msgstr "يصبح الإفراج التلقائي متاحًا اعتبارًا �
 msgid "Buyer confirmed receipt. Waiting for the seller's wallet to sign the release."
 msgstr "أكد المشتري الاستلام. في انتظار توقيع محفظة البائع على الإفراج."
 
+msgid "Too close to the automatic refund date to safely start a release now. Please contact support."
+msgstr "قريب جدًا من تاريخ الاسترداد التلقائي لبدء عملية التحرير بأمان الآن. يرجى التواصل مع الدعم."
+
 msgid "Funds released to the seller."
 msgstr "تم الإفراج عن الأموال إلى البائع."
 

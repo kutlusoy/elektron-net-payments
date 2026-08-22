@@ -41,6 +41,28 @@ final class FallbackChainDataProvider implements ChainDataProviderInterface
     }
 
     /**
+     * Unlike the other two methods, "every provider failed" is not an
+     * error here: it means no live fee estimate is available anywhere
+     * right now, which FeeRateResolver treats as normal and falls back
+     * from -- so this returns null instead of throwing.
+     */
+    public function getFeeEstimateLepPerVByte(): ?int
+    {
+        foreach ($this->providers as $provider) {
+            try {
+                $estimate = $provider->getFeeEstimateLepPerVByte();
+            } catch (Throwable $e) {
+                continue;
+            }
+            if ($estimate !== null) {
+                return $estimate;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @param callable(ChainDataProviderInterface): mixed $call
      * @return mixed
      */

@@ -21,7 +21,11 @@ interface ReleasePsbtBuilderInterface
      * @param int $fundingVout output index paying the escrow address
      * @param int $fundingAmountLep amount held by the escrow UTXO, in lep
      * @param string $sellerAddress payout address chosen by the seller's wallet
-     * @param int $feeRateLepPerVByte from PaymentsConfig
+     * @param int $feeRateLepPerVByte the rate to use, in lep/vByte -- the
+     *     caller SHOULD produce this via ChainData\FeeRateResolver::resolve()
+     *     (live mempool estimate, falling back to
+     *     PaymentsConfig::feeRateLepPerVByte() only when no estimate is
+     *     available), not by passing PaymentsConfig's fixed value directly
      * @return string base64-encoded, unsigned PSBT
      */
     public function buildReleasePsbt(

@@ -52,11 +52,15 @@ $order = $orderDao->findByItemAndBuyer($itemId, $buyerId);
 if ($order === null) {
     $config = elektron_escrow_config();
     $fundedAt = time();
+    // Unique per order, so this order's escrow address is unique even if
+    // this same buyer and seller transact more than once (possibly within
+    // the same second) -- see EscrowScriptBuilderInterface's docblock.
+    $orderNonceHex = bin2hex(random_bytes(16));
 
     // See EscrowScriptBuilderInterface's docblock: reference implementation,
     // not yet verified on a live Elektron Net node.
     $scriptBuilder = new BitwaspEscrowScriptBuilder(elektron_escrow_network());
-    $escrowAddress = $scriptBuilder->build($buyerPubKey, $sellerPubKey, $config->timeoutPolicy(), $fundedAt);
+    $escrowAddress = $scriptBuilder->build($buyerPubKey, $sellerPubKey, $orderNonceHex, $config->timeoutPolicy(), $fundedAt);
 
     $amountLep = (int) round(((float) $item['f_price']) * 100000000);
 

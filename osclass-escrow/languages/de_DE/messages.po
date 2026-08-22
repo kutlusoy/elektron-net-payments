@@ -108,6 +108,9 @@ msgstr "Automatische Freigabe ab {date} möglich, falls der Käufer nicht reagie
 msgid "Buyer confirmed receipt. Waiting for the seller's wallet to sign the release."
 msgstr "Käufer hat den Erhalt bestätigt. Warte darauf, dass die Wallet des Verkäufers die Freigabe signiert."
 
+msgid "Too close to the automatic refund date to safely start a release now. Please contact support."
+msgstr "Zu nah am automatischen Rückerstattungsdatum, um jetzt sicher eine Freigabe zu starten. Bitte kontaktieren Sie den Support."
+
 msgid "Funds released to the seller."
 msgstr "Guthaben an den Verkäufer freigegeben."
 
