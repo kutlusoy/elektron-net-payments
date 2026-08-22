@@ -2,20 +2,10 @@
 /** @var string|null $currentPubKey */
 /** @var string|null $errorMessage */
 /** @var bool $justSaved */
-/** @var array $debugInfo */
 ?>
 
 <div class="elektron-escrow-wallet">
     <h1><?php _e('Elektron Net wallet', ELEKTRON_ESCROW_DOMAIN); ?></h1>
-
-    <div style="border:2px dashed red; padding:10px; margin-bottom:15px; font-family:monospace; font-size:13px;">
-        <strong>TEMPORARY DEBUG (remove once the save issue is diagnosed):</strong>
-        <ul>
-            <?php foreach ($debugInfo as $debugKey => $debugValue) { ?>
-                <li><?php echo osc_esc_html($debugKey); ?>: <strong><?php echo osc_esc_html((string) $debugValue); ?></strong></li>
-            <?php } ?>
-        </ul>
-    </div>
 
     <?php if ($justSaved) { ?>
         <p class="elektron-escrow-success"><?php _e('Wallet connected.', ELEKTRON_ESCROW_DOMAIN); ?></p>
