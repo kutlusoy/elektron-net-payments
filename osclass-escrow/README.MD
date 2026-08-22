@@ -149,7 +149,13 @@ Two tables, entirely owned by this plugin; Osclass's own tables (`t_item`, `t_us
 |---|---|---|
 | `fk_i_user_id` | `INT UNSIGNED` | Primary key; one row per user who has connected a wallet. |
 | `pubkey_hex` | `VARCHAR(66)` | Compressed public key. Validated as `^(02\|03)[0-9a-fA-F]{64}$` before it is ever stored; a private key or seed phrase pasted here is rejected at that same check, not merely discouraged in the label text. |
+
+`views/wallet.php` includes a collapsible "How do I find my public key?" help block with the actual two-command flow (`getnewaddress` then `getaddressinfo "<address>"`) and a real example of each command's output, since this is the one step a non-technical user is most likely to get stuck on. The two RPC commands work identically whether typed into a GUI wallet's built-in Console or run with `elektron-cli` in a terminal, so one example covers both.
 | `dt_pub_date` | `DATETIME` | |
+
+### Changing a connected public key
+
+`elektron_escrow_save_user_pubkey()` (`includes/wallet.php`) refuses to actually change an already-saved key while `EscrowOrderDAO::hasActiveOrderForUser()` finds any non-terminal order for that user, as buyer or as seller (re-saving the identical key is always allowed, since it is not a change). This is a UX safeguard, not a cryptographic one, and the distinction matters: every order's `buyer_pubkey`/`seller_pubkey`/`redeem_script_hex` is copied once, at order creation, and never re-read from `elektron_escrow_wallet` afterward (see "Database schema" above), so this table's contents have **no effect at all** on any already-created order's actual on-chain address or script, whether the block exists or not. What the block actually prevents is a user connecting a *different* wallet mid-order and then discovering that the order they still have open needs a signature from the *old* key they just replaced, since the escrow script is permanently bound to whichever pubkeys were current at that order's creation. A wallet that is genuinely gone (lost, reset) makes that specific order's cooperative-release and both timeout-fallback paths unrecoverable regardless of what this plugin's own connected-key setting is changed to afterward; the block exists to stop that from happening by mistake, not because it is fixable after the fact.
 
 ## Escrow eligibility
 

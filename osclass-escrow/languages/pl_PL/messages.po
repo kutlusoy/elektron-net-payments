@@ -48,6 +48,21 @@ msgstr "Klucz publiczny Elektron Net (do płatności escrow)"
 msgid "Paste the public key from your Elektron Net wallet, never a private key or seed phrase. Needed once, before you can buy or sell with escrow."
 msgstr "Wklej klucz publiczny ze swojego portfela Elektron Net, nigdy klucz prywatny ani frazę seed. Potrzebne jednorazowo, zanim będzie można kupować lub sprzedawać przez escrow."
 
+msgid "How do I find my public key?"
+msgstr "Jak znaleźć mój klucz publiczny?"
+
+msgid "Works the same whether you type it into your wallet's built-in Console (in most wallets: Help > Debug window > Console) or run it with elektron-cli in a terminal, since both send the same commands to your node."
+msgstr "Działa tak samo, niezależnie od tego, czy wpiszesz to we wbudowaną konsolę portfela (w większości portfeli: Pomoc > Okno debugowania > Konsola), czy uruchomisz przez elektron-cli w terminalu, ponieważ oba wysyłają te same polecenia do Twojego węzła."
+
+msgid "1. Get a fresh receiving address:"
+msgstr "1. Pobierz nowy adres odbiorczy:"
+
+msgid "2. Look up that address's public key:"
+msgstr "2. Sprawdź klucz publiczny tego adresu:"
+
+msgid "Copy the value of \"pubkey\" (starts with 02 or 03, 66 hex characters) into the field above. Never run dumpprivkey or share its output anywhere; this plugin only ever needs the pubkey value."
+msgstr "Skopiuj wartość \"pubkey\" (zaczyna się od 02 lub 03, 66 znaków szesnastkowych) do pola powyżej. Nigdy nie uruchamiaj dumpprivkey ani nie udostępniaj jego wyniku nigdzie; ta wtyczka potrzebuje wyłącznie wartości pubkey."
+
 msgid "The Elektron Net public key looks invalid (expected a 33-byte compressed key, 66 hex characters starting with 02 or 03) and was not saved."
 msgstr "Klucz publiczny Elektron Net wygląda na nieprawidłowy (oczekiwano skompresowanego klucza 33-bajtowego, 66 znaków szesnastkowych zaczynających się od 02 lub 03) i nie został zapisany."
 
@@ -134,3 +149,6 @@ msgstr "Portfel połączony."
 
 msgid "A wallet is connected. Paste a different public key below to replace it."
 msgstr "Portfel jest już połączony. Wklej inny klucz publiczny poniżej, aby go zastąpić."
+
+msgid "You have an active escrow order that still needs your currently connected key. It must reach a final state (released, refunded, or claimed) before you can change your public key."
+msgstr "Masz aktywne zamówienie escrow, które nadal wymaga Twojego obecnie podłączonego klucza. Musi ono osiągnąć stan końcowy (zwolnione, zwrócone lub przejęte), zanim będziesz mógł zmienić swój klucz publiczny."

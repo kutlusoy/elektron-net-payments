@@ -118,4 +118,38 @@ class EscrowOrderDAO extends DAO
 
         return $result === false ? [] : $result->result();
     }
+
+    /**
+     * True if $userId has any non-terminal order, as buyer or as seller.
+     * Used to block changing a connected wallet's public key while an
+     * order still depends on the currently connected one (see
+     * includes/wallet.php): every order's own buyer_pubkey/seller_pubkey/
+     * redeem_script_hex is copied at creation time and never re-read from
+     * elektron_escrow_wallet afterward, so changing this table has no
+     * effect at all on an existing order either way -- this check exists
+     * purely to stop a user from mistakenly believing it would.
+     *
+     * Two separate queries rather than one OR'd query: this DAO's
+     * `$this->dao` query builder has no group()/parenthesization support,
+     * and combining `(buyer = X OR seller = X)` with `status NOT IN (...)`
+     * in a single call would risk SQL evaluating it as
+     * `buyer = X OR (seller = X AND status NOT IN (...))`, which would
+     * silently reintroduce a buyer's terminal orders as "active".
+     */
+    public function hasActiveOrderForUser(int $userId): bool
+    {
+        return $this->hasNonTerminalOrderByColumn('fk_i_buyer_id', $userId)
+            || $this->hasNonTerminalOrderByColumn('fk_i_seller_id', $userId);
+    }
+
+    private function hasNonTerminalOrderByColumn(string $column, int $userId): bool
+    {
+        $this->dao->select();
+        $this->dao->from($this->getTableName());
+        $this->dao->where($column, $userId);
+        $this->dao->whereNotIn('status', OrderStatus::TERMINAL);
+        $result = $this->dao->get();
+
+        return $result !== false && $result->numRows() > 0;
+    }
 }
