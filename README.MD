@@ -47,6 +47,18 @@ Each platform adapter ships as a plain zip a marketplace operator extracts strai
 
 Every future platform adapter gets its own `build-<platform>-plugin.sh` and `release-<platform>.yml`, scoped to its own tag prefix, rather than a shared workflow: that keeps one adapter's release from ever being able to build or publish another's.
 
+Tag:
+```bash
+git tag osclass-v0.1.0
+git push origin osclass-v0.1.0
+```
+
+If you must delete and tag new:
+
+```bash
+git tag -d osclass-v0.1.0 && git push origin :osclass-v0.1.0 && git tag osclass-v0.1.0 && git push origin osclass-v0.1.0
+```
+
 ## Trustless by design
 
 At no point does the server, the plugin, or the platform operator hold or have access to a private key belonging to the buyer or the seller. Only public keys and unsigned or partially signed transactions ever pass through the system. Funds can only move if the buyer and seller sign together, or if a timeout path is used, and that logic is enforced by the escrow script itself, not by a party that has to be trusted.
