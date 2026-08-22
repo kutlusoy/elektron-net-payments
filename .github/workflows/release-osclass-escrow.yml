@@ -1,0 +1,62 @@
+name: Release osclass-escrow
+
+# Tag as osclass-v1.2.3 to cut a real release, or run manually for a
+# throwaway pre-release build (useful to sanity-check a zip before tagging).
+# Named/scoped to this one module deliberately: a future WooCommerce adapter
+# (or any other platform under this repo) gets its own equivalent
+# release-<module>.yml with its own tag prefix, not a shared workflow, so
+# the two can never build or release each other's plugin by mistake.
+on:
+  push:
+    tags:
+      - 'osclass-v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to stamp into index.php and the zip filename (e.g. 0.1.0-rc1)'
+        required: true
+        default: '0.0.0-manual'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "value=${{ inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            tag="${GITHUB_REF#refs/tags/}"
+            echo "value=${tag#osclass-v}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build plugin zip
+        run: scripts/build-osclass-plugin.sh "${{ steps.version.outputs.value }}"
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/osclass-v')
+        run: |
+          gh release create "${GITHUB_REF#refs/tags/}" \
+            "dist/osclass-escrow-${{ steps.version.outputs.value }}.zip" \
+            --title "osclass-escrow ${{ steps.version.outputs.value }}" \
+            --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload build artifact
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: osclass-escrow-${{ steps.version.outputs.value }}
+          path: dist/osclass-escrow-${{ steps.version.outputs.value }}.zip

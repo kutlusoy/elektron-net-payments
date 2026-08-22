@@ -30,11 +30,22 @@ A standard payment plugin just forwards funds from buyer to seller. That works f
 elektron-net-payments/
     osclass-escrow/       Osclass plugin implementing the 2-of-2 escrow flow
     shared/                Shared library: escrow script logic, watcher daemon client, RPC wrapper
+    scripts/               Build scripts that package a platform adapter into an installable zip
+    .github/workflows/     One release workflow per platform adapter
     docs/
         doc-elektron/       Project documentation (guidelines, fix reports)
 ```
 
 Each platform integration lives in its own subdirectory and depends on the shared library rather than duplicating escrow logic. This keeps the core escrow behavior consistent across every plugin in the suite, and makes it straightforward to add support for additional platforms later. The timeout defaults, the frozen-per-order rule, and the chain-data fallback list described in this README all live in `shared/`, so a new platform adapter (WooCommerce or otherwise) gets them for free instead of having to reimplement them.
+
+## Packaging and releases
+
+Each platform adapter ships as a plain zip a marketplace operator extracts straight into that platform's plugin directory (for Osclass: `oc-content/plugins/osclass-escrow/`), with its Composer dependencies (the shared core plus whichever third-party libraries it needs) already baked into its own `vendor/` folder. Nobody installing the plugin is expected to run Composer themselves; most Osclass hosting has no shell access to do that anyway.
+
+- `scripts/build-osclass-plugin.sh [version]` builds that zip locally: installs Composer dependencies with `--no-dev`, copies the shared core in as real files rather than a symlink (`osclass-escrow/composer.json`'s path repository sets `"symlink": false` for exactly this reason, since a symlink into a sibling directory stops resolving the moment the zip is extracted somewhere else), recompiles every `.mo` from its `.po` in case one was edited without recompiling, stamps the given version into `index.php`'s header, strips dev-only files (`composer.json`, `composer.lock`, the `.po`-to-`.mo` fallback compiler), and writes `dist/osclass-escrow-<version>.zip`.
+- `.github/workflows/release-osclass-escrow.yml` runs that same script in CI. Pushing a tag matching `osclass-v*` (e.g. `osclass-v0.1.0`) builds the zip and attaches it to a new GitHub Release; running the workflow manually (`workflow_dispatch`) instead builds a throwaway zip as a downloadable Actions artifact, for trying a build before committing to a real tag.
+
+Every future platform adapter gets its own `build-<platform>-plugin.sh` and `release-<platform>.yml`, scoped to its own tag prefix, rather than a shared workflow: that keeps one adapter's release from ever being able to build or publish another's.
 
 ## Trustless by design
 
