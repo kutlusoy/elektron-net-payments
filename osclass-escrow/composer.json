@@ -15,6 +15,7 @@
     "require": {
         "php": ">=8.0",
         "elektron-net/payments-core": "*",
-        "endroid/qr-code": "^4.0"
+        "endroid/qr-code": "^4.0",
+        "lastguest/murmurhash": "2.1.1 as 2.0.0"
     }
 }
