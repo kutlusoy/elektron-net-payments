@@ -35,6 +35,7 @@ if (Params::getParam('save') === 'elektron_escrow_settings') {
     if ($errorMessage === null) {
         $fields = [
             'network' => Params::getParam('network'),
+            'currency_codes' => Params::getParam('currency_codes'),
             'chain_data_endpoints' => Params::getParam('chain_data_endpoints'),
             'required_confirmations' => (string) (int) Params::getParam('required_confirmations'),
             'fee_rate_lep_per_vbyte' => (string) (int) Params::getParam('fee_rate_lep_per_vbyte'),

@@ -21,6 +21,13 @@
                 </td>
             </tr>
             <tr>
+                <td><label for="currency_codes"><?php _e('Accepted currency codes (one per line)', ELEKTRON_ESCROW_DOMAIN); ?></label></td>
+                <td>
+                    <textarea name="currency_codes" id="currency_codes" rows="2" cols="60"><?php echo osc_esc_html(osc_get_preference('currency_codes', 'plugin-osclass-escrow')); ?></textarea>
+                    <p class="description"><?php _e('A listing is only offered escrow if its currency code is one of these. Osclass stores a currency code as exactly 3 letters, so "ELEK" itself can never be one; use a 3-letter contraction such as ELE or ELK instead.', ELEKTRON_ESCROW_DOMAIN); ?></p>
+                </td>
+            </tr>
+            <tr>
                 <td><label for="chain_data_endpoints"><?php _e('Chain-data endpoints (one per line, tried in order)', ELEKTRON_ESCROW_DOMAIN); ?></label></td>
                 <td>
                     <textarea name="chain_data_endpoints" id="chain_data_endpoints" rows="4" cols="60"><?php echo osc_esc_html(osc_get_preference('chain_data_endpoints', 'plugin-osclass-escrow')); ?></textarea>

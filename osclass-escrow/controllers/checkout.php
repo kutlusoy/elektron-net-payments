@@ -31,6 +31,13 @@ if ($item['fk_i_user_id'] == $buyerId) {
     osc_redirect_to(osc_item_url_from_item($item));
     exit;
 }
+// Defense in depth: views/item-widget.php already hides the "Buy" link for
+// an ineligible currency, but this route is reachable directly by URL too.
+if (!in_array(strtoupper((string) ($item['fk_c_currency_code'] ?? '')), elektron_escrow_currency_codes(), true)) {
+    osc_add_flash_error_message(__('This listing is not priced in a currency accepted for escrow.', ELEKTRON_ESCROW_DOMAIN));
+    osc_redirect_to(osc_item_url_from_item($item));
+    exit;
+}
 
 $buyerPubKey = elektron_escrow_get_user_pubkey($buyerId);
 $sellerPubKey = elektron_escrow_get_user_pubkey((int) $item['fk_i_user_id']);
