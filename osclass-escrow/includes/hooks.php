@@ -11,6 +11,28 @@
  * it in CWebItem::doModel(), same $item array argument. Verified directly
  * against github.com/mindstellar/shopclass, not assumed.
  */
+/**
+ * Adds the wallet-connect page to the logged-in user's account menu. This
+ * is the actual mechanism that makes it reachable at all: osc_add_route()'s
+ * $user_menu = true flag (see index.php) does NOT add anything to that
+ * menu by itself, confirmed by reading Rewrite::addRoute()/CWebCustom.php/
+ * osc_private_user_menu() in Shopclass core -- it only sets a request-scoped
+ * flag consumed by the route's own page chrome once you are already on it.
+ * The real mechanism is this same 'user_menu_filter' hook Shopclass's own
+ * billing feature uses for its "Credits"/"Buy credits" links (see
+ * oc-includes/osclass/helpers/hBilling.php), which is what
+ * osc_private_user_menu() actually reads.
+ */
+osc_add_hook('user_menu_filter', function (array $options) {
+    $options[] = array(
+        'name' => __('Elektron Net wallet', ELEKTRON_ESCROW_DOMAIN),
+        'url' => osc_route_url('elektron_escrow_wallet'),
+        'class' => 'opt_elektron_escrow_wallet',
+    );
+
+    return $options;
+});
+
 osc_add_hook('show_item', function ($item) {
     if (!osc_logged_user_id() || osc_logged_user_id() === osc_item_user_id()) {
         return;

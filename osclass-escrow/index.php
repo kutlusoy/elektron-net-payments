@@ -73,12 +73,17 @@ Author URI: https://elektron-net.org
         'elektron-escrow/order',
         'elektron-escrow/order',
         'osclass-escrow/controllers/order-status.php',
-        true // show inside the logged-in user's own menu (user-custom.php), not just the public theme wrapper
+        true // renders inside the account-menu chrome (CWebCustom sets 'in_user_menu'), not just the public
+             // theme wrapper -- this does NOT by itself add a link to that menu; see includes/hooks.php's
+             // 'user_menu_filter' hook for the actual link (osc_private_user_menu() ignores this flag
+             // entirely; confirmed from Rewrite::addRoute()/CWebCustom.php/hUtils.php source)
     );
     osc_add_route(
         'elektron_escrow_wallet',
         'elektron-escrow/wallet',
         'elektron-escrow/wallet',
         'osclass-escrow/controllers/wallet.php',
-        true // in the user's own menu; see includes/wallet.php for why this replaced the old 'user_profile_form' hook
+        true // same as above: account-menu chrome only, not a menu link by itself. See includes/wallet.php
+             // for why this route replaced the old 'user_profile_form' hook, and includes/hooks.php for
+             // the 'user_menu_filter' hook that actually makes it reachable.
     );
