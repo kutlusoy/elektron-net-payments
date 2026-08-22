@@ -1,6 +1,8 @@
 <?php if (!defined('ABS_PATH')) exit('ABS_PATH is not loaded. Direct access is not allowed.');
 /** @var array $order */
 /** @var bool $isBuyer */
+/** @var string|null $statusMessage */
+/** @var string|null $errorMessage */
 
 use ElektronNet\Payments\Core\Escrow\OrderStatus;
 
@@ -10,6 +12,14 @@ $pastT1 = $now >= (int) $order['buyer_refund_locktime'];
 
 <div class="elektron-escrow-order">
     <h1><?php _e('Elektron order', ELEKTRON_ESCROW_DOMAIN); ?> #<?php echo (int) $order['pk_i_id']; ?></h1>
+
+    <?php if ($statusMessage !== null) { ?>
+        <p class="elektron-escrow-success"><?php echo osc_esc_html($statusMessage); ?></p>
+    <?php } ?>
+
+    <?php if ($errorMessage !== null) { ?>
+        <p class="elektron-escrow-error"><?php echo osc_esc_html($errorMessage); ?></p>
+    <?php } ?>
 
     <?php if ($order['status'] === OrderStatus::AWAITING_PAYMENT || $order['status'] === OrderStatus::CONFIRMING) { ?>
         <p><?php echo osc_esc_html(elektron_escrow_t('order.' . $order['status'])); ?></p>

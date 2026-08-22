@@ -28,7 +28,16 @@ if (!$order || ($userId !== (int) $order['fk_i_buyer_id'] && $userId !== (int) $
 }
 
 $isBuyer = $userId === (int) $order['fk_i_buyer_id'];
+$statusMessage = null;
+$errorMessage = null;
 
+// Renders directly into this same response instead of
+// osc_add_flash_*_message() + a redirect back to this route. A flash
+// message is only shown by whatever the *active theme's*
+// custom.php/user-custom.php template does with it -- Shopclass ships
+// with no bundled theme at all, so that rendering is entirely outside
+// this plugin's control (see controllers/wallet.php for the same fix and
+// the fuller reasoning).
 if ($isBuyer && Params::getParam('confirm_receipt') === '1' && Params::getParam('CSRFName') !== '') {
     osc_csrf_check();
 
@@ -43,22 +52,22 @@ if ($isBuyer && Params::getParam('confirm_receipt') === '1' && Params::getParam(
         // buyer alone from T1 onward no matter what this plugin's database
         // says, so starting a release this close to T1 could tell the
         // seller funds are coming while the buyer can still reclaim them.
-        osc_add_flash_error_message(elektron_escrow_t('order.confirm_receipt.too_close_to_refund'));
+        $errorMessage = elektron_escrow_t('order.confirm_receipt.too_close_to_refund');
     } else {
         $orderDao->updateByPrimaryKey(
             ['status' => OrderStatus::RELEASE_PENDING_SELLER_SIGNATURE, 'dt_mod_date' => date('Y-m-d H:i:s')],
             $orderId
         );
+        // Reflects the just-applied change locally so the view below
+        // renders the new status without a second database round trip.
+        $order['status'] = OrderStatus::RELEASE_PENDING_SELLER_SIGNATURE;
         // TODO: build the actual release PSBT here once a
         // ReleasePsbtBuilderInterface implementation exists (see
         // shared/README.md, "Open items") and store it via PsbtRelay. Until
         // then the status change is recorded but no PSBT is generated yet,
         // which the status view below says explicitly.
-        osc_add_flash_ok_message(__('Receipt confirmed.', ELEKTRON_ESCROW_DOMAIN));
+        $statusMessage = __('Receipt confirmed.', ELEKTRON_ESCROW_DOMAIN);
     }
-
-    osc_redirect_to(osc_route_url('elektron_escrow_order_status', ['order' => $orderId]));
-    exit;
 }
 
 require osc_plugins_path() . 'osclass-escrow/views/order-status.php';
