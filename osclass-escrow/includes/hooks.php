@@ -1,7 +1,7 @@
 <?php if (!defined('ABS_PATH')) exit('ABS_PATH is not loaded. Direct access is not allowed.');
 
 /**
- * "Pay with Elektron Net" widget on the item detail page. Only rendered for
+ * "Buy with Elektron" widget on the item detail page. Only rendered for
  * a logged-in visitor who is not the item's own owner; buying your own
  * listing makes no sense and the escrow model requires two distinct wallets
  * anyway.

@@ -6,14 +6,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: tr_TR\n"
 
-msgid "Buy with Elektron Net (ELEK)"
-msgstr "Elektron Net (ELEK) ile satın al"
+msgid "Buy with Elektron (ELEK)"
+msgstr "Elektron (ELEK) ile satın al"
 
-msgid "View your Elektron Net order"
-msgstr "Elektron Net siparişini görüntüle"
+msgid "View your Elektron order"
+msgstr "Elektron siparişini görüntüle"
 
-msgid "Please log in to buy with Elektron Net."
-msgstr "Elektron Net ile satın almak için lütfen giriş yapın."
+msgid "Please log in to buy with Elektron."
+msgstr "Elektron ile satın almak için lütfen giriş yapın."
 
 msgid "This listing does not exist."
 msgstr "Bu ilan mevcut değil."
@@ -36,8 +36,8 @@ msgstr "Teslim alma onaylandı."
 msgid "Release PSBT construction is not implemented yet in this draft; nothing has actually moved on chain."
 msgstr "Bu taslakta serbest bırakma PSBT oluşturma henüz uygulanmadı; zincirde henüz hiçbir şey hareket etmedi."
 
-msgid "Elektron Net order"
-msgstr "Elektron Net siparişi"
+msgid "Elektron order"
+msgstr "Elektron siparişi"
 
 msgid "Confirm receipt"
 msgstr "Teslim almayı onayla"

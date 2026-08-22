@@ -18,11 +18,11 @@ if (elektron_escrow_get_user_pubkey((int) $item['fk_i_user_id']) === null) {
 <div class="elektron-escrow-widget">
     <?php if ($order === null) { ?>
         <a class="btn btn-primary" href="<?php echo osc_route_url('elektron_escrow_checkout', ['item' => $item['pk_i_id']]); ?>">
-            <?php _e('Buy with Elektron Net (ELEK)', ELEKTRON_ESCROW_DOMAIN); ?>
+            <?php _e('Buy with Elektron (ELEK)', ELEKTRON_ESCROW_DOMAIN); ?>
         </a>
     <?php } else { ?>
         <a class="btn btn-default" href="<?php echo osc_route_url('elektron_escrow_order_status', ['order' => $order['pk_i_id']]); ?>">
-            <?php _e('View your Elektron Net order', ELEKTRON_ESCROW_DOMAIN); ?>
+            <?php _e('View your Elektron order', ELEKTRON_ESCROW_DOMAIN); ?>
         </a>
     <?php } ?>
 </div>

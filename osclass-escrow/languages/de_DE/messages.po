@@ -6,14 +6,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de_DE\n"
 
-msgid "Buy with Elektron Net (ELEK)"
-msgstr "Mit Elektron Net (ELEK) kaufen"
+msgid "Buy with Elektron (ELEK)"
+msgstr "Mit Elektron (ELEK) kaufen"
 
-msgid "View your Elektron Net order"
-msgstr "Deine Elektron-Net-Bestellung ansehen"
+msgid "View your Elektron order"
+msgstr "Deine Elektron-Bestellung ansehen"
 
-msgid "Please log in to buy with Elektron Net."
-msgstr "Bitte melde dich an, um mit Elektron Net zu kaufen."
+msgid "Please log in to buy with Elektron."
+msgstr "Bitte melde dich an, um mit Elektron zu kaufen."
 
 msgid "This listing does not exist."
 msgstr "Dieses Angebot existiert nicht."
@@ -36,8 +36,8 @@ msgstr "Erhalt bestätigt."
 msgid "Release PSBT construction is not implemented yet in this draft; nothing has actually moved on chain."
 msgstr "Die Erstellung der Freigabe-PSBT ist in diesem Entwurf noch nicht implementiert; es wurde noch nichts auf der Chain bewegt."
 
-msgid "Elektron Net order"
-msgstr "Elektron-Net-Bestellung"
+msgid "Elektron order"
+msgstr "Elektron-Bestellung"
 
 msgid "Confirm receipt"
 msgstr "Erhalt bestätigen"

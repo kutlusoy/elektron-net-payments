@@ -6,14 +6,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: zh_CN\n"
 
-msgid "Buy with Elektron Net (ELEK)"
-msgstr "使用 Elektron Net (ELEK) 购买"
+msgid "Buy with Elektron (ELEK)"
+msgstr "使用 Elektron (ELEK) 购买"
 
-msgid "View your Elektron Net order"
-msgstr "查看您的 Elektron Net 订单"
+msgid "View your Elektron order"
+msgstr "查看您的 Elektron 订单"
 
-msgid "Please log in to buy with Elektron Net."
-msgstr "请登录后使用 Elektron Net 购买。"
+msgid "Please log in to buy with Elektron."
+msgstr "请登录后使用 Elektron 购买。"
 
 msgid "This listing does not exist."
 msgstr "此商品不存在。"
@@ -36,8 +36,8 @@ msgstr "已确认收货。"
 msgid "Release PSBT construction is not implemented yet in this draft; nothing has actually moved on chain."
 msgstr "此草案中尚未实现释放交易 PSBT 的构建；链上实际上尚未发生任何转移。"
 
-msgid "Elektron Net order"
-msgstr "Elektron Net 订单"
+msgid "Elektron order"
+msgstr "Elektron 订单"
 
 msgid "Confirm receipt"
 msgstr "确认收货"

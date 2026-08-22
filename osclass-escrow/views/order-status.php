@@ -9,7 +9,7 @@ $pastT1 = $now >= (int) $order['buyer_refund_locktime'];
 ?>
 
 <div class="elektron-escrow-order">
-    <h1><?php _e('Elektron Net order', ELEKTRON_ESCROW_DOMAIN); ?> #<?php echo (int) $order['pk_i_id']; ?></h1>
+    <h1><?php _e('Elektron order', ELEKTRON_ESCROW_DOMAIN); ?> #<?php echo (int) $order['pk_i_id']; ?></h1>
 
     <?php if ($order['status'] === OrderStatus::AWAITING_PAYMENT || $order['status'] === OrderStatus::CONFIRMING) { ?>
         <p><?php echo osc_esc_html(elektron_escrow_t('order.' . $order['status'])); ?></p>

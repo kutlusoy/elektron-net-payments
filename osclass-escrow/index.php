@@ -2,7 +2,7 @@
 /*
 Plugin Name: Elektron Net Escrow
 Plugin URI: https://elektron-net.org
-Description: Trustless 2-of-2 multisig escrow payments in Elektron Net (ELEK) for Osclass listings. See osclass-escrow/README.MD for the full API specification.
+Description: Trustless 2-of-2 multisig escrow payments in Elektron (ELEK) on the Elektron Net network, for Osclass listings. See osclass-escrow/README.MD for the full API specification.
 Version: 0.1
 Author: Elektron Net
 Author URI: https://elektron-net.org
@@ -18,6 +18,7 @@ Author URI: https://elektron-net.org
     require_once osc_plugin_path(__FILE__) . 'models/EscrowWalletDAO.php';
     require_once osc_plugin_path(__FILE__) . 'includes/config.php';   // elektron_escrow_config()
     require_once osc_plugin_path(__FILE__) . 'includes/i18n.php';     // elektron_escrow_t()
+    require_once osc_plugin_path(__FILE__) . 'includes/formatting.php'; // elektron_escrow_format_amount()
     require_once osc_plugin_path(__FILE__) . 'includes/wallet.php';   // one-time wallet connect
     require_once osc_plugin_path(__FILE__) . 'includes/hooks.php';    // item widget, routes, cron
 

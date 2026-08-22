@@ -6,14 +6,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ru_RU\n"
 
-msgid "Buy with Elektron Net (ELEK)"
-msgstr "Купить за Elektron Net (ELEK)"
+msgid "Buy with Elektron (ELEK)"
+msgstr "Купить за Elektron (ELEK)"
 
-msgid "View your Elektron Net order"
-msgstr "Посмотреть ваш заказ Elektron Net"
+msgid "View your Elektron order"
+msgstr "Посмотреть ваш заказ Elektron"
 
-msgid "Please log in to buy with Elektron Net."
-msgstr "Пожалуйста, войдите в систему, чтобы купить через Elektron Net."
+msgid "Please log in to buy with Elektron."
+msgstr "Пожалуйста, войдите в систему, чтобы купить через Elektron."
 
 msgid "This listing does not exist."
 msgstr "Это объявление не существует."
@@ -36,8 +36,8 @@ msgstr "Получение подтверждено."
 msgid "Release PSBT construction is not implemented yet in this draft; nothing has actually moved on chain."
 msgstr "Формирование PSBT для перевода средств пока не реализовано в этой черновой версии; в блокчейне ничего фактически не перемещалось."
 
-msgid "Elektron Net order"
-msgstr "Заказ Elektron Net"
+msgid "Elektron order"
+msgstr "Заказ Elektron"
 
 msgid "Confirm receipt"
 msgstr "Подтвердить получение"

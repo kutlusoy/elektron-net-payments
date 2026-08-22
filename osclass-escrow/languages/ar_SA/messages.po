@@ -6,14 +6,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ar_SA\n"
 
-msgid "Buy with Elektron Net (ELEK)"
-msgstr "الشراء عبر Elektron Net (ELEK)"
+msgid "Buy with Elektron (ELEK)"
+msgstr "الشراء عبر Elektron (ELEK)"
 
-msgid "View your Elektron Net order"
-msgstr "عرض طلبك في Elektron Net"
+msgid "View your Elektron order"
+msgstr "عرض طلبك في Elektron"
 
-msgid "Please log in to buy with Elektron Net."
-msgstr "يرجى تسجيل الدخول للشراء عبر Elektron Net."
+msgid "Please log in to buy with Elektron."
+msgstr "يرجى تسجيل الدخول للشراء عبر Elektron."
 
 msgid "This listing does not exist."
 msgstr "هذا الإعلان غير موجود."
@@ -36,8 +36,8 @@ msgstr "تم تأكيد الاستلام."
 msgid "Release PSBT construction is not implemented yet in this draft; nothing has actually moved on chain."
 msgstr "لم يتم بعد تنفيذ إنشاء معاملة PSBT للإفراج عن الأموال في هذه المسودة؛ لم يتم فعليًا نقل أي شيء على السلسلة."
 
-msgid "Elektron Net order"
-msgstr "طلب Elektron Net"
+msgid "Elektron order"
+msgstr "طلب Elektron"
 
 msgid "Confirm receipt"
 msgstr "تأكيد الاستلام"

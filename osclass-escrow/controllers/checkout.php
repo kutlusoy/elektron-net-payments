@@ -12,7 +12,7 @@ use ElektronNet\Payments\Core\Escrow\OrderStatus;
  */
 
 if (!osc_is_web_user_logged_in()) {
-    osc_add_flash_error_message(__('Please log in to buy with Elektron Net.', ELEKTRON_ESCROW_DOMAIN));
+    osc_add_flash_error_message(__('Please log in to buy with Elektron.', ELEKTRON_ESCROW_DOMAIN));
     osc_redirect_to(osc_user_login_url());
     exit;
 }

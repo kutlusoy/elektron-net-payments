@@ -17,7 +17,7 @@ $qrPngBase64 = base64_encode((new PngWriter())->write($qrCode)->getString());
 <div class="elektron-escrow-checkout">
     <h1><?php echo osc_esc_html($item['s_title']); ?></h1>
 
-    <p><?php echo osc_esc_html(elektron_escrow_t('order.awaiting_payment', ['{amount}' => $amountElek])); ?></p>
+    <p><?php echo osc_esc_html(elektron_escrow_t('order.awaiting_payment', ['{amount}' => elektron_escrow_format_amount($amountElek)])); ?></p>
 
     <img src="data:image/png;base64,<?php echo $qrPngBase64; ?>" alt="<?php echo osc_esc_html($order['s_address']); ?>" />
 

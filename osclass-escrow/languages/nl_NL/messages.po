@@ -6,14 +6,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: nl_NL\n"
 
-msgid "Buy with Elektron Net (ELEK)"
-msgstr "Kopen met Elektron Net (ELEK)"
+msgid "Buy with Elektron (ELEK)"
+msgstr "Kopen met Elektron (ELEK)"
 
-msgid "View your Elektron Net order"
-msgstr "Bekijk je Elektron Net-bestelling"
+msgid "View your Elektron order"
+msgstr "Bekijk je Elektron-bestelling"
 
-msgid "Please log in to buy with Elektron Net."
-msgstr "Log in om te kopen met Elektron Net."
+msgid "Please log in to buy with Elektron."
+msgstr "Log in om te kopen met Elektron."
 
 msgid "This listing does not exist."
 msgstr "Deze advertentie bestaat niet."
@@ -36,8 +36,8 @@ msgstr "Ontvangst bevestigd."
 msgid "Release PSBT construction is not implemented yet in this draft; nothing has actually moved on chain."
 msgstr "Het opbouwen van de vrijgave-PSBT is in dit concept nog niet geïmplementeerd; er is nog niets daadwerkelijk on-chain verplaatst."
 
-msgid "Elektron Net order"
-msgstr "Elektron Net-bestelling"
+msgid "Elektron order"
+msgstr "Elektron-bestelling"
 
 msgid "Confirm receipt"
 msgstr "Ontvangst bevestigen"
