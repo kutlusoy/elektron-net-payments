@@ -12,24 +12,40 @@ Author URI: https://elektron-net.org
 
     define('ELEKTRON_ESCROW_DOMAIN', 'osclass-escrow');
 
-    require_once osc_plugin_path(__FILE__) . 'vendor/autoload.php';
-    require_once osc_plugin_path(__FILE__) . 'install.php';
-    require_once osc_plugin_path(__FILE__) . 'models/EscrowOrderDAO.php';
-    require_once osc_plugin_path(__FILE__) . 'models/EscrowWalletDAO.php';
-    require_once osc_plugin_path(__FILE__) . 'includes/config.php';   // elektron_escrow_config()
-    require_once osc_plugin_path(__FILE__) . 'includes/i18n.php';     // elektron_escrow_t()
-    require_once osc_plugin_path(__FILE__) . 'includes/formatting.php'; // elektron_escrow_format_amount()
-    require_once osc_plugin_path(__FILE__) . 'includes/wallet.php';   // wallet pubkey get/save helpers
-    require_once osc_plugin_path(__FILE__) . 'includes/hooks.php';    // item widget, routes, cron
+    // __DIR__, not osc_plugin_path(__FILE__): that helper returns the full
+    // path to THIS file (see its own source in oc-includes/osclass/helpers/
+    // hPlugins.php -- it strips down to, and re-appends, the path
+    // including the filename, it does not return a directory), which is
+    // exactly right for the plugin-identifier uses below but silently
+    // wrong for building a path to another file, since it leaves no
+    // separator before the appended relative path.
+    require_once __DIR__ . '/vendor/autoload.php';
+    require_once __DIR__ . '/install.php';
+    require_once __DIR__ . '/models/EscrowOrderDAO.php';
+    require_once __DIR__ . '/models/EscrowWalletDAO.php';
+    require_once __DIR__ . '/includes/config.php';   // elektron_escrow_config()
+    require_once __DIR__ . '/includes/i18n.php';     // elektron_escrow_t()
+    require_once __DIR__ . '/includes/formatting.php'; // elektron_escrow_format_amount()
+    require_once __DIR__ . '/includes/wallet.php';   // wallet pubkey get/save helpers
+    require_once __DIR__ . '/includes/hooks.php';    // item widget, routes, cron
 
     // Activation / deactivation. See install.php.
+    // osc_register_plugin() genuinely does want osc_plugin_path(__FILE__)
+    // here (the full path), matching how Shopclass's own bundled
+    // sample-widgets plugin calls it. The hook names below are different:
+    // Plugins::uninstall() and CAdminPlugins's "Configure" action fire
+    // '<relative-path-to-index.php>_uninstall'/'_configure' (PLUGINS_PATH
+    // already stripped on their side, confirmed in Plugins.php), so the
+    // hook must be registered under that same relative identifier, not
+    // the full path osc_plugin_path(__FILE__) returns.
     osc_register_plugin(osc_plugin_path(__FILE__), 'elektron_escrow_install');
-    osc_add_hook(osc_plugin_path(__FILE__) . '_uninstall', 'elektron_escrow_uninstall');
+    osc_add_hook('osclass-escrow/index.php_uninstall', 'elektron_escrow_uninstall');
 
     // "Configure" action in the admin plugin list -> renders admin/settings.php
-    // inside the oc-admin skin. See osc_admin_render_plugin_url()'s doc comment
-    // in Osclass core for why the path resolution works this way.
-    osc_add_hook(osc_plugin_path(__FILE__) . '_configure', function () {
+    // inside the oc-admin skin. See the comment above osc_register_plugin()
+    // for why this hook name uses the relative path, not
+    // osc_plugin_path(__FILE__).
+    osc_add_hook('osclass-escrow/index.php_configure', function () {
         osc_admin_render_plugin('osclass-escrow/admin/settings.php');
     });
 
