@@ -5,9 +5,16 @@
  * osc_register_plugin() call). Creates the plugin's own order table and
  * seeds the admin-settings preferences with the suite-wide defaults.
  *
- * Nothing here touches Osclass's own tables (t_item, t_user, ...); the
- * order/escrow record is entirely this plugin's own storage, since Osclass
- * has no built-in order/checkout concept to hook into.
+ * Nothing here touches Osclass/Shopclass's own tables (t_item, t_user, ...).
+ * Shopclass does have a native billing/order system (mindstellar\billing\
+ * Billing, Order, t_billing_order), but it is a credits-purchase flow: a
+ * user buys credits from the marketplace operator itself, which are later
+ * spent on premium features. There is no seller, no per-item payment, and
+ * Billing::markPaid() mints credits to the buyer's own account, not funds
+ * to a different user. That does not fit escrow (buyer pays a specific
+ * seller for a specific item, funds sit in a 2-of-2 address, not an
+ * account balance), so this plugin keeps its own order table rather than
+ * forcing the flow through an API built for a different problem.
  */
 function elektron_escrow_install()
 {
@@ -59,6 +66,15 @@ function elektron_escrow_install()
  * never overwritten. Only called at install time, since every field always
  * has a value after that (admin/settings.php always writes every field on
  * save, even one left as its current default).
+ *
+ * Uses Preference::replace(), not the DAO-inherited insert(). Shopclass's
+ * Preference class caches every value in memory once, at construction
+ * (Preference::toArray()); insert() writes straight to t_preference without
+ * telling that cache, so a value inserted this way would read back empty
+ * for the rest of the same request. replace() is what the rest of the
+ * codebase uses for exactly this reason: it writes the row and updates the
+ * cache together. Verified against github.com/mindstellar/shopclass's own
+ * Preference.php, not assumed.
  */
 function elektron_escrow_set_default_preferences()
 {
@@ -76,18 +92,18 @@ function elektron_escrow_set_default_preferences()
 
     foreach ($defaults as $name => $value) {
         if (osc_get_preference($name, 'plugin-osclass-escrow') === '') {
-            Preference::newInstance()->insert([
-                's_section' => 'plugin-osclass-escrow',
-                's_name' => $name,
-                's_value' => $value,
-                'e_type' => 'STRING',
-            ]);
+            Preference::newInstance()->replace($name, $value, 'plugin-osclass-escrow', 'STRING');
         }
     }
 }
 
 function elektron_escrow_uninstall()
 {
+    // delete() (DAO-inherited) rather than replace()/set(): there is no
+    // native "remove a whole section" method on Preference, and nothing
+    // reads a preference back again in this same request afterward, so the
+    // cache-staleness that rules out insert()/update() above does not apply
+    // here.
     Preference::newInstance()->delete(['s_section' => 'plugin-osclass-escrow']);
     // The order table is deliberately kept on uninstall (it is transaction
     // history, not configuration); a marketplace operator who wants it gone

@@ -21,8 +21,8 @@ msgstr "此商品不存在。"
 msgid "You cannot buy your own listing."
 msgstr "您不能购买自己发布的商品。"
 
-msgid "Connect an Elektron Net wallet to your account first (see your profile settings), then come back to this listing."
-msgstr "请先在您的账户中连接 Elektron Net 钱包（见个人资料设置），然后再返回此商品页面。"
+msgid "Connect an Elektron Net wallet to your account first, then come back to this listing."
+msgstr "请先在您的账户中连接 Elektron Net 钱包，然后再返回此商品页面。"
 
 msgid "The seller has not connected an Elektron Net wallet yet, so this listing cannot be bought with escrow right now."
 msgstr "卖家尚未连接 Elektron Net 钱包，因此目前无法通过担保交易（escrow）购买此商品。"
@@ -122,3 +122,12 @@ msgstr "若此订单一直未被确认，您的自动退款窗口将于 {date} �
 
 msgid "Your automatic release window opens on {date} if the buyer does not respond."
 msgstr "若买家未作回应，您的自动放款窗口将于 {date} 开启。"
+
+msgid "Elektron Net wallet"
+msgstr "Elektron Net 钱包"
+
+msgid "Wallet connected."
+msgstr "钱包已连接。"
+
+msgid "A wallet is connected. Paste a different public key below to replace it."
+msgstr "已连接钱包。在下方粘贴不同的公钥即可替换。"

@@ -21,8 +21,8 @@ msgstr "Questo annuncio non esiste."
 msgid "You cannot buy your own listing."
 msgstr "Non puoi acquistare il tuo stesso annuncio."
 
-msgid "Connect an Elektron Net wallet to your account first (see your profile settings), then come back to this listing."
-msgstr "Collega prima un wallet Elektron Net al tuo account (vedi le impostazioni del profilo), poi torna a questo annuncio."
+msgid "Connect an Elektron Net wallet to your account first, then come back to this listing."
+msgstr "Collega prima un wallet Elektron Net al tuo account, poi torna a questo annuncio."
 
 msgid "The seller has not connected an Elektron Net wallet yet, so this listing cannot be bought with escrow right now."
 msgstr "Il venditore non ha ancora collegato un wallet Elektron Net, quindi questo annuncio non può essere acquistato con escrow al momento."
@@ -122,3 +122,12 @@ msgstr "La tua finestra di rimborso automatico si apre il {date} se questo ordin
 
 msgid "Your automatic release window opens on {date} if the buyer does not respond."
 msgstr "La tua finestra di rilascio automatico si apre il {date} se l'acquirente non risponde."
+
+msgid "Elektron Net wallet"
+msgstr "Wallet Elektron Net"
+
+msgid "Wallet connected."
+msgstr "Wallet collegato."
+
+msgid "A wallet is connected. Paste a different public key below to replace it."
+msgstr "Un wallet è già collegato. Incolla una chiave pubblica diversa qui sotto per sostituirlo."

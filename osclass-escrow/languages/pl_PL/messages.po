@@ -21,8 +21,8 @@ msgstr "To ogłoszenie nie istnieje."
 msgid "You cannot buy your own listing."
 msgstr "Nie możesz kupić własnego ogłoszenia."
 
-msgid "Connect an Elektron Net wallet to your account first (see your profile settings), then come back to this listing."
-msgstr "Najpierw połącz portfel Elektron Net ze swoim kontem (zobacz ustawienia profilu), a następnie wróć do tego ogłoszenia."
+msgid "Connect an Elektron Net wallet to your account first, then come back to this listing."
+msgstr "Najpierw połącz portfel Elektron Net ze swoim kontem, a następnie wróć do tego ogłoszenia."
 
 msgid "The seller has not connected an Elektron Net wallet yet, so this listing cannot be bought with escrow right now."
 msgstr "Sprzedawca nie połączył jeszcze portfela Elektron Net, więc tego ogłoszenia nie można teraz kupić przez escrow."
@@ -122,3 +122,12 @@ msgstr "Twoje okno automatycznego zwrotu otwiera się {date}, jeśli to zamówie
 
 msgid "Your automatic release window opens on {date} if the buyer does not respond."
 msgstr "Twoje okno automatycznego zwolnienia środków otwiera się {date}, jeśli kupujący nie odpowie."
+
+msgid "Elektron Net wallet"
+msgstr "Portfel Elektron Net"
+
+msgid "Wallet connected."
+msgstr "Portfel połączony."
+
+msgid "A wallet is connected. Paste a different public key below to replace it."
+msgstr "Portfel jest już połączony. Wklej inny klucz publiczny poniżej, aby go zastąpić."

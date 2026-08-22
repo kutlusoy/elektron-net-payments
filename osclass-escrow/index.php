@@ -19,7 +19,7 @@ Author URI: https://elektron-net.org
     require_once osc_plugin_path(__FILE__) . 'includes/config.php';   // elektron_escrow_config()
     require_once osc_plugin_path(__FILE__) . 'includes/i18n.php';     // elektron_escrow_t()
     require_once osc_plugin_path(__FILE__) . 'includes/formatting.php'; // elektron_escrow_format_amount()
-    require_once osc_plugin_path(__FILE__) . 'includes/wallet.php';   // one-time wallet connect
+    require_once osc_plugin_path(__FILE__) . 'includes/wallet.php';   // wallet pubkey get/save helpers
     require_once osc_plugin_path(__FILE__) . 'includes/hooks.php';    // item widget, routes, cron
 
     // Activation / deactivation. See install.php.
@@ -58,4 +58,11 @@ Author URI: https://elektron-net.org
         'elektron-escrow/order',
         'osclass-escrow/controllers/order-status.php',
         true // show inside the logged-in user's own menu (user-custom.php), not just the public theme wrapper
+    );
+    osc_add_route(
+        'elektron_escrow_wallet',
+        'elektron-escrow/wallet',
+        'elektron-escrow/wallet',
+        'osclass-escrow/controllers/wallet.php',
+        true // in the user's own menu; see includes/wallet.php for why this replaced the old 'user_profile_form' hook
     );

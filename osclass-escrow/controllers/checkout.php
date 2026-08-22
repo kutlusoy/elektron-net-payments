@@ -36,8 +36,8 @@ $buyerPubKey = elektron_escrow_get_user_pubkey($buyerId);
 $sellerPubKey = elektron_escrow_get_user_pubkey((int) $item['fk_i_user_id']);
 
 if ($buyerPubKey === null) {
-    osc_add_flash_error_message(__('Connect an Elektron Net wallet to your account first (see your profile settings), then come back to this listing.', ELEKTRON_ESCROW_DOMAIN));
-    osc_redirect_to(osc_user_profile_url());
+    osc_add_flash_error_message(__('Connect an Elektron Net wallet to your account first, then come back to this listing.', ELEKTRON_ESCROW_DOMAIN));
+    osc_redirect_to(osc_route_url('elektron_escrow_wallet'));
     exit;
 }
 if ($sellerPubKey === null) {

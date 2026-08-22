@@ -21,8 +21,8 @@ msgstr "Это объявление не существует."
 msgid "You cannot buy your own listing."
 msgstr "Вы не можете купить собственное объявление."
 
-msgid "Connect an Elektron Net wallet to your account first (see your profile settings), then come back to this listing."
-msgstr "Сначала подключите кошелёк Elektron Net к своему аккаунту (см. настройки профиля), затем вернитесь к этому объявлению."
+msgid "Connect an Elektron Net wallet to your account first, then come back to this listing."
+msgstr "Сначала подключите кошелёк Elektron Net к своему аккаунту, затем вернитесь к этому объявлению."
 
 msgid "The seller has not connected an Elektron Net wallet yet, so this listing cannot be bought with escrow right now."
 msgstr "Продавец ещё не подключил кошелёк Elektron Net, поэтому это объявление пока нельзя купить через escrow."
@@ -122,3 +122,12 @@ msgstr "Ваше окно автоматического возврата сре
 
 msgid "Your automatic release window opens on {date} if the buyer does not respond."
 msgstr "Ваше окно автоматического перевода средств откроется {date}, если покупатель не ответит."
+
+msgid "Elektron Net wallet"
+msgstr "Кошелёк Elektron Net"
+
+msgid "Wallet connected."
+msgstr "Кошелёк подключён."
+
+msgid "A wallet is connected. Paste a different public key below to replace it."
+msgstr "Кошелёк уже подключён. Вставьте другой публичный ключ ниже, чтобы заменить его."

@@ -21,8 +21,8 @@ msgstr "This listing does not exist."
 msgid "You cannot buy your own listing."
 msgstr "You cannot buy your own listing."
 
-msgid "Connect an Elektron Net wallet to your account first (see your profile settings), then come back to this listing."
-msgstr "Connect an Elektron Net wallet to your account first (see your profile settings), then come back to this listing."
+msgid "Connect an Elektron Net wallet to your account first, then come back to this listing."
+msgstr "Connect an Elektron Net wallet to your account first, then come back to this listing."
 
 msgid "The seller has not connected an Elektron Net wallet yet, so this listing cannot be bought with escrow right now."
 msgstr "The seller has not connected an Elektron Net wallet yet, so this listing cannot be bought with escrow right now."
@@ -122,3 +122,12 @@ msgstr "Your automatic refund window opens on {date} if this order stays unconfi
 
 msgid "Your automatic release window opens on {date} if the buyer does not respond."
 msgstr "Your automatic release window opens on {date} if the buyer does not respond."
+
+msgid "Elektron Net wallet"
+msgstr "Elektron Net wallet"
+
+msgid "Wallet connected."
+msgstr "Wallet connected."
+
+msgid "A wallet is connected. Paste a different public key below to replace it."
+msgstr "A wallet is connected. Paste a different public key below to replace it."
