@@ -1,10 +1,15 @@
 <?php if (!defined('ABS_PATH')) exit('ABS_PATH is not loaded. Direct access is not allowed.');
 /** @var string|null $currentPubKey */
 /** @var string|null $errorMessage */
+/** @var bool $justSaved */
 ?>
 
 <div class="elektron-escrow-wallet">
     <h1><?php _e('Elektron Net wallet', ELEKTRON_ESCROW_DOMAIN); ?></h1>
+
+    <?php if ($justSaved) { ?>
+        <p class="elektron-escrow-success"><?php _e('Wallet connected.', ELEKTRON_ESCROW_DOMAIN); ?></p>
+    <?php } ?>
 
     <?php if ($errorMessage !== null) { ?>
         <p class="elektron-escrow-error"><?php echo osc_esc_html($errorMessage); ?></p>
