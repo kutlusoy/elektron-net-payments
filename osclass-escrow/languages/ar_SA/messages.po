@@ -1,0 +1,124 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: osclass-escrow 0.1\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ar_SA\n"
+
+msgid "Buy with Elektron Net (ELEK)"
+msgstr "الشراء عبر Elektron Net (ELEK)"
+
+msgid "View your Elektron Net order"
+msgstr "عرض طلبك في Elektron Net"
+
+msgid "Please log in to buy with Elektron Net."
+msgstr "يرجى تسجيل الدخول للشراء عبر Elektron Net."
+
+msgid "This listing does not exist."
+msgstr "هذا الإعلان غير موجود."
+
+msgid "You cannot buy your own listing."
+msgstr "لا يمكنك شراء إعلانك الخاص."
+
+msgid "Connect an Elektron Net wallet to your account first (see your profile settings), then come back to this listing."
+msgstr "قم أولاً بربط محفظة Elektron Net بحسابك (راجع إعدادات ملفك الشخصي)، ثم عد إلى هذا الإعلان."
+
+msgid "The seller has not connected an Elektron Net wallet yet, so this listing cannot be bought with escrow right now."
+msgstr "لم يقم البائع بربط محفظة Elektron Net بعد، لذا لا يمكن شراء هذا الإعلان عبر الضمان (escrow) في الوقت الحالي."
+
+msgid "Order not found."
+msgstr "لم يتم العثور على الطلب."
+
+msgid "Receipt confirmed."
+msgstr "تم تأكيد الاستلام."
+
+msgid "Release PSBT construction is not implemented yet in this draft; nothing has actually moved on chain."
+msgstr "لم يتم بعد تنفيذ إنشاء معاملة PSBT للإفراج عن الأموال في هذه المسودة؛ لم يتم فعليًا نقل أي شيء على السلسلة."
+
+msgid "Elektron Net order"
+msgstr "طلب Elektron Net"
+
+msgid "Confirm receipt"
+msgstr "تأكيد الاستلام"
+
+msgid "Elektron Net public key (for escrow payments)"
+msgstr "المفتاح العام لـ Elektron Net (لمدفوعات الضمان)"
+
+msgid "Paste the public key from your Elektron Net wallet, never a private key or seed phrase. Needed once, before you can buy or sell with escrow."
+msgstr "الصق المفتاح العام من محفظة Elektron Net الخاصة بك، ولا تلصق أبدًا مفتاحًا خاصًا أو عبارة استرداد (seed phrase). مطلوب مرة واحدة فقط قبل أن تتمكن من البيع أو الشراء عبر الضمان."
+
+msgid "The Elektron Net public key looks invalid (expected a 33-byte compressed key, 66 hex characters starting with 02 or 03) and was not saved."
+msgstr "يبدو أن المفتاح العام لـ Elektron Net غير صالح (المتوقع مفتاح مضغوط بحجم 33 بايت، أي 66 حرفًا سداسيًا عشريًا يبدأ بـ 02 أو 03)، ولم يتم حفظه."
+
+msgid "Elektron Net Escrow"
+msgstr "Elektron Net Escrow"
+
+msgid "Elektron Net Escrow settings"
+msgstr "إعدادات Elektron Net Escrow"
+
+msgid "Elektron Net Escrow settings updated"
+msgstr "تم تحديث إعدادات Elektron Net Escrow"
+
+msgid "Network"
+msgstr "الشبكة"
+
+msgid "Chain-data endpoints (one per line, tried in order)"
+msgstr "نقاط الوصول لبيانات السلسلة (واحدة في كل سطر، تتم تجربتها بالترتيب)"
+
+msgid "Esplora/mempool-compatible base URLs, e.g. https://mempool.elektron-net.org/api"
+msgstr "روابط أساسية متوافقة مع Esplora/mempool، مثل https://mempool.elektron-net.org/api"
+
+msgid "Confirmations required before an order is \"funded\""
+msgstr "عدد التأكيدات المطلوبة قبل اعتبار الطلب \"مدفوعًا\""
+
+msgid "Release transaction fee rate (lep/vByte)"
+msgstr "معدل رسوم معاملة الإفراج (lep/vByte)"
+
+msgid "Buyer refund threshold, T1 (days)"
+msgstr "حد استرداد المشتري، T1 (أيام)"
+
+msgid "Seller release threshold, T2 (days)"
+msgstr "حد إفراج البائع، T2 (أيام)"
+
+msgid "T2 must be at least %sx T1; see the plugin README, \"Escrow timeout policy\", for why."
+msgstr "يجب أن يكون T2 على الأقل %s ضعف T1؛ راجع ملف README الخاص بالإضافة، قسم \"Escrow timeout policy\"، لمعرفة السبب."
+
+msgid "Save"
+msgstr "حفظ"
+
+msgid "Send {amount} ELEK to the address below to start this order."
+msgstr "أرسل {amount} ELEK إلى العنوان أدناه لبدء هذا الطلب."
+
+msgid "Payment seen, waiting for {confirmations} confirmation(s)."
+msgstr "تم رصد الدفعة، في انتظار {confirmations} تأكيد(ات)."
+
+msgid "Payment confirmed. Please confirm receipt once the item arrives."
+msgstr "تم تأكيد الدفع. يرجى تأكيد الاستلام بمجرد وصول العنصر."
+
+msgid "Payment confirmed. Waiting for the buyer to confirm receipt."
+msgstr "تم تأكيد الدفع. في انتظار تأكيد المشتري للاستلام."
+
+msgid "Automatic refund available from {date} if this order is not confirmed before then."
+msgstr "يصبح الاسترداد التلقائي متاحًا اعتبارًا من {date} إذا لم يتم تأكيد هذا الطلب قبل ذلك."
+
+msgid "Automatic release available from {date} if the buyer does not respond."
+msgstr "يصبح الإفراج التلقائي متاحًا اعتبارًا من {date} إذا لم يستجب المشتري."
+
+msgid "Buyer confirmed receipt. Waiting for the seller's wallet to sign the release."
+msgstr "أكد المشتري الاستلام. في انتظار توقيع محفظة البائع على الإفراج."
+
+msgid "Funds released to the seller."
+msgstr "تم الإفراج عن الأموال إلى البائع."
+
+msgid "Funds refunded to the buyer."
+msgstr "تم استرداد الأموال إلى المشتري."
+
+msgid "Funds claimed by the seller after the buyer did not respond in time."
+msgstr "استحوذ البائع على الأموال بعد عدم استجابة المشتري في الوقت المحدد."
+
+msgid "Your automatic refund window opens on {date} if this order stays unconfirmed."
+msgstr "تُفتح نافذة الاسترداد التلقائي الخاصة بك في {date} إذا ظل هذا الطلب غير مؤكد."
+
+msgid "Your automatic release window opens on {date} if the buyer does not respond."
+msgstr "تُفتح نافذة الإفراج التلقائي الخاصة بك في {date} إذا لم يستجب المشتري."
