@@ -88,6 +88,14 @@ function elektron_escrow_set_default_preferences()
         'buyer_refund_days' => (string) \ElektronNet\Payments\Core\Escrow\TimeoutPolicy::DEFAULT_BUYER_REFUND_DAYS,
         'seller_release_days' => (string) \ElektronNet\Payments\Core\Escrow\TimeoutPolicy::DEFAULT_SELLER_RELEASE_DAYS,
         'network' => 'mainnet',
+        // Osclass's own currency table stores a code as CHAR(3) (confirmed
+        // against a real installation's own
+        // oc-includes/osclass/installer/struct.sql), so "ELEK" can never
+        // actually be stored there; a list of accepted 3-letter codes lets
+        // this cope with different operators already having picked
+        // different contractions before that was known. See
+        // elektron_escrow_currency_codes() in includes/config.php.
+        'currency_codes' => "ELE\nELK",
     ];
 
     foreach ($defaults as $name => $value) {

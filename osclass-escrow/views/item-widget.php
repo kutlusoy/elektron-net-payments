@@ -2,12 +2,15 @@
 /** @var array $item Osclass item row */
 /** @var array|null $order this buyer's existing EscrowOrderDAO row for this item, if any */
 
-// Escrow only ever applies to listings priced directly in ELEK: converting
-// a fiat-priced listing would need a live exchange rate, and no reliable
-// ELEK price feed exists yet (see elektron-net-mempool's README). The
-// marketplace operator adds ELEK as a currency in Osclass's own currency
-// settings; sellers who want escrow price their listing in it directly.
-if (($item['fk_c_currency_code'] ?? '') !== 'ELEK') {
+// Escrow only ever applies to listings priced directly in one of the
+// admin-configured currency codes: converting a fiat-priced listing would
+// need a live exchange rate, and no reliable ELEK price feed exists yet
+// (see elektron-net-mempool's README). This is a list, not a single fixed
+// "ELEK", because Osclass's own currency table stores a code as exactly 3
+// characters (see elektron_escrow_currency_codes() in includes/config.php),
+// so different marketplace operators may already have picked different
+// 3-letter contractions (e.g. "ELE", "ELK") before that was known.
+if (!in_array(strtoupper((string) ($item['fk_c_currency_code'] ?? '')), elektron_escrow_currency_codes(), true)) {
     return;
 }
 if (elektron_escrow_get_user_pubkey((int) $item['fk_i_user_id']) === null) {

@@ -34,6 +34,12 @@ Two things in the core it depends on are still explicitly not production-ready, 
 - `EscrowScriptBuilderInterface`'s reference implementation (script/address derivation) has been checked line-by-line against bitwasp/bitcoin's actual source, but is not verified against a live Elektron Net node.
 - `ReleasePsbtBuilderInterface` has no reference implementation yet, so "confirm receipt" records the status change but does not yet produce a real PSBT (see "Open Questions" below).
 
+### The "Buy" button still didn't appear: the currency code was never storable
+
+Even after the CSRF fix above, and with a wallet saved for both the seller and a second, buyer account, a real listing still showed no "Buy" button. The eligibility check (`views/item-widget.php`) compared `fk_c_currency_code` against the literal string `ELEK`; the operator's own admin UI, however, only accepted 3 characters for a currency's ISO code, so the listing was actually priced in `ELK`, not `ELEK` -- and that 3-character limit is not a UI bug to work around, it is `t_currency.pk_c_code CHAR(3) NOT NULL` in the platform's own schema (`oc-includes/osclass/installer/struct.sql`), confirmed against the real `osclass-classifieds.com` v8.3.1 source. `ELEK` can therefore never be stored as a currency code on any Osclass-family platform, and the comparison could never have matched anything.
+
+Fixed by making the accepted currency code an admin-configurable list (`currency_codes` preference, `elektron_escrow_currency_codes()` in `includes/config.php`) rather than a single hardcoded value, since different marketplace operators may already have picked different 3-letter contractions (e.g. `ELE`, `ELK`) before this was known and should not have to migrate existing listings to agree on one. Defaults to both `ELE` and `ELK`. The check moved to `!in_array(strtoupper($item['fk_c_currency_code'] ?? ''), elektron_escrow_currency_codes(), true)`, enforced in both `views/item-widget.php` (hides the "Buy" link) and `controllers/checkout.php` (redirects away if the route is reached directly for an ineligible listing).
+
 ### Why the reference implementation is `mindstellar/shopclass`, not `osclass/Osclass`
 
 The original `osclass/Osclass` repository has had no commits since July 2018; it is not a live target. The actively maintained continuation is Mindstellar's fork, renamed **Shopclass** (PHP 8.0+, its own composer.json, CI, and a modernised admin theme), which states plainly that it "keeps Osclass's plugin and theme APIs ... so existing extensions keep working." This plugin now targets Shopclass specifically, on the explicit basis that the original is dead and every real installation going forward will be a Shopclass one.
@@ -178,7 +184,7 @@ Two tables, entirely owned by this plugin; Osclass's own tables (`t_item`, `t_us
 
 A listing is only ever offered escrow if **both** hold:
 
-1. The item's `fk_c_currency_code` is `ELEK`. Converting a fiat-priced listing would need a live exchange rate, and no reliable ELEK price feed exists yet (see `elektron-net-mempool`'s README on why the fiat price feed is disabled). The marketplace operator adds `ELEK` as a currency in Osclass's own currency settings; sellers who want escrow price their listing in it directly.
+1. The item's `fk_c_currency_code` (uppercased) is one of the admin-configured `currency_codes` (default `ELE`, `ELK`; see "Admin settings" below). This is a list, not the single fixed `ELEK`, because Osclass's own currency table stores a code as `CHAR(3)` (confirmed against a real installation's `oc-includes/osclass/installer/struct.sql`), so the 4-letter `ELEK` can never actually be stored as a currency code there -- an operator has to pick a 3-letter contraction instead, and different operators may already have picked different ones (`ELE` vs `ELK`) before this was known. Converting a fiat-priced listing would also need a live exchange rate, and no reliable ELEK price feed exists yet (see `elektron-net-mempool`'s README on why the fiat price feed is disabled). The check is enforced both where the "Buy" link is rendered (`views/item-widget.php`) and again in `controllers/checkout.php` itself, so navigating straight to the checkout URL for an ineligible listing still redirects away.
 2. The seller has a row in `elektron_escrow_wallet` (connected a wallet once, see "One-time wallet setup" in `../README.MD`).
 
 The buyer's own wallet connection is checked at checkout time instead (redirects to `elektron_escrow_wallet` if missing), since that is the point where it first matters for them.
@@ -204,6 +210,7 @@ Rendered by `views/admin-settings.php`, saved by `admin/settings.php`. Every fie
 | Field | Preference name | Default |
 |---|---|---|
 | Network | `network` | `mainnet` |
+| Accepted currency codes (one per line) | `currency_codes` | `ELE`, `ELK` |
 | Chain-data endpoints (one per line) | `chain_data_endpoints` | `https://mempool.elektron-net.org/api`, `https://mempool2.elektron-net.org/api` |
 | Confirmations required | `required_confirmations` | `3` |
 | Fee rate (lep/vByte) | `fee_rate_lep_per_vbyte` | `10` (fallback only -- see below) |
