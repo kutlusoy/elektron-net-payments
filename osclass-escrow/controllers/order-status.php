@@ -31,14 +31,17 @@ $isBuyer = $userId === (int) $order['fk_i_buyer_id'];
 $statusMessage = null;
 $errorMessage = null;
 
-// Renders directly into this same response instead of
-// osc_add_flash_*_message() + a redirect back to this route. A flash
-// message is only shown by whatever the *active theme's*
-// custom.php/user-custom.php template does with it -- Shopclass ships
-// with no bundled theme at all, so that rendering is entirely outside
-// this plugin's control (see controllers/wallet.php for the same fix and
-// the fuller reasoning).
-if ($isBuyer && Params::getParam('confirm_receipt') === '1' && Params::getParam('CSRFName') !== '') {
+// The 'confirm_receipt' marker alone decides whether this is a
+// submission; the CSRF token itself is deliberately NOT inspected before
+// calling osc_csrf_check(). See controllers/wallet.php for why: an
+// earlier version also required Params::getParam('CSRFName') !== '',
+// which hardcoded Shopclass's own token field name as an assumption about
+// a different real, deployed platform's internals, confirmed wrong live
+// (that platform's actual field is a single 'octoken' input). Renders
+// directly into this same response rather than osc_add_flash_*_message()
+// + a redirect, since a flash message is only shown by whatever the
+// active theme's custom.php/user-custom.php template does with it.
+if ($isBuyer && Params::getParam('confirm_receipt') === '1') {
     osc_csrf_check();
 
     if (!OrderStateMachine::canTransition($order['status'], OrderStatus::RELEASE_PENDING_SELLER_SIGNATURE)) {

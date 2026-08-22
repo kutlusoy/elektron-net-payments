@@ -9,7 +9,14 @@ use ElektronNet\Payments\Core\Escrow\TimeoutPolicy;
  * plugin's README for the full field list.
  */
 
-if (Params::getParam('save') === 'elektron_escrow_settings' && Params::getParam('CSRFName') !== '') {
+// The 'save' marker alone decides whether this is a submission; the CSRF
+// token itself is deliberately NOT inspected before calling
+// osc_csrf_check(). See controllers/wallet.php for why: hardcoding
+// Shopclass's own 'CSRFName' token field name here is an assumption about
+// a specific platform's internals that does not hold on every real,
+// deployed Osclass-family platform (confirmed live against one that uses
+// a single 'octoken' field instead).
+if (Params::getParam('save') === 'elektron_escrow_settings') {
     osc_csrf_check();
 
     $errorMessage = null;

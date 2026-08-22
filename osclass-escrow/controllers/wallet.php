@@ -15,38 +15,26 @@ $userId = (int) osc_logged_user_id();
 $errorMessage = null;
 $justSaved = false;
 
-// TEMPORARY DIAGNOSTIC (remove once the save issue is confirmed fixed):
-// shows exactly what this request actually received, since the reported
-// symptom (no message at all, field cleared) is consistent with several
-// different failure points and none of them can be told apart from the
-// outside. Deliberately does not touch the CSRFToken value itself.
-$debugInfo = array(
-    'REQUEST_METHOD' => $_SERVER['REQUEST_METHOD'] ?? '(unknown)',
-    "Params::getParam('save')" => Params::getParam('save'),
-    "Params::getParam('CSRFName') present" => Params::getParam('CSRFName') !== '' ? 'yes' : 'no',
-    "Params::getParam('CSRFToken') present" => Params::getParam('CSRFToken') !== '' ? 'yes' : 'no',
-    "Params::getParam('pubkey_hex')" => Params::getParam('pubkey_hex'),
-    'if-block entered' => 'no',
-);
-
-// Renders the success confirmation directly in this same response instead
-// of osc_add_flash_ok_message() + a redirect back to this same route. Not
-// just style: a flash message is stored server-side and only shown by
-// whatever the *active theme's* custom.php/user-custom.php template does
-// with it -- Shopclass ships with no bundled theme at all (oc-content/themes/
-// is empty except for the security stub), so that rendering is entirely
-// outside this plugin's control. Reporting success the same direct way
-// $errorMessage already does removes that dependency for the one message
-// that matters most here.
-if (Params::getParam('save') === 'elektron_escrow_wallet' && Params::getParam('CSRFName') !== '') {
-    $debugInfo['if-block entered'] = 'yes';
-
+// The 'save' marker alone decides whether this is a submission; the CSRF
+// token itself is deliberately NOT inspected here before calling
+// osc_csrf_check(). An earlier version also required
+// Params::getParam('CSRFName') !== '', which hardcoded Shopclass's own
+// token field name as an assumption about a *different* real, deployed
+// platform's internals -- confirmed wrong live: that platform's actual
+// CSRF field is a single 'octoken' input, not a 'CSRFName'/'CSRFToken'
+// pair, so the guard was always false and osc_csrf_check() never even ran.
+// osc_csrf_check() is already responsible for rejecting a missing/invalid
+// token on whichever platform is actually running underneath; this plugin
+// has no business assuming what that token looks like.
+if (Params::getParam('save') === 'elektron_escrow_wallet') {
     osc_csrf_check();
 
-    $debugInfo['reached after osc_csrf_check()'] = 'yes';
-
+    // Renders the success confirmation directly in this same response
+    // instead of osc_add_flash_ok_message() + a redirect back to this
+    // same route. A flash message is only shown by whatever the *active
+    // theme's* custom.php/user-custom.php template does with it, which is
+    // entirely outside this plugin's control.
     $result = elektron_escrow_save_user_pubkey($userId, (string) Params::getParam('pubkey_hex'));
-    $debugInfo['elektron_escrow_save_user_pubkey() returned'] = $result === true ? 'true' : $result;
     if ($result === true) {
         $justSaved = true;
     } else {
