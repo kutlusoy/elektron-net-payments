@@ -42,7 +42,7 @@ jobs:
           fi
 
       - name: Build plugin zip
-        run: scripts/build-osclass-plugin.sh "${{ steps.version.outputs.value }}"
+        run: bash scripts/build-osclass-plugin.sh "${{ steps.version.outputs.value }}"
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/osclass-v')
