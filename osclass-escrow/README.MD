@@ -48,7 +48,7 @@ Pushing a tag matching `osclass-v*` (e.g. `osclass-v0.1.0`) runs [`.github/workf
 From the repository root:
 
 ```bash
-scripts/build-osclass-plugin.sh 0.1.0
+bash scripts/build-osclass-plugin.sh 0.1.0
 ```
 
 Produces `dist/osclass-escrow-0.1.0.zip`. This is exactly what the GitHub Action runs; read it if you want to see precisely what the manual steps below automate.
