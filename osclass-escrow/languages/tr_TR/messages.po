@@ -1,0 +1,124 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: osclass-escrow 0.1\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: tr_TR\n"
+
+msgid "Buy with Elektron (ELEK)"
+msgstr "Elektron (ELEK) ile satın al"
+
+msgid "View your Elektron order"
+msgstr "Elektron siparişini görüntüle"
+
+msgid "Please log in to buy with Elektron."
+msgstr "Elektron ile satın almak için lütfen giriş yapın."
+
+msgid "This listing does not exist."
+msgstr "Bu ilan mevcut değil."
+
+msgid "You cannot buy your own listing."
+msgstr "Kendi ilanınızı satın alamazsınız."
+
+msgid "Connect an Elektron Net wallet to your account first (see your profile settings), then come back to this listing."
+msgstr "Önce hesabınıza bir Elektron Net cüzdanı bağlayın (profil ayarlarınıza bakın), ardından bu ilana geri dönün."
+
+msgid "The seller has not connected an Elektron Net wallet yet, so this listing cannot be bought with escrow right now."
+msgstr "Satıcı henüz bir Elektron Net cüzdanı bağlamadı, bu yüzden bu ilan şu anda escrow ile satın alınamaz."
+
+msgid "Order not found."
+msgstr "Sipariş bulunamadı."
+
+msgid "Receipt confirmed."
+msgstr "Teslim alma onaylandı."
+
+msgid "Release PSBT construction is not implemented yet in this draft; nothing has actually moved on chain."
+msgstr "Bu taslakta serbest bırakma PSBT oluşturma henüz uygulanmadı; zincirde henüz hiçbir şey hareket etmedi."
+
+msgid "Elektron order"
+msgstr "Elektron siparişi"
+
+msgid "Confirm receipt"
+msgstr "Teslim almayı onayla"
+
+msgid "Elektron Net public key (for escrow payments)"
+msgstr "Elektron Net genel anahtarı (escrow ödemeleri için)"
+
+msgid "Paste the public key from your Elektron Net wallet, never a private key or seed phrase. Needed once, before you can buy or sell with escrow."
+msgstr "Elektron Net cüzdanınızdaki genel anahtarı yapıştırın, asla özel anahtar veya kurtarma ifadesi (seed phrase) girmeyin. Escrow ile alım veya satım yapabilmeniz için bir kez gereklidir."
+
+msgid "The Elektron Net public key looks invalid (expected a 33-byte compressed key, 66 hex characters starting with 02 or 03) and was not saved."
+msgstr "Elektron Net genel anahtarı geçersiz görünüyor (33 baytlık sıkıştırılmış bir anahtar, 02 veya 03 ile başlayan 66 onaltılık karakter bekleniyor) ve kaydedilmedi."
+
+msgid "Elektron Net Escrow"
+msgstr "Elektron Net Escrow"
+
+msgid "Elektron Net Escrow settings"
+msgstr "Elektron Net Escrow ayarları"
+
+msgid "Elektron Net Escrow settings updated"
+msgstr "Elektron Net Escrow ayarları güncellendi"
+
+msgid "Network"
+msgstr "Ağ"
+
+msgid "Chain-data endpoints (one per line, tried in order)"
+msgstr "Zincir verisi uç noktaları (satır başına bir tane, sırayla denenir)"
+
+msgid "Esplora/mempool-compatible base URLs, e.g. https://mempool.elektron-net.org/api"
+msgstr "Esplora/mempool uyumlu temel URL'ler, örn. https://mempool.elektron-net.org/api"
+
+msgid "Confirmations required before an order is \"funded\""
+msgstr "Bir siparişin \"ödendi\" sayılması için gereken onay sayısı"
+
+msgid "Release transaction fee rate (lep/vByte)"
+msgstr "Serbest bırakma işleminin ücret oranı (lep/vByte)"
+
+msgid "Buyer refund threshold, T1 (days)"
+msgstr "Alıcı iade eşiği, T1 (gün)"
+
+msgid "Seller release threshold, T2 (days)"
+msgstr "Satıcı serbest bırakma eşiği, T2 (gün)"
+
+msgid "T2 must be at least %sx T1; see the plugin README, \"Escrow timeout policy\", for why."
+msgstr "T2, T1'in en az %s katı olmalıdır; nedenini öğrenmek için eklentinin README dosyasındaki \"Escrow timeout policy\" bölümüne bakın."
+
+msgid "Save"
+msgstr "Kaydet"
+
+msgid "Send {amount} ELEK to the address below to start this order."
+msgstr "Bu siparişi başlatmak için aşağıdaki adrese {amount} ELEK gönderin."
+
+msgid "Payment seen, waiting for {confirmations} confirmation(s)."
+msgstr "Ödeme görüldü, {confirmations} onay bekleniyor."
+
+msgid "Payment confirmed. Please confirm receipt once the item arrives."
+msgstr "Ödeme onaylandı. Ürün geldiğinde lütfen teslim almayı onaylayın."
+
+msgid "Payment confirmed. Waiting for the buyer to confirm receipt."
+msgstr "Ödeme onaylandı. Alıcının teslim almayı onaylaması bekleniyor."
+
+msgid "Automatic refund available from {date} if this order is not confirmed before then."
+msgstr "Bu sipariş o zamana kadar onaylanmazsa, {date} tarihinden itibaren otomatik iade mümkün olur."
+
+msgid "Automatic release available from {date} if the buyer does not respond."
+msgstr "Alıcı yanıt vermezse, {date} tarihinden itibaren otomatik serbest bırakma mümkün olur."
+
+msgid "Buyer confirmed receipt. Waiting for the seller's wallet to sign the release."
+msgstr "Alıcı teslim almayı onayladı. Satıcının cüzdanının serbest bırakmayı imzalaması bekleniyor."
+
+msgid "Funds released to the seller."
+msgstr "Bakiye satıcıya serbest bırakıldı."
+
+msgid "Funds refunded to the buyer."
+msgstr "Bakiye alıcıya iade edildi."
+
+msgid "Funds claimed by the seller after the buyer did not respond in time."
+msgstr "Alıcı zamanında yanıt vermediği için bakiye satıcı tarafından talep edildi."
+
+msgid "Your automatic refund window opens on {date} if this order stays unconfirmed."
+msgstr "Bu sipariş onaylanmadan kalırsa, otomatik iade pencereniz {date} tarihinde açılır."
+
+msgid "Your automatic release window opens on {date} if the buyer does not respond."
+msgstr "Alıcı yanıt vermezse, otomatik serbest bırakma pencereniz {date} tarihinde açılır."

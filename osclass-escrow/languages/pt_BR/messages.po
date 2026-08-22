@@ -1,0 +1,124 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: osclass-escrow 0.1\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pt_BR\n"
+
+msgid "Buy with Elektron (ELEK)"
+msgstr "Comprar com Elektron (ELEK)"
+
+msgid "View your Elektron order"
+msgstr "Ver seu pedido Elektron"
+
+msgid "Please log in to buy with Elektron."
+msgstr "Faça login para comprar com Elektron."
+
+msgid "This listing does not exist."
+msgstr "Este anúncio não existe."
+
+msgid "You cannot buy your own listing."
+msgstr "Você não pode comprar seu próprio anúncio."
+
+msgid "Connect an Elektron Net wallet to your account first (see your profile settings), then come back to this listing."
+msgstr "Conecte primeiro uma carteira Elektron Net à sua conta (veja as configurações do seu perfil) e depois volte a este anúncio."
+
+msgid "The seller has not connected an Elektron Net wallet yet, so this listing cannot be bought with escrow right now."
+msgstr "O vendedor ainda não conectou uma carteira Elektron Net, então este anúncio não pode ser comprado com escrow no momento."
+
+msgid "Order not found."
+msgstr "Pedido não encontrado."
+
+msgid "Receipt confirmed."
+msgstr "Recebimento confirmado."
+
+msgid "Release PSBT construction is not implemented yet in this draft; nothing has actually moved on chain."
+msgstr "A construção da PSBT de liberação ainda não foi implementada nesta versão preliminar; nada foi realmente movimentado na chain."
+
+msgid "Elektron order"
+msgstr "Pedido Elektron"
+
+msgid "Confirm receipt"
+msgstr "Confirmar recebimento"
+
+msgid "Elektron Net public key (for escrow payments)"
+msgstr "Chave pública Elektron Net (para pagamentos em escrow)"
+
+msgid "Paste the public key from your Elektron Net wallet, never a private key or seed phrase. Needed once, before you can buy or sell with escrow."
+msgstr "Cole a chave pública da sua carteira Elektron Net, nunca uma chave privada ou frase semente (seed). Necessária uma única vez, antes de poder comprar ou vender com escrow."
+
+msgid "The Elektron Net public key looks invalid (expected a 33-byte compressed key, 66 hex characters starting with 02 or 03) and was not saved."
+msgstr "A chave pública Elektron Net parece inválida (esperava-se uma chave comprimida de 33 bytes, 66 caracteres hexadecimais começando com 02 ou 03) e não foi salva."
+
+msgid "Elektron Net Escrow"
+msgstr "Elektron Net Escrow"
+
+msgid "Elektron Net Escrow settings"
+msgstr "Configurações do Elektron Net Escrow"
+
+msgid "Elektron Net Escrow settings updated"
+msgstr "Configurações do Elektron Net Escrow atualizadas"
+
+msgid "Network"
+msgstr "Rede"
+
+msgid "Chain-data endpoints (one per line, tried in order)"
+msgstr "Endpoints de dados da chain (um por linha, tentados em ordem)"
+
+msgid "Esplora/mempool-compatible base URLs, e.g. https://mempool.elektron-net.org/api"
+msgstr "URLs base compatíveis com Esplora/mempool, ex.: https://mempool.elektron-net.org/api"
+
+msgid "Confirmations required before an order is \"funded\""
+msgstr "Confirmações necessárias antes de um pedido ser considerado \"pago\""
+
+msgid "Release transaction fee rate (lep/vByte)"
+msgstr "Taxa da transação de liberação (lep/vByte)"
+
+msgid "Buyer refund threshold, T1 (days)"
+msgstr "Limite de reembolso do comprador, T1 (dias)"
+
+msgid "Seller release threshold, T2 (days)"
+msgstr "Limite de liberação do vendedor, T2 (dias)"
+
+msgid "T2 must be at least %sx T1; see the plugin README, \"Escrow timeout policy\", for why."
+msgstr "T2 deve ser pelo menos %sx T1; veja o README do plugin, \"Escrow timeout policy\", para entender o motivo."
+
+msgid "Save"
+msgstr "Salvar"
+
+msgid "Send {amount} ELEK to the address below to start this order."
+msgstr "Envie {amount} ELEK para o endereço abaixo para iniciar este pedido."
+
+msgid "Payment seen, waiting for {confirmations} confirmation(s)."
+msgstr "Pagamento detectado, aguardando {confirmations} confirmação(ões)."
+
+msgid "Payment confirmed. Please confirm receipt once the item arrives."
+msgstr "Pagamento confirmado. Confirme o recebimento assim que o item chegar."
+
+msgid "Payment confirmed. Waiting for the buyer to confirm receipt."
+msgstr "Pagamento confirmado. Aguardando o comprador confirmar o recebimento."
+
+msgid "Automatic refund available from {date} if this order is not confirmed before then."
+msgstr "Reembolso automático disponível a partir de {date}, caso este pedido não seja confirmado antes disso."
+
+msgid "Automatic release available from {date} if the buyer does not respond."
+msgstr "Liberação automática disponível a partir de {date}, caso o comprador não responda."
+
+msgid "Buyer confirmed receipt. Waiting for the seller's wallet to sign the release."
+msgstr "O comprador confirmou o recebimento. Aguardando a carteira do vendedor assinar a liberação."
+
+msgid "Funds released to the seller."
+msgstr "Fundos liberados para o vendedor."
+
+msgid "Funds refunded to the buyer."
+msgstr "Fundos reembolsados ao comprador."
+
+msgid "Funds claimed by the seller after the buyer did not respond in time."
+msgstr "Fundos reivindicados pelo vendedor após o comprador não responder a tempo."
+
+msgid "Your automatic refund window opens on {date} if this order stays unconfirmed."
+msgstr "Sua janela de reembolso automático se abre em {date}, caso este pedido permaneça não confirmado."
+
+msgid "Your automatic release window opens on {date} if the buyer does not respond."
+msgstr "Sua janela de liberação automática se abre em {date}, caso o comprador não responda."

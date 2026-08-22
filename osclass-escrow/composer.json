@@ -1,0 +1,17 @@
+{
+    "name": "elektron-net/osclass-escrow",
+    "description": "Osclass adapter for the Elektron Net Payments escrow suite.",
+    "type": "osclass-plugin",
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../shared"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "elektron-net/payments-core": "*",
+        "endroid/qr-code": "^4.0"
+    }
+}
