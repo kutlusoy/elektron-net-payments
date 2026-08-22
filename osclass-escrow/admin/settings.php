@@ -1,0 +1,52 @@
+<?php if (!defined('ABS_PATH')) exit('ABS_PATH is not loaded. Direct access is not allowed.');
+
+use ElektronNet\Payments\Core\Escrow\TimeoutPolicy;
+
+/**
+ * Admin settings page, rendered via osc_admin_render_plugin_url() (see
+ * index.php's "_configure" hook). Every value here maps 1:1 to a
+ * 'plugin-osclass-escrow' preference written by install.php; see this
+ * plugin's README for the full field list.
+ */
+
+if (Params::getParam('save') === 'elektron_escrow_settings' && Params::getParam('CSRFName') !== '') {
+    osc_csrf_check();
+
+    $errorMessage = null;
+    try {
+        // Validated up front so a bad admin input can never write a policy
+        // that reopens either of the two timeout attacks described in the
+        // README ("Why neither party can set these per order").
+        TimeoutPolicy::fromDays(
+            (int) Params::getParam('buyer_refund_days'),
+            (int) Params::getParam('seller_release_days')
+        );
+    } catch (InvalidArgumentException $e) {
+        $errorMessage = $e->getMessage();
+    }
+
+    if ($errorMessage === null) {
+        $fields = [
+            'network' => Params::getParam('network'),
+            'chain_data_endpoints' => Params::getParam('chain_data_endpoints'),
+            'required_confirmations' => (string) (int) Params::getParam('required_confirmations'),
+            'fee_rate_lep_per_vbyte' => (string) (int) Params::getParam('fee_rate_lep_per_vbyte'),
+            'buyer_refund_days' => (string) (int) Params::getParam('buyer_refund_days'),
+            'seller_release_days' => (string) (int) Params::getParam('seller_release_days'),
+        ];
+        foreach ($fields as $name => $value) {
+            Preference::newInstance()->update(
+                ['s_value' => $value],
+                ['s_section' => 'plugin-osclass-escrow', 's_name' => $name]
+            );
+        }
+        osc_add_flash_ok_message(__('Elektron Net Escrow settings updated', ELEKTRON_ESCROW_DOMAIN), 'admin');
+    } else {
+        osc_add_flash_error_message($errorMessage, 'admin');
+    }
+
+    osc_redirect_to(osc_admin_render_plugin_url('osclass-escrow/admin/settings.php'));
+    exit;
+}
+
+require osc_plugins_path() . 'osclass-escrow/views/admin-settings.php';
