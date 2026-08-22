@@ -3,7 +3,7 @@
 Plugin Name: Elektron Net Escrow
 Plugin URI: https://elektron-net.org
 Description: Trustless 2-of-2 multisig escrow payments in Elektron (ELEK) on the Elektron Net network, for Osclass listings. See osclass-escrow/README.MD for the full API specification.
-Version: 0.1
+Version: 0.1.0
 Author: Elektron Net
 Author URI: https://elektron-net.org
 */

@@ -1,6 +1,6 @@
 # Elektron Net Payments, `osclass-escrow` API Specification
 
-- **Version:** 0.1 (draft)
+- **Version:** 0.1.0 (draft)
 - **Date:** August 22, 2026
 - **Audience:** Osclass developers, marketplace operators, plugin reviewers
 - **Reference implementation:** [`elektron-net`](https://github.com/kutlusoy/elektron-net), and [`osclass/Osclass`](https://github.com/osclass/Osclass) for every hook/helper cited below
