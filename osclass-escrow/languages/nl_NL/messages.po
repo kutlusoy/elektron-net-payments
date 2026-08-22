@@ -21,8 +21,8 @@ msgstr "Deze advertentie bestaat niet."
 msgid "You cannot buy your own listing."
 msgstr "Je kunt je eigen advertentie niet kopen."
 
-msgid "Connect an Elektron Net wallet to your account first (see your profile settings), then come back to this listing."
-msgstr "Koppel eerst een Elektron Net-wallet aan je account (zie je profielinstellingen) en kom dan terug naar deze advertentie."
+msgid "Connect an Elektron Net wallet to your account first, then come back to this listing."
+msgstr "Koppel eerst een Elektron Net-wallet aan je account en kom dan terug naar deze advertentie."
 
 msgid "The seller has not connected an Elektron Net wallet yet, so this listing cannot be bought with escrow right now."
 msgstr "De verkoper heeft nog geen Elektron Net-wallet gekoppeld, dus deze advertentie kan nu niet via escrow worden gekocht."
@@ -47,6 +47,21 @@ msgstr "Elektron Net-publieke sleutel (voor escrow-betalingen)"
 
 msgid "Paste the public key from your Elektron Net wallet, never a private key or seed phrase. Needed once, before you can buy or sell with escrow."
 msgstr "Plak de publieke sleutel van je Elektron Net-wallet, nooit een privésleutel of seed phrase. Eenmalig nodig voordat je via escrow kunt kopen of verkopen."
+
+msgid "How do I find my public key?"
+msgstr "Hoe vind ik mijn publieke sleutel?"
+
+msgid "Works the same whether you type it into your wallet's built-in Console (in most wallets: Help > Debug window > Console) or run it with elektron-cli in a terminal, since both send the same commands to your node."
+msgstr "Werkt hetzelfde, of je het nu typt in de ingebouwde Console van je wallet (in de meeste wallets: Help > Debugvenster > Console) of uitvoert met elektron-cli in een terminal, aangezien beide dezelfde commando's naar je node sturen."
+
+msgid "1. Get a fresh receiving address:"
+msgstr "1. Haal een nieuw ontvangstadres op:"
+
+msgid "2. Look up that address's public key:"
+msgstr "2. Zoek de publieke sleutel van dat adres op:"
+
+msgid "Copy the value of \"pubkey\" (starts with 02 or 03, 66 hex characters) into the field above. Never run dumpprivkey or share its output anywhere; this plugin only ever needs the pubkey value."
+msgstr "Kopieer de waarde van \"pubkey\" (begint met 02 of 03, 66 hex-tekens) naar het bovenstaande veld. Voer nooit dumpprivkey uit en deel de uitvoer ervan nergens; deze plugin heeft alleen de pubkey-waarde nodig."
 
 msgid "The Elektron Net public key looks invalid (expected a 33-byte compressed key, 66 hex characters starting with 02 or 03) and was not saved."
 msgstr "De Elektron Net-publieke sleutel lijkt ongeldig (verwacht wordt een gecomprimeerde sleutel van 33 bytes, 66 hex-tekens beginnend met 02 of 03) en is niet opgeslagen."
@@ -108,6 +123,9 @@ msgstr "Automatische vrijgave beschikbaar vanaf {date} als de koper niet reageer
 msgid "Buyer confirmed receipt. Waiting for the seller's wallet to sign the release."
 msgstr "Koper heeft ontvangst bevestigd. Wachten tot de wallet van de verkoper de vrijgave ondertekent."
 
+msgid "Too close to the automatic refund date to safely start a release now. Please contact support."
+msgstr "Te dicht bij de automatische terugbetalingsdatum om nu veilig een vrijgave te starten. Neem contact op met de ondersteuning."
+
 msgid "Funds released to the seller."
 msgstr "Tegoed vrijgegeven aan de verkoper."
 
@@ -122,3 +140,15 @@ msgstr "Je automatische terugbetalingsvenster opent op {date} als deze bestellin
 
 msgid "Your automatic release window opens on {date} if the buyer does not respond."
 msgstr "Je automatische vrijgavevenster opent op {date} als de koper niet reageert."
+
+msgid "Elektron Net wallet"
+msgstr "Elektron Net-wallet"
+
+msgid "Wallet connected."
+msgstr "Wallet gekoppeld."
+
+msgid "A wallet is connected. Paste a different public key below to replace it."
+msgstr "Er is al een wallet gekoppeld. Plak hieronder een andere publieke sleutel om deze te vervangen."
+
+msgid "You have an active escrow order that still needs your currently connected key. It must reach a final state (released, refunded, or claimed) before you can change your public key."
+msgstr "Je hebt een actieve escrow-bestelling die nog steeds je huidig gekoppelde sleutel nodig heeft. Deze moet een eindstatus bereiken (vrijgegeven, terugbetaald of opgeëist) voordat je je publieke sleutel kunt wijzigen."

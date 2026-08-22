@@ -1,9 +1,9 @@
 # Elektron Net Payments, `osclass-escrow` API Specification
 
-- **Version:** 0.1 (draft)
+- **Version:** 0.1.0 (draft)
 - **Date:** August 22, 2026
 - **Audience:** Osclass developers, marketplace operators, plugin reviewers
-- **Reference implementation:** [`elektron-net`](https://github.com/kutlusoy/elektron-net), and [`osclass/Osclass`](https://github.com/osclass/Osclass) for every hook/helper cited below
+- **Reference implementation:** [`elektron-net`](https://github.com/kutlusoy/elektron-net), and [`mindstellar/shopclass`](https://github.com/mindstellar/shopclass) for every hook/helper cited below (see "Status" for why, and for what changed from the original `osclass/Osclass`)
 - **Consumer of:** [`../shared`](../shared), the platform-agnostic escrow core
 - **See also:** [`../README.MD`](../README.MD) for the escrow model and the timeout policy this plugin implements
 
@@ -13,10 +13,23 @@ This document specifies how the Osclass adapter plugin is wired into Osclass its
 
 ## Status
 
-Draft. Every Osclass integration point below (hooks, DAO usage, routes) has been checked against the actual `osclass/Osclass` source, not just its documentation. Two things in the core it depends on are explicitly not production-ready yet, and this plugin inherits that limitation:
+Draft. Every Osclass integration point below (hooks, DAO usage, routes, i18n) has been checked directly against source, not documentation, and not assumed. The same standard was applied to the escrow transaction logic itself after a direct question about it turned up real gaps: address uniqueness per order was not actually guaranteed (fixed, see `../shared/README.md`, "Escrow address correctness"), a stale/settled order could be resumed on repurchase (fixed, same section), the reference script builder called two bitwasp/bitcoin methods that do not exist in that library and would have thrown on every call (fixed, `../shared/README.md`, "Open items"), and "confirm receipt" had no protection against being started too close to the buyer's own refund deadline to be safe (fixed, see "Order lifecycle" below). Two things in the core it depends on are still explicitly not production-ready, and this plugin inherits that limitation:
 
-- `EscrowScriptBuilderInterface`'s reference implementation (script/address derivation) is not verified against a live Elektron Net node.
+- `EscrowScriptBuilderInterface`'s reference implementation (script/address derivation) has been checked line-by-line against bitwasp/bitcoin's actual source, but is not verified against a live Elektron Net node.
 - `ReleasePsbtBuilderInterface` has no reference implementation yet, so "confirm receipt" records the status change but does not yet produce a real PSBT (see "Open Questions" below).
+
+### Why the reference implementation is `mindstellar/shopclass`, not `osclass/Osclass`
+
+The original `osclass/Osclass` repository has had no commits since July 2018; it is not a live target. The actively maintained continuation is Mindstellar's fork, renamed **Shopclass** (PHP 8.0+, its own composer.json, CI, and a modernised admin theme), which states plainly that it "keeps Osclass's plugin and theme APIs ... so existing extensions keep working." This plugin now targets Shopclass specifically, on the explicit basis that the original is dead and every real installation going forward will be a Shopclass one.
+
+That compatibility promise was verified, not taken on faith, by cloning `mindstellar/shopclass` and checking every API this plugin touches against its actual source:
+
+- **Unchanged, confirmed identical:** `osc_add_hook`, `osc_add_route` (same 8-parameter signature), `osc_register_plugin`, `osc_admin_menu_plugins`, `osc_admin_render_plugin_url`, the `DAO` base class (`setTableName`/`setPrimaryKey`/`setFields`/`findByPrimaryKey`/`updateByPrimaryKey`/`insert`/`update`/`delete`, all still validating field keys against `setFields()` exactly as before), the legacy `$this->dao` query builder (`select`/`from`/`where`/`whereIn`/`get`, including the CodeIgniter-style `'column <='` embedded-operator convention this plugin's DAOs use), the `DBRecordsetClass` result object (`row()`/`numRows()`/`result()`), `osc_csrf_check()`/`osc_csrf_token_form()`, the `t_item` schema (`fk_i_user_id`, `f_price`, `fk_c_currency_code`), and the custom-route security check in `CWebCustom` (rejects any path containing `/admin/`).
+- **The `.mo` loading path was load-tested, not just read.** Shopclass parses translations with the real `gettext/gettext` Composer package (`Gettext\Translations::fromMoFile()`), not the hand-rolled reader the original used. Every one of this plugin's 12 compiled `.mo` files was loaded through that exact parser (`vendor/gettext/gettext` from a real Shopclass checkout) and every entry read back correctly, including the non-Latin scripts (Russian, Arabic, Chinese).
+- **Broken, and fixed:** the `item_detail` hook was renamed to `show_item` (same `$item` argument; see `includes/hooks.php`). The `user_profile_form` hook, previously used to add the wallet-connect field to the profile-edit page, **does not exist in Shopclass at all**: its only call site in the original was Osclass's bundled fallback GUI theme, which Shopclass removed outright, and no core controller replaced it. Wallet connect is now its own route (`elektron_escrow_wallet`, see "Hooks used") rather than a field embedded in a page this plugin does not control; this is also more robust than the old approach, since it no longer depends on whatever the active theme's profile template happens to render.
+- **Deprecated, not removed:** `Preference::insert()`/`update()`/`delete()` no longer exist as such; they still work via the inherited `DAO` methods (verified: the field keys this plugin passes are in `Preference`'s `setFields()` list, so `checkFieldKeys()` does not reject them), but bypass Shopclass's in-memory preference cache (`Preference::toArray()`, loaded once per request). This plugin now uses `Preference::replace($key, $value, $section, $type)` for every settings write, the same method the rest of Shopclass's own code uses, so a value written this request is never read back stale.
+
+None of this was assumed from the "keeps the Osclass extension API" claim alone; every point above was checked against `mindstellar/shopclass`'s actual source before this plugin's code was written against it, precisely because getting a payments plugin's platform assumptions wrong is not the kind of thing to guess at.
 
 ## Plugin identity
 
@@ -27,7 +40,7 @@ Draft. Every Osclass integration point below (hooks, DAO usage, routes) has been
 
 ## Dependencies (Composer)
 
-See `composer.json`. `vendor/` must be installed (`composer install` inside this directory) before the plugin is activated; `index.php` requires `vendor/autoload.php` unconditionally.
+See `composer.json`. `vendor/` must be installed (`composer install` inside this directory) before the plugin is activated; `index.php` requires `vendor/autoload.php` unconditionally. Requires PHP 8.0+, matching Shopclass's own `composer.json`.
 
 | Package | Used for |
 |---|---|
@@ -97,10 +110,8 @@ The resulting zip is what you upload through Osclass's own plugin installer, or 
 | `<plugin_path>_uninstall` | `index.php` | Deactivation callback, `elektron_escrow_uninstall()` (removes preferences, keeps the order table). |
 | `<plugin_path>_configure` | `index.php` | "Configure" action in the admin plugin list, renders `admin/settings.php`. |
 | `admin_menu_init` | `index.php` | Adds a dedicated "Elektron Net Escrow" entry under Admin > Plugins. |
-| `item_detail` | `includes/hooks.php` | Injects the "Pay with Elektron Net" / "View your order" widget on the item detail page. Receives the current item array, per Osclass core (`osc_run_hook('item_detail', osc_item())`). |
+| `show_item` | `includes/hooks.php` | Injects the "Buy with Elektron" / "View your order" widget on the item detail page. Receives the current item array; called `item_detail` with the same signature in the original Osclass, renamed in Shopclass (see "Status"). |
 | `cron_daily` | `includes/hooks.php` | Daily sweep that raises `elektron_escrow_buyer_refund_reminder_due` / `elektron_escrow_seller_release_reminder_due` for orders whose T1/T2 reminder window (see `../shared`'s `ReminderScheduler`) is open. Actual notification delivery is a TODO, see below. |
-| `user_profile_form` | `includes/wallet.php` | Adds the one-time "Elektron Net public key" field to the user's own profile form. Receives the current user array. |
-| `user_edit_completed` | `includes/wallet.php` | Validates and stores that field. Receives the user id. |
 
 Custom routes (via `osc_add_route()`, registered unconditionally at the top level of `index.php`, matching the pattern Osclass's own bundled `google_maps` plugin uses):
 
@@ -108,6 +119,7 @@ Custom routes (via `osc_add_route()`, registered unconditionally at the top leve
 |---|---|---|---|
 | `elektron_escrow_checkout` | `elektron-escrow/checkout?item=<id>` | `controllers/checkout.php` | Creates or resumes the current buyer's order for one item. |
 | `elektron_escrow_order_status` | `elektron-escrow/order?order=<id>` | `controllers/order-status.php` | Status/countdown page for either party; `$user_menu = true`, so it also appears inside the logged-in user's own menu. |
+| `elektron_escrow_wallet` | `elektron-escrow/wallet` | `controllers/wallet.php` | The one-time wallet-connect page (see `includes/wallet.php`'s docblock, and "Status", for why this is a route rather than the `user_profile_form` hook the original Osclass used). `$user_menu = true`, same as order status. |
 
 ## Database schema
 
@@ -137,7 +149,13 @@ Two tables, entirely owned by this plugin; Osclass's own tables (`t_item`, `t_us
 |---|---|---|
 | `fk_i_user_id` | `INT UNSIGNED` | Primary key; one row per user who has connected a wallet. |
 | `pubkey_hex` | `VARCHAR(66)` | Compressed public key. Validated as `^(02\|03)[0-9a-fA-F]{64}$` before it is ever stored; a private key or seed phrase pasted here is rejected at that same check, not merely discouraged in the label text. |
+
+`views/wallet.php` includes a collapsible "How do I find my public key?" help block with the actual two-command flow (`getnewaddress` then `getaddressinfo "<address>"`) and a real example of each command's output, since this is the one step a non-technical user is most likely to get stuck on. The two RPC commands work identically whether typed into a GUI wallet's built-in Console or run with `elektron-cli` in a terminal, so one example covers both.
 | `dt_pub_date` | `DATETIME` | |
+
+### Changing a connected public key
+
+`elektron_escrow_save_user_pubkey()` (`includes/wallet.php`) refuses to actually change an already-saved key while `EscrowOrderDAO::hasActiveOrderForUser()` finds any non-terminal order for that user, as buyer or as seller (re-saving the identical key is always allowed, since it is not a change). This is a UX safeguard, not a cryptographic one, and the distinction matters: every order's `buyer_pubkey`/`seller_pubkey`/`redeem_script_hex` is copied once, at order creation, and never re-read from `elektron_escrow_wallet` afterward (see "Database schema" above), so this table's contents have **no effect at all** on any already-created order's actual on-chain address or script, whether the block exists or not. What the block actually prevents is a user connecting a *different* wallet mid-order and then discovering that the order they still have open needs a signature from the *old* key they just replaced, since the escrow script is permanently bound to whichever pubkeys were current at that order's creation. A wallet that is genuinely gone (lost, reset) makes that specific order's cooperative-release and both timeout-fallback paths unrecoverable regardless of what this plugin's own connected-key setting is changed to afterward; the block exists to stop that from happening by mistake, not because it is fixable after the fact.
 
 ## Escrow eligibility
 
@@ -146,7 +164,9 @@ A listing is only ever offered escrow if **both** hold:
 1. The item's `fk_c_currency_code` is `ELEK`. Converting a fiat-priced listing would need a live exchange rate, and no reliable ELEK price feed exists yet (see `elektron-net-mempool`'s README on why the fiat price feed is disabled). The marketplace operator adds `ELEK` as a currency in Osclass's own currency settings; sellers who want escrow price their listing in it directly.
 2. The seller has a row in `elektron_escrow_wallet` (connected a wallet once, see "One-time wallet setup" in `../README.MD`).
 
-The buyer's own wallet connection is checked at checkout time instead (redirects to the profile page if missing), since that is the point where it first matters for them.
+The buyer's own wallet connection is checked at checkout time instead (redirects to `elektron_escrow_wallet` if missing), since that is the point where it first matters for them.
+
+Neither the order table nor the checkout flow uses Shopclass's native billing/credits system (`mindstellar\billing\Billing`, `Order`, `t_billing_order`): that subsystem is a user buying credits from the marketplace operator itself, later spent on premium listing features. There is no seller and no per-item payment in it, and its `Billing::markPaid()` mints credits to the buyer's own account rather than paying a different user, so it does not fit escrow (buyer pays a specific seller for a specific item; funds sit in a 2-of-2 address, not an account balance). See `install.php`'s docblock for the same note where it is architecturally relevant.
 
 ## Terminology and number formatting
 
@@ -169,11 +189,15 @@ Rendered by `views/admin-settings.php`, saved by `admin/settings.php`. Every fie
 | Network | `network` | `mainnet` |
 | Chain-data endpoints (one per line) | `chain_data_endpoints` | `https://mempool.elektron-net.org/api`, `https://mempool2.elektron-net.org/api` |
 | Confirmations required | `required_confirmations` | `3` |
-| Fee rate (lep/vByte) | `fee_rate_lep_per_vbyte` | `10` |
+| Fee rate (lep/vByte) | `fee_rate_lep_per_vbyte` | `10` (fallback only -- see below) |
 | Buyer refund threshold, T1 (days) | `buyer_refund_days` | `30` |
 | Seller release threshold, T2 (days) | `seller_release_days` | `60` |
 
+The fee-rate field is a fallback, not the value actually used: whichever `ReleasePsbtBuilderInterface` implementation eventually ships should request a live estimate through `ChainData\FeeRateResolver::resolve()` first (see `../shared/README.md`, "Open items") and fall back to this admin-configured value only when no configured chain-data endpoint can currently supply one.
+
 Saving re-validates T1/T2 through `TimeoutPolicy::fromDays()` server-side (never trusts client-side form validation alone) and rejects the save with a flash error if the guardrails from `../README.MD`, "Escrow timeout policy", are violated. A change here only affects orders created afterward; see "Values are frozen per order" in the root README.
+
+Every write here (`install.php`'s defaults, and this save handler) uses `Preference::replace($key, $value, $section, $type)`, not the DAO-inherited `insert()`/`update()`; see "Status" above for why the latter would read back stale within the same request on Shopclass.
 
 ## i18n
 
@@ -190,9 +214,9 @@ Twelve locales ship today, all fully translated (`en_US` carries identity transl
 
 The platform-agnostic lifecycle itself (`OrderStatus`, `OrderStateMachine`) is specified in `../shared/README.md`. In this adapter:
 
-1. **Checkout** (`controllers/checkout.php`): on first visit for a given (item, buyer) pair, derives a fresh `EscrowAddress` from both parties' stored public keys and the configured `TimeoutPolicy`, and inserts the order row with `status = awaiting_payment`. Revisiting the same checkout URL resumes the existing order instead of creating a second one.
+1. **Checkout** (`controllers/checkout.php`): on first visit for a given (item, buyer) pair, generates a fresh random per-order nonce and derives a fresh, guaranteed-unique `EscrowAddress` from it plus both parties' stored public keys and the configured `TimeoutPolicy` (see `../shared/README.md`, "Escrow address correctness"), then inserts the order row with `status = awaiting_payment`. Revisiting the same checkout URL resumes the existing *non-terminal* order instead of creating a second one; a settled (released/refunded/claimed) order from an earlier purchase of the same item is never resumed -- a fresh order, and a fresh address, is created instead. Known limitation: two concurrent first-visit requests can each create their own order before either finishes (see `../shared/README.md`, "Open items"); this produces at most a harmless duplicate "awaiting payment" order, not an address collision or fund-loss risk.
 2. **Watching for payment**: not implemented as a background daemon yet in this draft; see "Open Questions". Once implemented, it moves the status through `confirming` to `funded` using `elektron_escrow_chain_data()` (a `FallbackChainDataProvider` built from the admin-configured endpoint list) and the configured confirmation threshold.
-3. **Confirm receipt** (`controllers/order-status.php`): the buyer's only action. Moves the status to `release_pending_seller_signature` via `OrderStateMachine::canTransition()`. Does **not** yet build a real release PSBT (see "Open Questions").
+3. **Confirm receipt** (`controllers/order-status.php`): the buyer's only action. Moves the status to `release_pending_seller_signature` via `OrderStateMachine::canTransition()`, but only once `TimeoutPolicy::canSafelyStartRelease()` also holds. That second check exists because "confirm receipt" is purely a database status change with no on-chain effect at all: the buyer's own timeout-refund path stays spendable by the buyer alone from T1 onward regardless of what this plugin's status column says, so starting a release too close to T1 risks the seller being told funds are on the way while the buyer can still reclaim them first (an honest delay on the seller's side -- their signing device offline, asleep -- is enough, no bad faith required). Within `TimeoutPolicy::MIN_CONFIRM_RECEIPT_SAFETY_MARGIN_DAYS` of T1, the action is refused outright with a translated error, not merely discouraged. Does **not** yet build a real release PSBT (see "Open Questions").
 4. **Reminders**: `includes/hooks.php`'s `cron_daily` hook identifies which orders have a reminder due; delivering that reminder (email, in-portal message) is a TODO, see below.
 
 ## Uninstall behavior
@@ -204,5 +228,6 @@ Deactivating the plugin (`elektron_escrow_uninstall()`) deletes its admin prefer
 1. **Release PSBT construction.** `ReleasePsbtBuilderInterface` (in `../shared`) has no implementation yet. Until it does, "confirm receipt" changes the order's status but produces no PSBT, and there is nothing yet for `PsbtRelay` to actually carry between the two wallets.
 2. **Payment watching.** Nothing in this draft polls `elektron_escrow_chain_data()` on a schedule to move orders from `awaiting_payment` through `confirming` to `funded`. Likely a `cron_hourly` (or more frequent, if Osclass's cron granularity allows) hook in `includes/hooks.php`, mirroring the `cron_daily` reminder sweep.
 3. **Reminder delivery.** `cron_daily` already identifies which orders have a reminder due (see "Order lifecycle" above); nothing sends it yet. Likely Osclass's own outgoing-mail helpers, matching how core sends its own `hook_email_*` notifications.
-4. **Wallet connect UX.** The public key field on the profile form (`views/wallet-field.php`) is a plain text input. A real wallet (browser extension, QR-based mobile companion) providing the key automatically, instead of the user copy-pasting a hex string, is a likely follow-up once such a wallet exists.
-5. **`BitwaspEscrowScriptBuilder` and `ElektronNetworkFactory`** need verification against a live Elektron Net node/regtest before this plugin should be trusted with real funds; see both classes' docblocks in `../shared`.
+4. **Wallet connect UX.** The public key field on the dedicated wallet-connect page (`views/wallet.php`) is a plain text input. A real wallet (browser extension, QR-based mobile companion) providing the key automatically, instead of the user copy-pasting a hex string, is a likely follow-up once such a wallet exists.
+5. **`BitwaspEscrowScriptBuilder` and `ElektronNetworkFactory`** need verification against a live Elektron Net node/regtest before this plugin should be trusted with real funds; see both classes' docblocks in `../shared`. (Both have since been checked against bitwasp/bitcoin's own source, which is a different, narrower kind of verification -- see `../shared/README.md`, "Open items" -- and is not a substitute for this one.)
+6. **Duplicate order on a concurrent double-submit.** Two checkout requests for the same (item, buyer) pair arriving before the first finishes inserting can each create their own order; see `../shared/README.md`, "Open items", for why a plain unique index does not fix this cleanly and what actually would.

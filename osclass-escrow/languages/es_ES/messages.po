@@ -21,8 +21,8 @@ msgstr "Este anuncio no existe."
 msgid "You cannot buy your own listing."
 msgstr "No puedes comprar tu propio anuncio."
 
-msgid "Connect an Elektron Net wallet to your account first (see your profile settings), then come back to this listing."
-msgstr "Conecta primero un monedero de Elektron Net a tu cuenta (consulta los ajustes de tu perfil) y luego vuelve a este anuncio."
+msgid "Connect an Elektron Net wallet to your account first, then come back to this listing."
+msgstr "Conecta primero un monedero de Elektron Net a tu cuenta y luego vuelve a este anuncio."
 
 msgid "The seller has not connected an Elektron Net wallet yet, so this listing cannot be bought with escrow right now."
 msgstr "El vendedor todavía no ha conectado un monedero de Elektron Net, por lo que este anuncio no se puede comprar con custodia (escrow) por ahora."
@@ -47,6 +47,21 @@ msgstr "Clave pública de Elektron Net (para pagos en custodia)"
 
 msgid "Paste the public key from your Elektron Net wallet, never a private key or seed phrase. Needed once, before you can buy or sell with escrow."
 msgstr "Pega la clave pública de tu monedero de Elektron Net, nunca una clave privada ni una frase semilla. Se necesita una sola vez, antes de poder comprar o vender con custodia."
+
+msgid "How do I find my public key?"
+msgstr "¿Cómo encuentro mi clave pública?"
+
+msgid "Works the same whether you type it into your wallet's built-in Console (in most wallets: Help > Debug window > Console) or run it with elektron-cli in a terminal, since both send the same commands to your node."
+msgstr "Funciona igual tanto si lo escribes en la consola integrada de tu monedero (en la mayoría: Ayuda > Ventana de depuración > Consola) como si lo ejecutas con elektron-cli en una terminal, ya que ambos envían los mismos comandos a tu nodo."
+
+msgid "1. Get a fresh receiving address:"
+msgstr "1. Obtén una nueva dirección de recepción:"
+
+msgid "2. Look up that address's public key:"
+msgstr "2. Consulta la clave pública de esa dirección:"
+
+msgid "Copy the value of \"pubkey\" (starts with 02 or 03, 66 hex characters) into the field above. Never run dumpprivkey or share its output anywhere; this plugin only ever needs the pubkey value."
+msgstr "Copia el valor de \"pubkey\" (empieza con 02 o 03, 66 caracteres hexadecimales) en el campo de arriba. Nunca ejecutes dumpprivkey ni compartas su resultado en ningún sitio; este plugin solo necesita el valor de pubkey."
 
 msgid "The Elektron Net public key looks invalid (expected a 33-byte compressed key, 66 hex characters starting with 02 or 03) and was not saved."
 msgstr "La clave pública de Elektron Net parece inválida (se espera una clave comprimida de 33 bytes, 66 caracteres hexadecimales que empiecen por 02 o 03) y no se ha guardado."
@@ -108,6 +123,9 @@ msgstr "Liberación automática disponible a partir del {date} si el comprador n
 msgid "Buyer confirmed receipt. Waiting for the seller's wallet to sign the release."
 msgstr "El comprador confirmó la recepción. Esperando a que el monedero del vendedor firme la liberación."
 
+msgid "Too close to the automatic refund date to safely start a release now. Please contact support."
+msgstr "Demasiado cerca de la fecha de reembolso automático para iniciar una liberación de forma segura ahora. Por favor, contacte con soporte."
+
 msgid "Funds released to the seller."
 msgstr "Fondos liberados al vendedor."
 
@@ -122,3 +140,15 @@ msgstr "Tu ventana de reembolso automático se abre el {date} si este pedido per
 
 msgid "Your automatic release window opens on {date} if the buyer does not respond."
 msgstr "Tu ventana de liberación automática se abre el {date} si el comprador no responde."
+
+msgid "Elektron Net wallet"
+msgstr "Monedero de Elektron Net"
+
+msgid "Wallet connected."
+msgstr "Monedero conectado."
+
+msgid "A wallet is connected. Paste a different public key below to replace it."
+msgstr "Ya hay un monedero conectado. Pega otra clave pública abajo para reemplazarlo."
+
+msgid "You have an active escrow order that still needs your currently connected key. It must reach a final state (released, refunded, or claimed) before you can change your public key."
+msgstr "Tienes un pedido de depósito en garantía activo que todavía necesita tu clave actualmente conectada. Debe alcanzar un estado final (liberado, reembolsado o reclamado) antes de que puedas cambiar tu clave pública."

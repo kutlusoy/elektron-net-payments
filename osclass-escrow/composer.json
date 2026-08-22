@@ -13,7 +13,7 @@
         }
     ],
     "require": {
-        "php": ">=7.4",
+        "php": ">=8.0",
         "elektron-net/payments-core": "*",
         "endroid/qr-code": "^4.0"
     }

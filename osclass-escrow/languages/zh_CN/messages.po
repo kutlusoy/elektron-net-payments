@@ -21,8 +21,8 @@ msgstr "此商品不存在。"
 msgid "You cannot buy your own listing."
 msgstr "您不能购买自己发布的商品。"
 
-msgid "Connect an Elektron Net wallet to your account first (see your profile settings), then come back to this listing."
-msgstr "请先在您的账户中连接 Elektron Net 钱包（见个人资料设置），然后再返回此商品页面。"
+msgid "Connect an Elektron Net wallet to your account first, then come back to this listing."
+msgstr "请先在您的账户中连接 Elektron Net 钱包，然后再返回此商品页面。"
 
 msgid "The seller has not connected an Elektron Net wallet yet, so this listing cannot be bought with escrow right now."
 msgstr "卖家尚未连接 Elektron Net 钱包，因此目前无法通过担保交易（escrow）购买此商品。"
@@ -47,6 +47,21 @@ msgstr "Elektron Net 公钥（用于担保交易付款）"
 
 msgid "Paste the public key from your Elektron Net wallet, never a private key or seed phrase. Needed once, before you can buy or sell with escrow."
 msgstr "请粘贴您 Elektron Net 钱包中的公钥，切勿粘贴私钥或助记词。此操作只需进行一次，之后才能通过担保交易进行买卖。"
+
+msgid "How do I find my public key?"
+msgstr "如何找到我的公钥？"
+
+msgid "Works the same whether you type it into your wallet's built-in Console (in most wallets: Help > Debug window > Console) or run it with elektron-cli in a terminal, since both send the same commands to your node."
+msgstr "无论是在钱包内置的控制台中输入（大多数钱包中：帮助 > 调试窗口 > 控制台），还是在终端中使用 elektron-cli 运行，效果都是一样的，因为两者向您的节点发送的是相同的命令。"
+
+msgid "1. Get a fresh receiving address:"
+msgstr "1. 获取一个新的收款地址："
+
+msgid "2. Look up that address's public key:"
+msgstr "2. 查询该地址的公钥："
+
+msgid "Copy the value of \"pubkey\" (starts with 02 or 03, 66 hex characters) into the field above. Never run dumpprivkey or share its output anywhere; this plugin only ever needs the pubkey value."
+msgstr "将 \"pubkey\" 的值（以 02 或 03 开头，共 66 个十六进制字符）复制到上方字段中。切勿运行 dumpprivkey 或在任何地方分享其输出；此插件只需要 pubkey 的值。"
 
 msgid "The Elektron Net public key looks invalid (expected a 33-byte compressed key, 66 hex characters starting with 02 or 03) and was not saved."
 msgstr "该 Elektron Net 公钥似乎无效（应为 33 字节的压缩公钥，即以 02 或 03 开头的 66 位十六进制字符），未被保存。"
@@ -108,6 +123,9 @@ msgstr "若买家未作回应，自 {date} 起可自动放款。"
 msgid "Buyer confirmed receipt. Waiting for the seller's wallet to sign the release."
 msgstr "买家已确认收货。正在等待卖家钱包对放款交易签名。"
 
+msgid "Too close to the automatic refund date to safely start a release now. Please contact support."
+msgstr "距离自动退款日期太近，现在无法安全地启动放款。请联系客服。"
+
 msgid "Funds released to the seller."
 msgstr "资金已放款给卖家。"
 
@@ -122,3 +140,15 @@ msgstr "若此订单一直未被确认，您的自动退款窗口将于 {date} �
 
 msgid "Your automatic release window opens on {date} if the buyer does not respond."
 msgstr "若买家未作回应，您的自动放款窗口将于 {date} 开启。"
+
+msgid "Elektron Net wallet"
+msgstr "Elektron Net 钱包"
+
+msgid "Wallet connected."
+msgstr "钱包已连接。"
+
+msgid "A wallet is connected. Paste a different public key below to replace it."
+msgstr "已连接钱包。在下方粘贴不同的公钥即可替换。"
+
+msgid "You have an active escrow order that still needs your currently connected key. It must reach a final state (released, refunded, or claimed) before you can change your public key."
+msgstr "您有一笔活跃的担保交易订单仍需要您当前连接的密钥。该订单必须达到最终状态（已放款、已退款或已由卖家领取）后，您才能更改公钥。"

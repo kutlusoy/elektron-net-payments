@@ -21,8 +21,8 @@ msgstr "هذا الإعلان غير موجود."
 msgid "You cannot buy your own listing."
 msgstr "لا يمكنك شراء إعلانك الخاص."
 
-msgid "Connect an Elektron Net wallet to your account first (see your profile settings), then come back to this listing."
-msgstr "قم أولاً بربط محفظة Elektron Net بحسابك (راجع إعدادات ملفك الشخصي)، ثم عد إلى هذا الإعلان."
+msgid "Connect an Elektron Net wallet to your account first, then come back to this listing."
+msgstr "قم أولاً بربط محفظة Elektron Net بحسابك، ثم عد إلى هذا الإعلان."
 
 msgid "The seller has not connected an Elektron Net wallet yet, so this listing cannot be bought with escrow right now."
 msgstr "لم يقم البائع بربط محفظة Elektron Net بعد، لذا لا يمكن شراء هذا الإعلان عبر الضمان (escrow) في الوقت الحالي."
@@ -47,6 +47,21 @@ msgstr "المفتاح العام لـ Elektron Net (لمدفوعات الضما
 
 msgid "Paste the public key from your Elektron Net wallet, never a private key or seed phrase. Needed once, before you can buy or sell with escrow."
 msgstr "الصق المفتاح العام من محفظة Elektron Net الخاصة بك، ولا تلصق أبدًا مفتاحًا خاصًا أو عبارة استرداد (seed phrase). مطلوب مرة واحدة فقط قبل أن تتمكن من البيع أو الشراء عبر الضمان."
+
+msgid "How do I find my public key?"
+msgstr "كيف أجد مفتاحي العام؟"
+
+msgid "Works the same whether you type it into your wallet's built-in Console (in most wallets: Help > Debug window > Console) or run it with elektron-cli in a terminal, since both send the same commands to your node."
+msgstr "يعمل بنفس الطريقة سواء كتبته في وحدة التحكم (Console) المدمجة في محفظتك (في معظم المحافظ: مساعدة > نافذة التصحيح > وحدة التحكم) أو نفّذته باستخدام elektron-cli في الطرفية، لأن كليهما يرسل نفس الأوامر إلى عقدتك."
+
+msgid "1. Get a fresh receiving address:"
+msgstr "1. احصل على عنوان استلام جديد:"
+
+msgid "2. Look up that address's public key:"
+msgstr "2. ابحث عن المفتاح العام لهذا العنوان:"
+
+msgid "Copy the value of \"pubkey\" (starts with 02 or 03, 66 hex characters) into the field above. Never run dumpprivkey or share its output anywhere; this plugin only ever needs the pubkey value."
+msgstr "انسخ قيمة \"pubkey\" (تبدأ بـ 02 أو 03، وتتكوّن من 66 حرفًا سداسيًا عشريًا) إلى الحقل أعلاه. لا تُشغّل أبدًا الأمر dumpprivkey ولا تشارك ناتجه في أي مكان؛ هذه الإضافة تحتاج فقط إلى قيمة pubkey."
 
 msgid "The Elektron Net public key looks invalid (expected a 33-byte compressed key, 66 hex characters starting with 02 or 03) and was not saved."
 msgstr "يبدو أن المفتاح العام لـ Elektron Net غير صالح (المتوقع مفتاح مضغوط بحجم 33 بايت، أي 66 حرفًا سداسيًا عشريًا يبدأ بـ 02 أو 03)، ولم يتم حفظه."
@@ -108,6 +123,9 @@ msgstr "يصبح الإفراج التلقائي متاحًا اعتبارًا �
 msgid "Buyer confirmed receipt. Waiting for the seller's wallet to sign the release."
 msgstr "أكد المشتري الاستلام. في انتظار توقيع محفظة البائع على الإفراج."
 
+msgid "Too close to the automatic refund date to safely start a release now. Please contact support."
+msgstr "قريب جدًا من تاريخ الاسترداد التلقائي لبدء عملية التحرير بأمان الآن. يرجى التواصل مع الدعم."
+
 msgid "Funds released to the seller."
 msgstr "تم الإفراج عن الأموال إلى البائع."
 
@@ -122,3 +140,15 @@ msgstr "تُفتح نافذة الاسترداد التلقائي الخاصة �
 
 msgid "Your automatic release window opens on {date} if the buyer does not respond."
 msgstr "تُفتح نافذة الإفراج التلقائي الخاصة بك في {date} إذا لم يستجب المشتري."
+
+msgid "Elektron Net wallet"
+msgstr "محفظة Elektron Net"
+
+msgid "Wallet connected."
+msgstr "تم ربط المحفظة."
+
+msgid "A wallet is connected. Paste a different public key below to replace it."
+msgstr "تم ربط محفظة بالفعل. الصق مفتاحًا عامًا مختلفًا أدناه لاستبدالها."
+
+msgid "You have an active escrow order that still needs your currently connected key. It must reach a final state (released, refunded, or claimed) before you can change your public key."
+msgstr "لديك طلب ضمان (escrow) نشط لا يزال بحاجة إلى مفتاحك المتصل حاليًا. يجب أن يصل إلى حالة نهائية (تم التحرير، أو الاسترداد، أو المطالبة) قبل أن تتمكن من تغيير مفتاحك العام."

@@ -3,6 +3,7 @@
 namespace ElektronNet\Payments\Core\ChainData;
 
 use RuntimeException;
+use Throwable;
 
 /**
  * Esplora/mempool-style REST API client (elektron-net-mempool, or a
@@ -64,6 +65,35 @@ final class EsploraChainDataProvider implements ChainDataProviderInterface
         }
 
         return max(0, $tipHeight - $txHeight + 1);
+    }
+
+    /**
+     * Calls `GET {baseUrl}/v1/fees/recommended`, elektron-net-mempool's own
+     * purpose-built fee endpoint (confirmed against that repository's
+     * backend/src/api/bitcoin/bitcoin.routes.ts and
+     * production/nginx/location-api.conf: the plain Esplora-compatible
+     * `/fee-estimates` path exists too but is explicitly marked deprecated
+     * there in favor of the `/v1/fees/...` endpoints, so this uses the
+     * current one). Response shape:
+     * `{fastestFee, halfHourFee, hourFee, economyFee, minimumFee}`, values
+     * in lep/vByte (this fork keeps Bitcoin's satoshi-equivalent scale, so
+     * the endpoint's sat/vByte numbers are lep/vByte numbers unchanged).
+     * `halfHourFee` is used as the "moderate priority" rate this interface
+     * asks for.
+     */
+    public function getFeeEstimateLepPerVByte(): ?int
+    {
+        try {
+            $json = $this->getJson('/v1/fees/recommended');
+        } catch (Throwable $e) {
+            return null;
+        }
+
+        if (!is_array($json) || !isset($json['halfHourFee']) || !is_numeric($json['halfHourFee'])) {
+            return null;
+        }
+
+        return max(1, (int) round((float) $json['halfHourFee']));
     }
 
     /**

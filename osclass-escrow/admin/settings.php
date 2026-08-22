@@ -34,11 +34,11 @@ if (Params::getParam('save') === 'elektron_escrow_settings' && Params::getParam(
             'buyer_refund_days' => (string) (int) Params::getParam('buyer_refund_days'),
             'seller_release_days' => (string) (int) Params::getParam('seller_release_days'),
         ];
+        // Preference::replace(), not update(): see install.php's docblock on
+        // elektron_escrow_set_default_preferences() for why the DAO-inherited
+        // insert()/update() bypass Shopclass's in-memory preference cache.
         foreach ($fields as $name => $value) {
-            Preference::newInstance()->update(
-                ['s_value' => $value],
-                ['s_section' => 'plugin-osclass-escrow', 's_name' => $name]
-            );
+            Preference::newInstance()->replace($name, $value, 'plugin-osclass-escrow', 'STRING');
         }
         osc_add_flash_ok_message(__('Elektron Net Escrow settings updated', ELEKTRON_ESCROW_DOMAIN), 'admin');
     } else {

@@ -5,8 +5,13 @@
  * a logged-in visitor who is not the item's own owner; buying your own
  * listing makes no sense and the escrow model requires two distinct wallets
  * anyway.
+ *
+ * Hook is 'show_item', not 'item_detail': Shopclass (the actively maintained
+ * fork this plugin targets, see README "Reference implementation") renamed
+ * it in CWebItem::doModel(), same $item array argument. Verified directly
+ * against github.com/mindstellar/shopclass, not assumed.
  */
-osc_add_hook('item_detail', function ($item) {
+osc_add_hook('show_item', function ($item) {
     if (!osc_logged_user_id() || osc_logged_user_id() === osc_item_user_id()) {
         return;
     }

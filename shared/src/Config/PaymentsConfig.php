@@ -28,7 +28,11 @@ final class PaymentsConfig
     /** @var TimeoutPolicy */
     private $timeoutPolicy;
 
-    /** @var int fee rate in lep/vByte used when constructing the release PSBT */
+    /**
+     * @var int fee rate in lep/vByte, used as the fallback when
+     *     constructing the release PSBT if ChainData\FeeRateResolver
+     *     could not get a live estimate from any configured endpoint
+     */
     private $feeRateLepPerVByte;
 
     public function __construct(
@@ -79,6 +83,13 @@ final class PaymentsConfig
         return $this->timeoutPolicy;
     }
 
+    /**
+     * The fixed fallback rate, in lep/vByte. Callers building a release
+     * PSBT should not use this directly -- pass it as the
+     * $staticFallbackLepPerVByte argument to
+     * ChainData\FeeRateResolver::resolve() instead, so a live estimate is
+     * preferred when one is available.
+     */
     public function feeRateLepPerVByte(): int
     {
         return $this->feeRateLepPerVByte;

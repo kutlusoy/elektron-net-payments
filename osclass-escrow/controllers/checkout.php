@@ -36,8 +36,8 @@ $buyerPubKey = elektron_escrow_get_user_pubkey($buyerId);
 $sellerPubKey = elektron_escrow_get_user_pubkey((int) $item['fk_i_user_id']);
 
 if ($buyerPubKey === null) {
-    osc_add_flash_error_message(__('Connect an Elektron Net wallet to your account first (see your profile settings), then come back to this listing.', ELEKTRON_ESCROW_DOMAIN));
-    osc_redirect_to(osc_user_profile_url());
+    osc_add_flash_error_message(__('Connect an Elektron Net wallet to your account first, then come back to this listing.', ELEKTRON_ESCROW_DOMAIN));
+    osc_redirect_to(osc_route_url('elektron_escrow_wallet'));
     exit;
 }
 if ($sellerPubKey === null) {
@@ -52,11 +52,15 @@ $order = $orderDao->findByItemAndBuyer($itemId, $buyerId);
 if ($order === null) {
     $config = elektron_escrow_config();
     $fundedAt = time();
+    // Unique per order, so this order's escrow address is unique even if
+    // this same buyer and seller transact more than once (possibly within
+    // the same second) -- see EscrowScriptBuilderInterface's docblock.
+    $orderNonceHex = bin2hex(random_bytes(16));
 
     // See EscrowScriptBuilderInterface's docblock: reference implementation,
     // not yet verified on a live Elektron Net node.
     $scriptBuilder = new BitwaspEscrowScriptBuilder(elektron_escrow_network());
-    $escrowAddress = $scriptBuilder->build($buyerPubKey, $sellerPubKey, $config->timeoutPolicy(), $fundedAt);
+    $escrowAddress = $scriptBuilder->build($buyerPubKey, $sellerPubKey, $orderNonceHex, $config->timeoutPolicy(), $fundedAt);
 
     $amountLep = (int) round(((float) $item['f_price']) * 100000000);
 

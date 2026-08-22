@@ -2,10 +2,8 @@
 
 namespace ElektronNet\Payments\Core\Escrow;
 
-use BitWasp\Bitcoin\Address\SegwitAddress;
-use BitWasp\Bitcoin\Bitcoin;
-use BitWasp\Bitcoin\Crypto\Hash;
 use BitWasp\Bitcoin\Network\Network;
+use BitWasp\Bitcoin\Script\Interpreter\Number;
 use BitWasp\Bitcoin\Script\Opcodes;
 use BitWasp\Bitcoin\Script\ScriptFactory;
 use BitWasp\Bitcoin\Script\WitnessScript;
@@ -15,13 +13,28 @@ use BitWasp\Buffertools\Buffer;
  * Reference implementation of EscrowScriptBuilderInterface, built on
  * bitwasp/bitcoin.
  *
- * STATUS: reference/draft, not verified against a live Elektron Net node.
- * Before this is trusted with real funds it MUST be checked on Elektron Net
+ * STATUS: reference/draft, checked against bitwasp/bitcoin's actual source
+ * (cloned Bit-Wasp/bitcoin-php to verify every call below, not assumed from
+ * its docs) but still NOT verified against a live Elektron Net node. Before
+ * this is trusted with real funds it MUST be checked on Elektron Net
  * regtest: confirm the produced address matches what `elektrond`/`elektron-cli`
  * expects for the same redeem script, and confirm both fallback paths
  * actually spend once their locktime has passed. See the class-level notes
  * on EscrowScriptBuilderInterface for the two Elektron-Net-specific details
  * (bech32 HRP, BIP113 median-time-past) that are easiest to get subtly wrong.
+ *
+ * Two real bugs were caught and fixed by that source check, both of which
+ * would have thrown on every single call:
+ * - `ScriptFactory::scriptNum()` does not exist in this library; a CLTV
+ *   locktime value must be pushed as a
+ *   \BitWasp\Bitcoin\Script\Interpreter\Number (see its use below), which
+ *   ScriptFactory::sequence() specifically knows how to encode. A bare int
+ *   in that sequence is treated as an opcode, not a data push, so it is not
+ *   a valid substitute either.
+ * - `SegwitAddress`'s constructor requires a `WitnessProgram`, not a
+ *   script-hash Buffer; `WitnessScript` already builds one internally and
+ *   exposes it via `getAddress(): SegwitAddress`, which is what this class
+ *   now calls instead of constructing a SegwitAddress by hand.
  */
 final class BitwaspEscrowScriptBuilder implements EscrowScriptBuilderInterface
 {
@@ -38,6 +51,7 @@ final class BitwaspEscrowScriptBuilder implements EscrowScriptBuilderInterface
     public function build(
         string $buyerPubKeyHex,
         string $sellerPubKeyHex,
+        string $orderNonceHex,
         TimeoutPolicy $timeoutPolicy,
         int $fundedAtUnixTime
     ): EscrowAddress {
@@ -46,6 +60,7 @@ final class BitwaspEscrowScriptBuilder implements EscrowScriptBuilderInterface
 
         $buyerPubKey = Buffer::hex($buyerPubKeyHex);
         $sellerPubKey = Buffer::hex($sellerPubKeyHex);
+        $orderNonce = Buffer::hex($orderNonceHex);
 
         $cooperative = ScriptFactory::sequence([
             Opcodes::OP_2,
@@ -56,7 +71,7 @@ final class BitwaspEscrowScriptBuilder implements EscrowScriptBuilderInterface
         ]);
 
         $buyerRefund = ScriptFactory::sequence([
-            ScriptFactory::scriptNum($buyerRefundLocktime),
+            Number::int($buyerRefundLocktime),
             Opcodes::OP_CHECKLOCKTIMEVERIFY,
             Opcodes::OP_DROP,
             $buyerPubKey,
@@ -64,7 +79,7 @@ final class BitwaspEscrowScriptBuilder implements EscrowScriptBuilderInterface
         ]);
 
         $sellerRelease = ScriptFactory::sequence([
-            ScriptFactory::scriptNum($sellerReleaseLocktime),
+            Number::int($sellerReleaseLocktime),
             Opcodes::OP_CHECKLOCKTIMEVERIFY,
             Opcodes::OP_DROP,
             $sellerPubKey,
@@ -72,6 +87,8 @@ final class BitwaspEscrowScriptBuilder implements EscrowScriptBuilderInterface
         ]);
 
         $witnessScript = new WitnessScript(ScriptFactory::sequence([
+            $orderNonce,
+            Opcodes::OP_DROP,
             Opcodes::OP_IF,
             $cooperative,
             Opcodes::OP_ELSE,
@@ -83,7 +100,7 @@ final class BitwaspEscrowScriptBuilder implements EscrowScriptBuilderInterface
             Opcodes::OP_ENDIF,
         ]));
 
-        $address = new SegwitAddress($witnessScript->getWitnessScriptHash($witnessScript));
+        $address = $witnessScript->getAddress();
 
         return new EscrowAddress(
             $address->getAddress($this->network),

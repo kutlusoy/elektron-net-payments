@@ -25,6 +25,7 @@ final class MessageCatalog
         'order.countdown.buyer_refund' => 'Automatic refund available from {date} if this order is not confirmed before then.',
         'order.countdown.seller_release' => 'Automatic release available from {date} if the buyer does not respond.',
         'order.release_pending_seller_signature' => 'Buyer confirmed receipt. Waiting for the seller\'s wallet to sign the release.',
+        'order.confirm_receipt.too_close_to_refund' => 'Too close to the automatic refund date to safely start a release now. Please contact support.',
         'order.released' => 'Funds released to the seller.',
         'order.refunded' => 'Funds refunded to the buyer.',
         'order.claimed_by_seller' => 'Funds claimed by the seller after the buyer did not respond in time.',
