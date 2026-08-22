@@ -6,7 +6,6 @@ use ElektronNet\Payments\Core\ChainData\FallbackChainDataProvider;
 use ElektronNet\Payments\Core\Config\PaymentsConfig;
 use ElektronNet\Payments\Core\Escrow\ElektronNetworkFactory;
 use ElektronNet\Payments\Core\Escrow\TimeoutPolicy;
-use RuntimeException;
 
 /**
  * Builds a core PaymentsConfig from this plugin's own admin preferences
