@@ -35,6 +35,60 @@ See `composer.json`. `vendor/` must be installed (`composer install` inside this
 | `bitwasp/bitcoin` | Pulled in transitively by the core, for script/address construction. |
 | `endroid/qr-code` | Renders the payment QR code on the checkout page. |
 
+## Building a release zip
+
+This directory as checked into the repository is source, not an installable plugin: it has no `vendor/`, since that would mean committing every dependency's code into version control. Turning it into something that can be extracted straight into `oc-content/plugins/osclass-escrow/` on a real Osclass site means running Composer first. Two ways to get there:
+
+### Automated (GitHub Actions)
+
+Pushing a tag matching `osclass-v*` (e.g. `osclass-v0.1.0`) runs [`.github/workflows/release-osclass-escrow.yml`](../.github/workflows/release-osclass-escrow.yml), which builds the zip via the script below and attaches it to a new GitHub Release. Running that workflow manually (`workflow_dispatch`, with a version string of your choice) instead uploads the zip as a downloadable Actions artifact, useful for trying a build before committing to a real tag.
+
+### Automated (local script)
+
+From the repository root:
+
+```bash
+bash scripts/build-osclass-plugin.sh 0.1.0
+```
+
+Produces `dist/osclass-escrow-0.1.0.zip`. This is exactly what the GitHub Action runs; read it if you want to see precisely what the manual steps below automate.
+
+### Manual (no script, no CI)
+
+If you would rather not run someone else's shell script, or need to adapt a step for your own setup, here is every step it performs, spelled out:
+
+1. **Copy both directories, keeping their relative layout.** `osclass-escrow/composer.json` depends on the shared core via a `"../shared"` path repository, so copy `osclass-escrow/` and `shared/` side by side into a scratch location (not in place inside your git checkout, so a mistake here cannot dirty your working tree):
+   ```bash
+   mkdir -p /tmp/elektron-build && cp -a osclass-escrow /tmp/elektron-build/ && cp -a shared /tmp/elektron-build/
+   cd /tmp/elektron-build/osclass-escrow
+   ```
+2. **Install dependencies without dev packages:**
+   ```bash
+   composer install --no-dev --optimize-autoloader
+   ```
+   `osclass-escrow/composer.json` sets `"symlink": false` on the path repository, so this copies the shared core's actual files into `vendor/elektron-net/payments-core` rather than creating a symlink; a symlink into a sibling directory would stop resolving the moment this zip is extracted somewhere else.
+3. **Recompile every translation.** Skip this step if you have not touched a `.po` file since the `.mo` files in this repository were last committed:
+   ```bash
+   for po in languages/*/messages.po; do
+     msgfmt -o "$(dirname "$po")/messages.mo" "$po"
+   done
+   ```
+   No `msgfmt`? Use the fallback compiler this repository ships instead: `php languages/po2mo.php <locale>/messages.po <locale>/messages.mo`, once per locale.
+4. **(Optional) Stamp a version** into the `Version:` line of `index.php`'s plugin header, so the deployed copy reports the version you are shipping:
+   ```bash
+   sed -i -E "s/^Version: .*/Version: 0.1.0/" index.php
+   ```
+5. **Remove dev-only files** that a deployed copy does not need (`vendor/` already carries everything required at runtime):
+   ```bash
+   rm -f composer.json composer.lock languages/po2mo.php
+   ```
+6. **Zip it**, with `osclass-escrow/` itself as the top-level folder inside the archive, so extracting the zip directly into `oc-content/plugins/` produces `oc-content/plugins/osclass-escrow/`:
+   ```bash
+   cd /tmp/elektron-build && zip -rq osclass-escrow-0.1.0.zip osclass-escrow
+   ```
+
+The resulting zip is what you upload through Osclass's own plugin installer, or extract manually into `oc-content/plugins/`.
+
 ## Hooks used
 
 | Hook | Where | Purpose |
