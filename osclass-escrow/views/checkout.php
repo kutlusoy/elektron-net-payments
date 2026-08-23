@@ -6,6 +6,8 @@
 // Preview only: no order, address, or QR code exists yet at this point (see
 // controllers/checkout.php's docblock). Once an order is created, its own
 // permanent elektron_escrow_order_status page is what shows those.
+
+elektron_escrow_table_style();
 ?>
 
 <div class="elektron-escrow-checkout-preview">
@@ -13,7 +15,7 @@
 
     <p><?php _e('You are about to start an Elektron Net escrow purchase for this listing.', ELEKTRON_ESCROW_DOMAIN); ?></p>
 
-    <table class="table">
+    <table class="elektron-escrow-table">
         <tr>
             <td><?php _e('Item', ELEKTRON_ESCROW_DOMAIN); ?></td>
             <td><a href="<?php echo osc_esc_html(osc_item_url_from_item($item)); ?>"><?php echo osc_esc_html($item['s_title']); ?></a></td>

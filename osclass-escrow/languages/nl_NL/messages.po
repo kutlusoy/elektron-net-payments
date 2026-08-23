@@ -260,3 +260,54 @@ msgstr "Deze advertentie heeft geen vaste prijs, dus kan niet met escrow worden 
 
 msgid "This listing is not priced in a currency accepted for escrow."
 msgstr "Deze advertentie is niet geprijsd in een valuta die voor escrow wordt geaccepteerd."
+
+msgid "A buyer started an Elektron Net escrow purchase for your listing \"%s\"."
+msgstr "Een koper is een Elektron Net escrow-aankoop gestart voor jouw advertentie \"%s\"."
+
+msgid "An Elektron Net escrow order for your listing was cancelled"
+msgstr "Een Elektron Net escrow-bestelling voor jouw advertentie is geannuleerd"
+
+msgid "Back to your orders"
+msgstr "Terug naar je bestellingen"
+
+msgid "Cancel order"
+msgstr "Bestelling annuleren"
+
+msgid "Cancel this order? This cannot be undone."
+msgstr "Deze bestelling annuleren? Dit kan niet ongedaan worden gemaakt."
+
+msgid "Hello %s,"
+msgstr "Hallo %s,"
+
+msgid "New Elektron Net escrow order for your listing"
+msgstr "Nieuwe Elektron Net escrow-bestelling voor jouw advertentie"
+
+msgid "Payment seen, waiting for {confirmations} confirmation(s) before it counts as funded."
+msgstr "Betaling gezien, wacht op {confirmations} bevestiging(en) voordat het als betaald telt."
+
+msgid "The buyer cancelled their escrow order for your listing \"%s\". No payment was made."
+msgstr "De koper heeft zijn escrow-bestelling voor jouw advertentie \"%s\" geannuleerd. Er is niet betaald."
+
+msgid "This order can no longer be cancelled."
+msgstr "Deze bestelling kan niet meer worden geannuleerd."
+
+msgid "This order has been cancelled."
+msgstr "Deze bestelling is geannuleerd."
+
+msgid "Waiting for the buyer to send {amount} ELEK."
+msgstr "Wachten tot de koper {amount} ELEK verstuurt."
+
+msgid "You started an Elektron Net escrow purchase for \"%s\"."
+msgstr "Je bent een Elektron Net escrow-aankoop gestart voor \"%s\"."
+
+msgid "You will be notified once the payment is confirmed."
+msgstr "Je wordt op de hoogte gebracht zodra de betaling is bevestigd."
+
+msgid "Your Elektron Net escrow order #%d"
+msgstr "Je Elektron Net escrow-bestelling #%d"
+
+msgid "Your Elektron Net escrow order #%d was cancelled"
+msgstr "Je Elektron Net escrow-bestelling #%d is geannuleerd"
+
+msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
+msgstr "Je escrow-bestelling voor \"%s\" is geannuleerd. Er is niet betaald."

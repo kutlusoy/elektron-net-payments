@@ -260,3 +260,54 @@ msgstr "This listing has no fixed price, so it cannot be bought with escrow."
 
 msgid "This listing is not priced in a currency accepted for escrow."
 msgstr "This listing is not priced in a currency accepted for escrow."
+
+msgid "A buyer started an Elektron Net escrow purchase for your listing \"%s\"."
+msgstr "A buyer started an Elektron Net escrow purchase for your listing \"%s\"."
+
+msgid "An Elektron Net escrow order for your listing was cancelled"
+msgstr "An Elektron Net escrow order for your listing was cancelled"
+
+msgid "Back to your orders"
+msgstr "Back to your orders"
+
+msgid "Cancel order"
+msgstr "Cancel order"
+
+msgid "Cancel this order? This cannot be undone."
+msgstr "Cancel this order? This cannot be undone."
+
+msgid "Hello %s,"
+msgstr "Hello %s,"
+
+msgid "New Elektron Net escrow order for your listing"
+msgstr "New Elektron Net escrow order for your listing"
+
+msgid "Payment seen, waiting for {confirmations} confirmation(s) before it counts as funded."
+msgstr "Payment seen, waiting for {confirmations} confirmation(s) before it counts as funded."
+
+msgid "The buyer cancelled their escrow order for your listing \"%s\". No payment was made."
+msgstr "The buyer cancelled their escrow order for your listing \"%s\". No payment was made."
+
+msgid "This order can no longer be cancelled."
+msgstr "This order can no longer be cancelled."
+
+msgid "This order has been cancelled."
+msgstr "This order has been cancelled."
+
+msgid "Waiting for the buyer to send {amount} ELEK."
+msgstr "Waiting for the buyer to send {amount} ELEK."
+
+msgid "You started an Elektron Net escrow purchase for \"%s\"."
+msgstr "You started an Elektron Net escrow purchase for \"%s\"."
+
+msgid "You will be notified once the payment is confirmed."
+msgstr "You will be notified once the payment is confirmed."
+
+msgid "Your Elektron Net escrow order #%d"
+msgstr "Your Elektron Net escrow order #%d"
+
+msgid "Your Elektron Net escrow order #%d was cancelled"
+msgstr "Your Elektron Net escrow order #%d was cancelled"
+
+msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
+msgstr "Your escrow order for \"%s\" has been cancelled. No payment was made."

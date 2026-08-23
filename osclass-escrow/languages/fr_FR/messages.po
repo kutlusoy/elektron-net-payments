@@ -260,3 +260,54 @@ msgstr "Cette annonce n'a pas de prix fixe, elle ne peut donc pas être achetée
 
 msgid "This listing is not priced in a currency accepted for escrow."
 msgstr "Cette annonce n'est pas libellée dans une devise acceptée pour le séquestre."
+
+msgid "A buyer started an Elektron Net escrow purchase for your listing \"%s\"."
+msgstr "Un acheteur a démarré un achat sous séquestre Elektron Net pour votre annonce \"%s\"."
+
+msgid "An Elektron Net escrow order for your listing was cancelled"
+msgstr "Une commande de séquestre Elektron Net pour votre annonce a été annulée"
+
+msgid "Back to your orders"
+msgstr "Retour à vos commandes"
+
+msgid "Cancel order"
+msgstr "Annuler la commande"
+
+msgid "Cancel this order? This cannot be undone."
+msgstr "Annuler cette commande ? Cette action est irréversible."
+
+msgid "Hello %s,"
+msgstr "Bonjour %s,"
+
+msgid "New Elektron Net escrow order for your listing"
+msgstr "Nouvelle commande de séquestre Elektron Net pour votre annonce"
+
+msgid "Payment seen, waiting for {confirmations} confirmation(s) before it counts as funded."
+msgstr "Paiement détecté, en attente de {confirmations} confirmation(s) avant d'être considéré comme payé."
+
+msgid "The buyer cancelled their escrow order for your listing \"%s\". No payment was made."
+msgstr "L'acheteur a annulé sa commande de séquestre pour votre annonce \"%s\". Aucun paiement n'a été effectué."
+
+msgid "This order can no longer be cancelled."
+msgstr "Cette commande ne peut plus être annulée."
+
+msgid "This order has been cancelled."
+msgstr "Cette commande a été annulée."
+
+msgid "Waiting for the buyer to send {amount} ELEK."
+msgstr "En attente que l'acheteur envoie {amount} ELEK."
+
+msgid "You started an Elektron Net escrow purchase for \"%s\"."
+msgstr "Vous avez démarré un achat sous séquestre Elektron Net pour \"%s\"."
+
+msgid "You will be notified once the payment is confirmed."
+msgstr "Vous serez averti dès que le paiement sera confirmé."
+
+msgid "Your Elektron Net escrow order #%d"
+msgstr "Votre commande de séquestre Elektron Net #%d"
+
+msgid "Your Elektron Net escrow order #%d was cancelled"
+msgstr "Votre commande de séquestre Elektron Net #%d a été annulée"
+
+msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
+msgstr "Votre commande de séquestre pour \"%s\" a été annulée. Aucun paiement n'a été effectué."

@@ -40,6 +40,48 @@ $isBuyer = $userId === (int) $order['fk_i_buyer_id'];
 $statusMessage = null;
 $errorMessage = null;
 
+// Buyer-only, and only while still awaiting_payment: cancelling deletes the
+// order outright rather than moving it to some new "cancelled" status (see
+// EscrowOrderDAO::cancelByBuyer()'s docblock), so there is nothing left to
+// render as an order-status page afterward -- a notice is shown instead.
+// The buyer/seller emails are sent with the item and order data fetched
+// *before* the row is gone, since the DAO method itself only ever returns
+// whether the delete happened, not the row it deleted.
+if ($isBuyer && Params::getParam('cancel_order') === '1') {
+    osc_csrf_check();
+
+    if ($orderDao->cancelByBuyer($orderId, $userId)) {
+        $item = Item::newInstance()->findByPrimaryKey((int) $order['fk_i_item_id']);
+        if ($item !== false) {
+            elektron_escrow_send_order_cancelled_emails($order, $item);
+        }
+
+        elektron_escrow_render_notice(
+            __('This order has been cancelled.', ELEKTRON_ESCROW_DOMAIN),
+            osc_route_url('elektron_escrow_orders'),
+            __('Back to your orders', ELEKTRON_ESCROW_DOMAIN)
+        );
+        exit;
+    }
+
+    // Did not delete anything. Re-check what actually happened rather than
+    // assume why: either the order moved past awaiting_payment (e.g. the
+    // payment watcher, includes/hooks.php's 'cron_minutely' hook, saw a
+    // payment arrive between this page loading and the cancel button being
+    // pressed), or it is already gone (a double-submitted cancel: this same
+    // buyer's own first request already deleted it a moment earlier).
+    $order = $orderDao->findByPrimaryKey($orderId);
+    if ($order === false) {
+        elektron_escrow_render_notice(
+            __('This order has been cancelled.', ELEKTRON_ESCROW_DOMAIN),
+            osc_route_url('elektron_escrow_orders'),
+            __('Back to your orders', ELEKTRON_ESCROW_DOMAIN)
+        );
+        exit;
+    }
+    $errorMessage = __('This order can no longer be cancelled.', ELEKTRON_ESCROW_DOMAIN);
+}
+
 // The 'confirm_receipt' marker alone decides whether this is a
 // submission; the CSRF token itself is deliberately NOT inspected before
 // calling osc_csrf_check(). See controllers/wallet.php for why: an

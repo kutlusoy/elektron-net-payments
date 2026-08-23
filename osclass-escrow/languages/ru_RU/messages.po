@@ -260,3 +260,54 @@ msgstr "У этого объявления нет фиксированной ц�
 
 msgid "This listing is not priced in a currency accepted for escrow."
 msgstr "Это объявление не оценено в валюте, принимаемой для эскроу."
+
+msgid "A buyer started an Elektron Net escrow purchase for your listing \"%s\"."
+msgstr "Покупатель начал покупку через эскроу Elektron Net для вашего объявления \"%s\"."
+
+msgid "An Elektron Net escrow order for your listing was cancelled"
+msgstr "Заказ через эскроу Elektron Net для вашего объявления был отменён"
+
+msgid "Back to your orders"
+msgstr "Вернуться к вашим заказам"
+
+msgid "Cancel order"
+msgstr "Отменить заказ"
+
+msgid "Cancel this order? This cannot be undone."
+msgstr "Отменить этот заказ? Это действие нельзя отменить обратно."
+
+msgid "Hello %s,"
+msgstr "Здравствуйте, %s,"
+
+msgid "New Elektron Net escrow order for your listing"
+msgstr "Новый заказ через эскроу Elektron Net для вашего объявления"
+
+msgid "Payment seen, waiting for {confirmations} confirmation(s) before it counts as funded."
+msgstr "Платёж обнаружен, ожидание {confirmations} подтверждения(й), прежде чем он будет считаться оплаченным."
+
+msgid "The buyer cancelled their escrow order for your listing \"%s\". No payment was made."
+msgstr "Покупатель отменил заказ через эскроу для вашего объявления \"%s\". Оплата не производилась."
+
+msgid "This order can no longer be cancelled."
+msgstr "Этот заказ больше нельзя отменить."
+
+msgid "This order has been cancelled."
+msgstr "Этот заказ был отменён."
+
+msgid "Waiting for the buyer to send {amount} ELEK."
+msgstr "Ожидание отправки {amount} ELEK покупателем."
+
+msgid "You started an Elektron Net escrow purchase for \"%s\"."
+msgstr "Вы начали покупку через эскроу Elektron Net для \"%s\"."
+
+msgid "You will be notified once the payment is confirmed."
+msgstr "Вы получите уведомление, как только платёж будет подтверждён."
+
+msgid "Your Elektron Net escrow order #%d"
+msgstr "Ваш заказ через эскроу Elektron Net #%d"
+
+msgid "Your Elektron Net escrow order #%d was cancelled"
+msgstr "Ваш заказ через эскроу Elektron Net #%d был отменён"
+
+msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
+msgstr "Ваш заказ через эскроу для \"%s\" был отменён. Оплата не производилась."

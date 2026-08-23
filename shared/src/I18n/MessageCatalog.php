@@ -19,7 +19,9 @@ final class MessageCatalog
     /** @var array<string, string> */
     private const MESSAGES = [
         'order.awaiting_payment' => 'Send {amount} ELEK to the address below to start this order.',
+        'order.awaiting_payment.seller' => 'Waiting for the buyer to send {amount} ELEK.',
         'order.confirming' => 'Payment seen, waiting for {confirmations} confirmation(s).',
+        'order.confirming.seller' => 'Payment seen, waiting for {confirmations} confirmation(s) before it counts as funded.',
         'order.funded.buyer' => 'Payment confirmed. Please confirm receipt once the item arrives.',
         'order.funded.seller' => 'Payment confirmed. Waiting for the buyer to confirm receipt.',
         'order.countdown.buyer_refund' => 'Automatic refund available from {date} if this order is not confirmed before then.',

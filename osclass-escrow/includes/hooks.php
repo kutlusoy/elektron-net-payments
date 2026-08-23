@@ -69,6 +69,64 @@ osc_add_hook('item_detail', function ($item) {
 });
 
 /**
+ * Payment watcher: the piece that actually moves an order from
+ * awaiting_payment through confirming to funded. Nothing did this before --
+ * an order's own escrow address was never checked against the chain at all,
+ * so no order could ever leave awaiting_payment on its own no matter what a
+ * buyer actually sent (see README, "Order lifecycle" and "Open Questions").
+ *
+ * Checks total value received *at the order's own address*
+ * (ChainDataProviderInterface::getAddressTransactions()), never who sent
+ * it or from where -- the escrow address itself is what a buyer's payment
+ * has to reach; nothing about the connected pubkeys is a "from" address it
+ * has to match. An order still short of its full amount_lep is left in
+ * awaiting_payment (no partial-payment handling yet, see "Open Questions");
+ * once the received total covers it, the order moves to confirming
+ * immediately (even at 0 confirmations -- "seen on chain" already, per
+ * OrderStatus's own docblock) and to funded once the best confirmation
+ * count among its transactions reaches the admin-configured threshold.
+ *
+ * Hooked on 'cron_minutely' (throttled server-side to at most once every 5
+ * minutes regardless of how often it fires, see oc-includes/osclass/
+ * cron.php), the finest-grained cron hook Osclass has; running this on
+ * 'cron_daily' like the reminder sweep below would leave a real payment
+ * undetected for up to a day.
+ */
+osc_add_hook('cron_minutely', function () {
+    $dao = EscrowOrderDAO::newInstance();
+    $chainData = elektron_escrow_chain_data();
+    $requiredConfirmations = (int) osc_get_preference('required_confirmations', 'plugin-osclass-escrow');
+
+    foreach ($dao->findAwaitingPaymentOrConfirming() as $order) {
+        $transactions = $chainData->getAddressTransactions($order['s_address']);
+
+        $receivedLep = 0;
+        $bestConfirmations = 0;
+        foreach ($transactions as $transaction) {
+            $receivedLep += $transaction->receivedLep();
+            $bestConfirmations = max($bestConfirmations, $transaction->confirmations());
+        }
+
+        if ($receivedLep < (int) $order['amount_lep']) {
+            continue; // not (fully) paid yet
+        }
+
+        $newStatus = $bestConfirmations >= $requiredConfirmations
+            ? \ElektronNet\Payments\Core\Escrow\OrderStatus::FUNDED
+            : \ElektronNet\Payments\Core\Escrow\OrderStatus::CONFIRMING;
+
+        if ($newStatus === $order['status']) {
+            continue;
+        }
+
+        $dao->updateByPrimaryKey(
+            ['status' => $newStatus, 'dt_mod_date' => date('Y-m-d H:i:s')],
+            $order['pk_i_id']
+        );
+    }
+});
+
+/**
  * Daily sweep: send the T1/T2 reminder notifications described in the
  * README ("Countdown display"), using the shared core's ReminderScheduler
  * to decide whether "now" falls inside a reminder window.

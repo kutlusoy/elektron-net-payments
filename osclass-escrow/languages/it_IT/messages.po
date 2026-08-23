@@ -260,3 +260,54 @@ msgstr "Questo annuncio non ha un prezzo fisso, quindi non può essere acquistat
 
 msgid "This listing is not priced in a currency accepted for escrow."
 msgstr "Questo annuncio non è quotato in una valuta accettata per l'escrow."
+
+msgid "A buyer started an Elektron Net escrow purchase for your listing \"%s\"."
+msgstr "Un acquirente ha avviato un acquisto in deposito a garanzia Elektron Net per il tuo annuncio \"%s\"."
+
+msgid "An Elektron Net escrow order for your listing was cancelled"
+msgstr "Un ordine in deposito a garanzia Elektron Net per il tuo annuncio è stato annullato"
+
+msgid "Back to your orders"
+msgstr "Torna ai tuoi ordini"
+
+msgid "Cancel order"
+msgstr "Annulla ordine"
+
+msgid "Cancel this order? This cannot be undone."
+msgstr "Annullare questo ordine? Questa azione non può essere annullata."
+
+msgid "Hello %s,"
+msgstr "Ciao %s,"
+
+msgid "New Elektron Net escrow order for your listing"
+msgstr "Nuovo ordine in deposito a garanzia Elektron Net per il tuo annuncio"
+
+msgid "Payment seen, waiting for {confirmations} confirmation(s) before it counts as funded."
+msgstr "Pagamento rilevato, in attesa di {confirmations} conferma/e prima che risulti pagato."
+
+msgid "The buyer cancelled their escrow order for your listing \"%s\". No payment was made."
+msgstr "L'acquirente ha annullato il suo ordine in deposito a garanzia per il tuo annuncio \"%s\". Non è stato effettuato alcun pagamento."
+
+msgid "This order can no longer be cancelled."
+msgstr "Questo ordine non può più essere annullato."
+
+msgid "This order has been cancelled."
+msgstr "Questo ordine è stato annullato."
+
+msgid "Waiting for the buyer to send {amount} ELEK."
+msgstr "In attesa che l'acquirente invii {amount} ELEK."
+
+msgid "You started an Elektron Net escrow purchase for \"%s\"."
+msgstr "Hai avviato un acquisto in deposito a garanzia Elektron Net per \"%s\"."
+
+msgid "You will be notified once the payment is confirmed."
+msgstr "Sarai avvisato non appena il pagamento sarà confermato."
+
+msgid "Your Elektron Net escrow order #%d"
+msgstr "Il tuo ordine in deposito a garanzia Elektron Net #%d"
+
+msgid "Your Elektron Net escrow order #%d was cancelled"
+msgstr "Il tuo ordine in deposito a garanzia Elektron Net #%d è stato annullato"
+
+msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
+msgstr "Il tuo ordine in deposito a garanzia per \"%s\" è stato annullato. Non è stato effettuato alcun pagamento."
