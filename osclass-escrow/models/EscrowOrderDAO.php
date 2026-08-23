@@ -40,6 +40,7 @@ class EscrowOrderDAO extends DAO
             'fk_i_seller_id',
             'buyer_pubkey',
             'seller_pubkey',
+            'seller_payout_address',
             's_address',
             'redeem_script_hex',
             'buyer_refund_locktime',

@@ -114,11 +114,11 @@ msgstr "Payment confirmed. Please confirm receipt once the item arrives."
 msgid "Payment confirmed. Waiting for the buyer to confirm receipt."
 msgstr "Payment confirmed. Waiting for the buyer to confirm receipt."
 
-msgid "Automatic refund available from {date} if this order is not confirmed before then."
-msgstr "Automatic refund available from {date} if this order is not confirmed before then."
+msgid "Target refund date: {date}, if this order is not confirmed before then. Contact support if you need one -- there is no automatic on-chain refund yet."
+msgstr "Target refund date: {date}, if this order is not confirmed before then. Contact support if you need one -- there is no automatic on-chain refund yet."
 
-msgid "Automatic release available from {date} if the buyer does not respond."
-msgstr "Automatic release available from {date} if the buyer does not respond."
+msgid "Target release date: {date}, if the buyer does not respond. Contact support if you need this -- there is no automatic on-chain release yet."
+msgstr "Target release date: {date}, if the buyer does not respond. Contact support if you need this -- there is no automatic on-chain release yet."
 
 msgid "Buyer confirmed receipt. Waiting for the seller's wallet to sign the release."
 msgstr "Buyer confirmed receipt. Waiting for the seller's wallet to sign the release."
@@ -344,3 +344,78 @@ msgstr "Address"
 
 msgid "Redeem script"
 msgstr "Redeem script"
+
+msgid "A wallet is connected. Paste a different xpub below to replace it."
+msgstr "A wallet is connected. Paste a different xpub below to replace it."
+
+msgid "After saving, this page shows you the first address your xpub produces so you can check it matches what your own wallet shows -- do that before using the connected wallet for a real order."
+msgstr "After saving, this page shows you the first address your xpub produces so you can check it matches what your own wallet shows -- do that before using the connected wallet for a real order."
+
+msgid "Check this against your own wallet: does it match the first address your wallet shows you? If not, the xpub was pasted from the wrong place and orders using it will not be usable later -- see the instructions below for how to get the right one."
+msgstr "Check this against your own wallet: does it match the first address your wallet shows you? If not, the xpub was pasted from the wrong place and orders using it will not be usable later -- see the instructions below for how to get the right one."
+
+msgid "Elektron Net extended public key (xpub, for escrow payments)"
+msgstr "Elektron Net extended public key (xpub, for escrow payments)"
+
+msgid "Elektron Net node wallet (elektrond / elektron-cli / elektron-qt)"
+msgstr "Elektron Net node wallet (elektrond / elektron-cli / elektron-qt)"
+
+msgid "Elektrum desktop app"
+msgstr "Elektrum desktop app"
+
+msgid "Elektrum mobile app"
+msgstr "Elektrum mobile app"
+
+msgid "How do I find my xpub?"
+msgstr "How do I find my xpub?"
+
+msgid "In the result, find the entry whose \"descriptors\" array contains one starting with \"wpkh(\" and marked \"active\": true, and copy that entry's \"xpub\" value."
+msgstr "In the result, find the entry whose \"descriptors\" array contains one starting with \"wpkh(\" and marked \"active\": true, and copy that entry's \"xpub\" value."
+
+msgid "Menu: Wallet > Information. The \"Master Public Key\" field shown there is your xpub (also available as a QR code)."
+msgstr "Menu: Wallet > Information. The \"Master Public Key\" field shown there is your xpub (also available as a QR code)."
+
+msgid "No wallet password needed for this (it only reads public keys):"
+msgstr "No wallet password needed for this (it only reads public keys):"
+
+msgid "Or, in the Console (Tools > Console, or Help > Debug window > Console in some versions):"
+msgstr "Or, in the Console (Tools > Console, or Help > Debug window > Console in some versions):"
+
+msgid "Paste your xpub, never a private key, xprv, or seed phrase. Needed once, before you can buy or sell with escrow: a fresh address is derived from it for every order automatically, so you never have to do this again."
+msgstr "Paste your xpub, never a private key, xprv, or seed phrase. Needed once, before you can buy or sell with escrow: a fresh address is derived from it for every order automatically, so you never have to do this again."
+
+msgid "Please paste an xpub."
+msgstr "Please paste an xpub."
+
+msgid "The first address this xpub produces is:"
+msgstr "The first address this xpub produces is:"
+
+msgid "The mobile app does not currently show the xpub anywhere in its own screens. Until that changes, open the same wallet (same seed phrase) once in the Elektrum desktop app to read it there -- you only need to do this once, the xpub never changes for a given seed."
+msgstr "The mobile app does not currently show the xpub anywhere in its own screens. Until that changes, open the same wallet (same seed phrase) once in the Elektrum desktop app to read it there -- you only need to do this once, the xpub never changes for a given seed."
+
+msgid "This does not look like a valid extended public key (xpub) for this network."
+msgstr "This does not look like a valid extended public key (xpub) for this network."
+
+msgid "This is a private extended key (xprv), not a public one (xpub). Never paste a private key or seed phrase anywhere on this site."
+msgstr "This is a private extended key (xprv), not a public one (xpub). Never paste a private key or seed phrase anywhere on this site."
+
+msgid "You have an active escrow order that still needs a key derived from your currently connected xpub. It must reach a final state (released, refunded, or claimed) before you can change your xpub."
+msgstr "You have an active escrow order that still needs a key derived from your currently connected xpub. It must reach a final state (released, refunded, or claimed) before you can change your xpub."
+
+msgid "Your payment of %s ELEK for \"%s\" is confirmed."
+msgstr "Your payment of %s ELEK for \"%s\" is confirmed."
+
+msgid "Please confirm receipt on the order page once the item arrives."
+msgstr "Please confirm receipt on the order page once the item arrives."
+
+msgid "Payment confirmed for your Elektron Net escrow order #%d"
+msgstr "Payment confirmed for your Elektron Net escrow order #%d"
+
+msgid "The buyer's payment of %s ELEK for \"%s\" is confirmed."
+msgstr "The buyer's payment of %s ELEK for \"%s\" is confirmed."
+
+msgid "If this listing is now sold, remember to deactivate it yourself -- this is not done automatically."
+msgstr "If this listing is now sold, remember to deactivate it yourself -- this is not done automatically."
+
+msgid "You will be notified once the buyer confirms receipt."
+msgstr "You will be notified once the buyer confirms receipt."

@@ -67,5 +67,12 @@ function elektron_escrow_check_payment(array $order): array
     $order['status'] = $newStatus;
     $order['dt_mod_date'] = $modDate;
 
+    if ($newStatus === OrderStatus::FUNDED) {
+        $item = Item::newInstance()->findByPrimaryKey((int) $order['fk_i_item_id']);
+        if ($item !== false) {
+            elektron_escrow_send_order_funded_emails($order, $item, ((int) $order['amount_lep']) / 100000000);
+        }
+    }
+
     return $order;
 }

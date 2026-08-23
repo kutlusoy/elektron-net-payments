@@ -27,6 +27,7 @@ function elektron_escrow_install()
             fk_i_seller_id INT(10) UNSIGNED NOT NULL,
             buyer_pubkey VARCHAR(66) NOT NULL,
             seller_pubkey VARCHAR(66) NOT NULL,
+            seller_payout_address VARCHAR(90) NOT NULL,
             s_address VARCHAR(90) NOT NULL,
             redeem_script_hex TEXT NOT NULL,
             buyer_refund_locktime INT(10) UNSIGNED NOT NULL,
@@ -50,7 +51,8 @@ function elektron_escrow_install()
     $dao->dao->query(
         'CREATE TABLE IF NOT EXISTS ' . DB_TABLE_PREFIX . 'elektron_escrow_wallet (
             fk_i_user_id INT(10) UNSIGNED NOT NULL,
-            pubkey_hex VARCHAR(66) NOT NULL,
+            xpub VARCHAR(120) NOT NULL,
+            next_index INT(10) UNSIGNED NOT NULL DEFAULT 0,
             dt_pub_date DATETIME NOT NULL,
 
             PRIMARY KEY (fk_i_user_id)
