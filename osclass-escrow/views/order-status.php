@@ -166,6 +166,12 @@ elektron_escrow_table_style();
         <?php if ($order['psbt_base64'] === null) { ?>
             <p class="text-muted"><?php _e('This release could not be prepared automatically (this is rare -- it can happen if the payment arrived in more than one transaction). The two parties will have to cooperatively sign and broadcast a spend from the escrow address using their own wallets, with the script below.', ELEKTRON_ESCROW_DOMAIN); ?></p>
 
+            <form method="post" action="<?php echo osc_route_url('elektron_escrow_order_status', ['order' => $order['pk_i_id']]); ?>">
+                <?php echo osc_csrf_token_form(); ?>
+                <input type="hidden" name="retry_psbt" value="1" />
+                <input type="submit" class="btn btn-default" value="<?php echo osc_esc_html(__('Try again', ELEKTRON_ESCROW_DOMAIN)); ?>" />
+            </form>
+
             <p><?php _e('Redeem script', ELEKTRON_ESCROW_DOMAIN); ?></p>
             <code class="elektron-escrow-code"><?php echo osc_esc_html($order['redeem_script_hex']); ?></code>
         <?php } elseif ($isBuyer) { ?>
