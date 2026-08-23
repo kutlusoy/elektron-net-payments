@@ -24,9 +24,13 @@
  *
  * USAGE (three steps, run as CLI, never through the web server):
  *   1. php legacy-release.php skeleton --address=... --redeem-script=... --destination=... --amount-lep=...
+ *      [--network=mainnet|testnet|regtest, default mainnet]
  *      [--buyer-pubkey=... --seller-pubkey=...] writes skeleton.json (no
  *      private key involved). The two pubkeys are optional but let step 2
- *      catch someone entering the wrong wallet's private key.
+ *      catch someone entering the wrong wallet's private key. --network
+ *      matters because Elektron Net's bech32 addresses use the 'be' prefix
+ *      (mainnet), not Bitcoin's 'bc' -- get this wrong and address parsing
+ *      either fails outright or (worse) silently assumes Bitcoin.
  *   2. Buyer and seller each separately run, on their OWN machine:
  *      php legacy-release.php sign --skeleton=skeleton.json --role=buyer
  *      php legacy-release.php sign --skeleton=skeleton.json --role=seller
@@ -59,6 +63,7 @@ use BitWasp\Bitcoin\Bitcoin;
 use BitWasp\Bitcoin\Crypto\EcAdapter\EcSerializer;
 use BitWasp\Bitcoin\Crypto\EcAdapter\Serializer\Signature\DerSignatureSerializerInterface;
 use BitWasp\Bitcoin\Key\Factory\PrivateKeyFactory;
+use BitWasp\Bitcoin\Network\Network;
 use BitWasp\Bitcoin\Script\Interpreter\Checker;
 use BitWasp\Bitcoin\Script\Interpreter\Interpreter;
 use BitWasp\Bitcoin\Script\Script;
@@ -71,6 +76,32 @@ use BitWasp\Bitcoin\Transaction\Factory\TxBuilder;
 use BitWasp\Bitcoin\Transaction\SignatureHash\SigHash;
 use BitWasp\Bitcoin\Transaction\TransactionOutput;
 use BitWasp\Buffertools\Buffer;
+use ElektronNet\Payments\Core\Escrow\ElektronNetworkFactory;
+
+/**
+ * bitwasp/bitcoin defaults every address/network-aware call to Bitcoin
+ * mainnet ('bc' bech32 HRP) unless a Network is passed explicitly --
+ * Elektron Net uses 'be' instead (see ElektronNetworkFactory's own
+ * docblock, verified against elektron-net's chainparams.cpp). Omitting
+ * this previously made both the address-derivation sanity check and the
+ * destination-address parsing silently assume Bitcoin, which either
+ * produced a confusing "address does not match" error (for the escrow
+ * address) or would have thrown trying to parse a real 'be1...'
+ * destination as if it were a 'bc1...' one.
+ */
+function networkFromName(string $name): Network
+{
+    switch ($name) {
+        case 'mainnet':
+            return ElektronNetworkFactory::mainnet();
+        case 'testnet':
+            return ElektronNetworkFactory::testnet();
+        case 'regtest':
+            return ElektronNetworkFactory::regtest();
+        default:
+            fail("unknown --network '{$name}', expected mainnet, testnet, or regtest.");
+    }
+}
 
 function fail(string $message): void
 {
@@ -140,10 +171,11 @@ function cmdSkeleton(array $args): void
     // enters the wrong private key later.
 
     $mempoolApi = rtrim($args['mempool-api'] ?? 'https://mempool.elektron-net.org/api', '/');
+    $network = networkFromName($args['network'] ?? 'mainnet');
     $witnessScript = new WitnessScript(new Script(Buffer::hex($args['redeem-script'])));
 
     $addrCreator = new AddressCreator();
-    $derivedAddress = $witnessScript->getAddress()->getAddress();
+    $derivedAddress = $witnessScript->getAddress()->getAddress($network);
     if ($derivedAddress !== $args['address']) {
         fail(
             "the redeem script does not derive to --address. Got {$derivedAddress}, " .
@@ -167,7 +199,7 @@ function cmdSkeleton(array $args): void
     }
     $utxo = $confirmed[0];
 
-    $destination = $addrCreator->fromString($args['destination']);
+    $destination = $addrCreator->fromString($args['destination'], $network);
     $amountOut = (int) $args['amount-lep'];
     $fee = (int) $utxo['value'] - $amountOut;
     if ($fee < 0) {
@@ -183,6 +215,7 @@ function cmdSkeleton(array $args): void
         'destination' => $args['destination'],
         'amount_out_lep' => $amountOut,
         'mempool_api' => $mempoolApi,
+        'network' => $args['network'] ?? 'mainnet',
         'buyer_pubkey' => $args['buyer-pubkey'] ?? null,
         'seller_pubkey' => $args['seller-pubkey'] ?? null,
     ];
@@ -200,11 +233,12 @@ function cmdSkeleton(array $args): void
 function buildUnsignedFromSkeleton(array $skeleton)
 {
     $witnessScript = new WitnessScript(new Script(Buffer::hex($skeleton['redeem_script_hex'])));
+    $network = networkFromName($skeleton['network'] ?? 'mainnet');
     $addrCreator = new AddressCreator();
 
     $unsigned = (new TxBuilder())
         ->input($skeleton['funding_txid'], (int) $skeleton['funding_vout'], null, 0xffffffff)
-        ->payToAddress((int) $skeleton['amount_out_lep'], $addrCreator->fromString($skeleton['destination']))
+        ->payToAddress((int) $skeleton['amount_out_lep'], $addrCreator->fromString($skeleton['destination'], $network))
         ->get();
 
     return [$unsigned, $witnessScript, (int) $skeleton['funding_value_lep']];
