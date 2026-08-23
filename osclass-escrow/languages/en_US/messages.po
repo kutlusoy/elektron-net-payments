@@ -509,3 +509,12 @@ msgstr "Standard Electrum wallets refuse to sign this directly (a deliberate Ele
 
 msgid "Download Electrum console script"
 msgstr "Download Electrum console script"
+
+msgid "Your escrow order for \"%s\" is complete. The funds have been released to the seller."
+msgstr "Your escrow order for \"%s\" is complete. The funds have been released to the seller."
+
+msgid "Your escrow order for \"%s\" is complete. You confirmed the funds were released to your own wallet."
+msgstr "Your escrow order for \"%s\" is complete. You confirmed the funds were released to your own wallet."
+
+msgid "Your Elektron Net escrow order #%d is complete"
+msgstr "Your Elektron Net escrow order #%d is complete"

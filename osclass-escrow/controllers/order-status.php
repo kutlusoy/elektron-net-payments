@@ -246,10 +246,9 @@ if ($isBuyer && Params::getParam('submit_signed_psbt') === '1') {
 }
 
 // Seller-only: records that the cooperative release has actually happened
-// (both parties signed and broadcast a spend from the escrow address to the
-// seller's own wallet, outside this plugin -- see ReleasePsbtBuilderInterface's
-// docblock in ../shared: there is no reference implementation yet, so this
-// plugin cannot build or relay that PSBT itself today). This is a pure
+// (both parties signed and the seller broadcast a spend from the escrow
+// address to their own wallet, entirely outside this plugin -- see
+// includes/psbt.php and the README, "Trustless by design"). This is a pure
 // database status change with no on-chain effect of its own; it exists
 // because RELEASE_PENDING_SELLER_SIGNATURE otherwise has no way to ever
 // reach RELEASED at all, even after a real, successful release.
@@ -262,6 +261,12 @@ if (!$isBuyer && Params::getParam('mark_released') === '1') {
             $orderId
         );
         $order['status'] = OrderStatus::RELEASED;
+
+        $item = Item::newInstance()->findByPrimaryKey((int) $order['fk_i_item_id']);
+        if ($item !== false) {
+            elektron_escrow_send_order_released_emails($order, $item, ((int) $order['amount_lep']) / 100000000);
+        }
+
         $statusMessage = __('Order marked as released.', ELEKTRON_ESCROW_DOMAIN);
     }
 }

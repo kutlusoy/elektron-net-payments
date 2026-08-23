@@ -127,6 +127,48 @@ function elektron_escrow_send_order_funded_emails(array $order, array $item, flo
 }
 
 /**
+ * Sent once the seller marks the order as released (see
+ * controllers/order-status.php's own docblock for why that action exists
+ * at all -- it is the only thing that ever moves an order out of
+ * `release_pending_seller_signature`, since the actual release happens
+ * entirely outside this plugin, in the two parties' own wallets).
+ *
+ * @param array $order EscrowOrderDAO row (already updated to 'released')
+ * @param array $item Osclass item row
+ * @param float $amountElek
+ */
+function elektron_escrow_send_order_released_emails(array $order, array $item, float $amountElek): void
+{
+    $buyer = User::newInstance()->findByPrimaryKey((int) $order['fk_i_buyer_id']);
+    $seller = User::newInstance()->findByPrimaryKey((int) $order['fk_i_seller_id']);
+    $itemTitle = osc_esc_html($item['s_title']);
+
+    if ($buyer !== false && trim((string) $buyer['s_email']) !== '') {
+        $body = '<p>' . sprintf(osc_esc_html(__('Hello %s,', ELEKTRON_ESCROW_DOMAIN)), osc_esc_html($buyer['s_name'])) . '</p>'
+            . '<p>' . sprintf(osc_esc_html(__('Your escrow order for "%s" is complete. The funds have been released to the seller.', ELEKTRON_ESCROW_DOMAIN)), $itemTitle) . '</p>';
+
+        osc_sendMail([
+            'to' => $buyer['s_email'],
+            'to_name' => $buyer['s_name'],
+            'subject' => sprintf(__('Your Elektron Net escrow order #%d is complete', ELEKTRON_ESCROW_DOMAIN), (int) $order['pk_i_id']),
+            'body' => $body,
+        ], 'elektron_escrow_order_released');
+    }
+
+    if ($seller !== false && trim((string) $seller['s_email']) !== '') {
+        $body = '<p>' . sprintf(osc_esc_html(__('Hello %s,', ELEKTRON_ESCROW_DOMAIN)), osc_esc_html($seller['s_name'])) . '</p>'
+            . '<p>' . sprintf(osc_esc_html(__('Your escrow order for "%s" is complete. You confirmed the funds were released to your own wallet.', ELEKTRON_ESCROW_DOMAIN)), $itemTitle) . '</p>';
+
+        osc_sendMail([
+            'to' => $seller['s_email'],
+            'to_name' => $seller['s_name'],
+            'subject' => sprintf(__('Your Elektron Net escrow order #%d is complete', ELEKTRON_ESCROW_DOMAIN), (int) $order['pk_i_id']),
+            'body' => $body,
+        ], 'elektron_escrow_order_released');
+    }
+}
+
+/**
  * @param array $order EscrowOrderDAO row (about to be/already deleted)
  * @param array $item Osclass item row
  */
