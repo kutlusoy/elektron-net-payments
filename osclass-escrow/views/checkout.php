@@ -2,6 +2,8 @@
 /** @var array $item Osclass item row */
 /** @var float $amountElek */
 /** @var \ElektronNet\Payments\Core\Escrow\TimeoutPolicy $timeoutPolicy */
+/** @var string $buyerEmail */
+/** @var string|null $errorMessage */
 
 // Preview only: no order, address, or QR code exists yet at this point (see
 // controllers/checkout.php's docblock). Once an order is created, its own
@@ -37,9 +39,36 @@ elektron_escrow_table_style();
         $timeoutPolicy->buyerRefundDays()
     ); ?></p>
 
+    <?php if ($errorMessage !== null) { ?>
+        <p class="elektron-escrow-error"><?php echo osc_esc_html($errorMessage); ?></p>
+    <?php } ?>
+
     <form method="post" action="<?php echo osc_route_url('elektron_escrow_checkout', ['item' => $item['pk_i_id']]); ?>">
         <?php echo osc_csrf_token_form(); ?>
         <input type="hidden" name="confirm_checkout" value="1" />
+
+        <h2><?php _e('Shipping details', ELEKTRON_ESCROW_DOMAIN); ?></h2>
+        <p class="help-block">
+            <?php _e('Only shared with the seller once your payment is confirmed, so they can send the item to you.', ELEKTRON_ESCROW_DOMAIN); ?>
+        </p>
+
+        <label for="shipping_name"><?php _e('Full name', ELEKTRON_ESCROW_DOMAIN); ?></label>
+        <input type="text" name="shipping_name" id="shipping_name" required maxlength="190" size="50"
+               value="<?php echo osc_esc_html((string) Params::getParam('shipping_name')); ?>" />
+
+        <label for="shipping_address"><?php _e('Shipping address', ELEKTRON_ESCROW_DOMAIN); ?></label>
+        <textarea name="shipping_address" id="shipping_address" required rows="4" cols="50"
+                  placeholder="<?php echo osc_esc_html(__('Street, postal code, city, country', ELEKTRON_ESCROW_DOMAIN)); ?>"
+        ><?php echo osc_esc_html((string) Params::getParam('shipping_address')); ?></textarea>
+
+        <label for="shipping_phone"><?php _e('Phone number', ELEKTRON_ESCROW_DOMAIN); ?></label>
+        <input type="text" name="shipping_phone" id="shipping_phone" required maxlength="40" size="25"
+               value="<?php echo osc_esc_html((string) Params::getParam('shipping_phone')); ?>" />
+
+        <label for="contact_email"><?php _e('Contact email for this order', ELEKTRON_ESCROW_DOMAIN); ?></label>
+        <input type="email" name="contact_email" id="contact_email" required maxlength="190" size="40"
+               value="<?php echo osc_esc_html((string) (Params::getParam('contact_email') ?: $buyerEmail)); ?>" />
+
         <input type="submit" class="btn btn-primary" value="<?php echo osc_esc_html(__('Confirm and generate payment address', ELEKTRON_ESCROW_DOMAIN)); ?>" />
         <a class="btn btn-default" href="<?php echo osc_esc_html(osc_item_url_from_item($item)); ?>"><?php _e('Cancel', ELEKTRON_ESCROW_DOMAIN); ?></a>
     </form>

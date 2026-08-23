@@ -99,9 +99,29 @@ if ($existingOrder !== null) {
 }
 
 $config = elektron_escrow_config();
+$buyer = User::newInstance()->findByPrimaryKey($buyerId);
+$buyerEmail = $buyer !== false ? (string) $buyer['s_email'] : '';
+$errorMessage = null;
 
 if (Params::getParam('confirm_checkout') === '1') {
     osc_csrf_check();
+
+    $shippingName = trim((string) Params::getParam('shipping_name'));
+    $shippingAddress = trim((string) Params::getParam('shipping_address'));
+    $shippingPhone = trim((string) Params::getParam('shipping_phone'));
+    $contactEmail = trim((string) Params::getParam('contact_email'));
+
+    if ($shippingName === '' || $shippingAddress === '' || $shippingPhone === '' || $contactEmail === '') {
+        $errorMessage = __('Please fill in all shipping details.', ELEKTRON_ESCROW_DOMAIN);
+    } elseif (!filter_var($contactEmail, FILTER_VALIDATE_EMAIL)) {
+        $errorMessage = __('Please enter a valid contact email.', ELEKTRON_ESCROW_DOMAIN);
+    }
+
+    if ($errorMessage !== null) {
+        $timeoutPolicy = $config->timeoutPolicy();
+        require osc_plugins_path() . 'osclass-escrow/views/checkout.php';
+        exit;
+    }
 
     $fundedAt = time();
 
@@ -134,6 +154,10 @@ if (Params::getParam('confirm_checkout') === '1') {
         'buyer_pubkey' => $buyerPubKey,
         'seller_pubkey' => $sellerPubKey,
         'seller_payout_address' => $sellerPayoutAddress,
+        'buyer_shipping_name' => $shippingName,
+        'buyer_shipping_address' => $shippingAddress,
+        'buyer_shipping_phone' => $shippingPhone,
+        'buyer_contact_email' => $contactEmail,
         's_address' => $escrowAddress->address(),
         'redeem_script_hex' => $escrowAddress->redeemScriptHex(),
         'buyer_refund_locktime' => $escrowAddress->buyerRefundLocktime(),

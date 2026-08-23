@@ -422,3 +422,33 @@ msgstr "You will be notified once the buyer confirms receipt."
 
 msgid "Starts with ypub or zpub instead of xpub? That is fine, paste it as shown -- some wallets use a different prefix to hint at the address type, but it is accepted here either way."
 msgstr "Starts with ypub or zpub instead of xpub? That is fine, paste it as shown -- some wallets use a different prefix to hint at the address type, but it is accepted here either way."
+
+msgid "Shipping details"
+msgstr "Shipping details"
+
+msgid "Only shared with the seller once your payment is confirmed, so they can send the item to you."
+msgstr "Only shared with the seller once your payment is confirmed, so they can send the item to you."
+
+msgid "Full name"
+msgstr "Full name"
+
+msgid "Shipping address"
+msgstr "Shipping address"
+
+msgid "Street, postal code, city, country"
+msgstr "Street, postal code, city, country"
+
+msgid "Phone number"
+msgstr "Phone number"
+
+msgid "Contact email for this order"
+msgstr "Contact email for this order"
+
+msgid "Please fill in all shipping details."
+msgstr "Please fill in all shipping details."
+
+msgid "Please enter a valid contact email."
+msgstr "Please enter a valid contact email."
+
+msgid "Ship to:"
+msgstr "Ship to:"

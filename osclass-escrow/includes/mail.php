@@ -104,8 +104,15 @@ function elektron_escrow_send_order_funded_emails(array $order, array $item, flo
     }
 
     if ($seller !== false && trim((string) $seller['s_email']) !== '') {
+        $shippingBlock = '<p><strong>' . osc_esc_html(__('Ship to:', ELEKTRON_ESCROW_DOMAIN)) . '</strong></p>'
+            . '<p>' . osc_esc_html($order['buyer_shipping_name']) . '<br>'
+            . nl2br(osc_esc_html($order['buyer_shipping_address'])) . '</p>'
+            . '<p>' . osc_esc_html(__('Phone number', ELEKTRON_ESCROW_DOMAIN)) . ': ' . osc_esc_html($order['buyer_shipping_phone']) . '</p>'
+            . '<p>' . osc_esc_html(__('Contact email for this order', ELEKTRON_ESCROW_DOMAIN)) . ': ' . osc_esc_html($order['buyer_contact_email']) . '</p>';
+
         $body = '<p>' . sprintf(osc_esc_html(__('Hello %s,', ELEKTRON_ESCROW_DOMAIN)), osc_esc_html($seller['s_name'])) . '</p>'
             . '<p>' . sprintf(osc_esc_html(__('The buyer\'s payment of %s ELEK for "%s" is confirmed.', ELEKTRON_ESCROW_DOMAIN)), osc_esc_html(elektron_escrow_format_amount($amountElek)), $itemTitle) . '</p>'
+            . $shippingBlock
             . '<p>' . osc_esc_html(__('If this listing is now sold, remember to deactivate it yourself -- this is not done automatically.', ELEKTRON_ESCROW_DOMAIN)) . '</p>'
             . '<p>' . osc_esc_html(__('You will be notified once the buyer confirms receipt.', ELEKTRON_ESCROW_DOMAIN)) . '</p>'
             . '<p>' . $orderLink . '</p>';

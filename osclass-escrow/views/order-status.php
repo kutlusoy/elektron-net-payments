@@ -51,6 +51,35 @@ elektron_escrow_table_style();
     <?php } ?>
 
     <?php
+    // Only shown to the seller, and only once payment is actually
+    // confirmed (i.e. no longer awaiting_payment/confirming) -- see
+    // controllers/checkout.php for why this is collected per order rather
+    // than once on the buyer's profile, and includes/mail.php for the
+    // same details sent in the 'funded' email.
+    ?>
+    <?php if (!$isBuyer && !$showPaymentDetails) { ?>
+        <h2><?php _e('Shipping details', ELEKTRON_ESCROW_DOMAIN); ?></h2>
+        <table class="elektron-escrow-table">
+            <tr>
+                <td><?php _e('Full name', ELEKTRON_ESCROW_DOMAIN); ?></td>
+                <td><?php echo osc_esc_html($order['buyer_shipping_name']); ?></td>
+            </tr>
+            <tr>
+                <td><?php _e('Shipping address', ELEKTRON_ESCROW_DOMAIN); ?></td>
+                <td style="white-space: pre-wrap;"><?php echo osc_esc_html($order['buyer_shipping_address']); ?></td>
+            </tr>
+            <tr>
+                <td><?php _e('Phone number', ELEKTRON_ESCROW_DOMAIN); ?></td>
+                <td><?php echo osc_esc_html($order['buyer_shipping_phone']); ?></td>
+            </tr>
+            <tr>
+                <td><?php _e('Contact email for this order', ELEKTRON_ESCROW_DOMAIN); ?></td>
+                <td><?php echo osc_esc_html($order['buyer_contact_email']); ?></td>
+            </tr>
+        </table>
+    <?php } ?>
+
+    <?php
     // Payment details (address, QR code, payment URI) and the "send X ELEK"
     // instruction are buyer-only: the seller has nothing to pay and no
     // action to take yet, so showing them the buyer's own payment
