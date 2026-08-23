@@ -87,3 +87,11 @@ Author URI: https://elektron-net.org
              // for why this route replaced the old 'user_profile_form' hook, and includes/hooks.php for
              // the 'user_menu_filter' hook that actually makes it reachable.
     );
+    osc_add_route(
+        'elektron_escrow_orders',
+        'elektron-escrow/orders',
+        'elektron-escrow/orders',
+        'osclass-escrow/controllers/orders.php',
+        true // same as above: account-menu chrome only; includes/hooks.php's 'user_menu_filter' hook
+             // adds the actual link, alongside the wallet one.
+    );

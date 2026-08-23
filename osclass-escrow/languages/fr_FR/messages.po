@@ -152,3 +152,75 @@ msgstr "Un portefeuille est déjà connecté. Collez une autre clé publique ci-
 
 msgid "You have an active escrow order that still needs your currently connected key. It must reach a final state (released, refunded, or claimed) before you can change your public key."
 msgstr "Vous avez une commande sous séquestre active qui a encore besoin de votre clé actuellement connectée. Elle doit atteindre un état final (libérée, remboursée ou réclamée) avant que vous puissiez changer votre clé publique."
+
+msgid "You are about to start an Elektron Net escrow purchase for this listing."
+msgstr "Vous êtes sur le point de démarrer un achat sous séquestre (escrow) Elektron Net pour cette annonce."
+
+msgid "Item"
+msgstr "Article"
+
+msgid "Price"
+msgstr "Prix"
+
+msgid "A unique payment address is generated only after you confirm below. Funds sent there are held in a 2-of-2 escrow between you and the seller."
+msgstr "Une adresse de paiement unique n'est générée qu'après votre confirmation ci-dessous. Les fonds envoyés y sont détenus dans un séquestre 2-sur-2 entre vous et le vendeur."
+
+msgid "If you do not confirm receipt, the seller can automatically claim the funds %d days after your payment is confirmed."
+msgstr "Si vous ne confirmez pas la réception, le vendeur peut réclamer automatiquement les fonds %d jours après la confirmation de votre paiement."
+
+msgid "If the seller never responds, you can automatically reclaim the funds %d days after your payment is confirmed."
+msgstr "Si le vendeur ne répond jamais, vous pouvez récupérer automatiquement les fonds %d jours après la confirmation de votre paiement."
+
+msgid "Confirm and generate payment address"
+msgstr "Confirmer et générer l'adresse de paiement"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Amount"
+msgstr "Montant"
+
+msgid "Status"
+msgstr "Statut"
+
+msgid "(listing removed)"
+msgstr "(annonce supprimée)"
+
+msgid "My Elektron orders"
+msgstr "Mes commandes Elektron"
+
+msgid "Purchases"
+msgstr "Achats"
+
+msgid "Sales"
+msgstr "Ventes"
+
+msgid "You have not bought anything with Elektron escrow yet."
+msgstr "Vous n'avez encore rien acheté avec le séquestre Elektron."
+
+msgid "You have not sold anything with Elektron escrow yet."
+msgstr "Vous n'avez encore rien vendu avec le séquestre Elektron."
+
+msgid "View"
+msgstr "Voir"
+
+msgid "Awaiting payment"
+msgstr "En attente de paiement"
+
+msgid "Confirming"
+msgstr "Confirmation en cours"
+
+msgid "Funded"
+msgstr "Payé"
+
+msgid "Release pending"
+msgstr "Libération en attente"
+
+msgid "Released"
+msgstr "Libéré"
+
+msgid "Refunded"
+msgstr "Remboursé"
+
+msgid "Claimed by seller"
+msgstr "Réclamé par le vendeur"

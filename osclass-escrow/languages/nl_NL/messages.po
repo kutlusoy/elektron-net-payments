@@ -152,3 +152,75 @@ msgstr "Er is al een wallet gekoppeld. Plak hieronder een andere publieke sleute
 
 msgid "You have an active escrow order that still needs your currently connected key. It must reach a final state (released, refunded, or claimed) before you can change your public key."
 msgstr "Je hebt een actieve escrow-bestelling die nog steeds je huidig gekoppelde sleutel nodig heeft. Deze moet een eindstatus bereiken (vrijgegeven, terugbetaald of opgeëist) voordat je je publieke sleutel kunt wijzigen."
+
+msgid "You are about to start an Elektron Net escrow purchase for this listing."
+msgstr "Je staat op het punt een Elektron Net escrow-aankoop voor deze advertentie te starten."
+
+msgid "Item"
+msgstr "Artikel"
+
+msgid "Price"
+msgstr "Prijs"
+
+msgid "A unique payment address is generated only after you confirm below. Funds sent there are held in a 2-of-2 escrow between you and the seller."
+msgstr "Er wordt pas een uniek betaaladres gegenereerd nadat je hieronder bevestigt. Geld dat daarnaartoe wordt gestuurd, wordt vastgehouden in een 2-van-2-escrow tussen jou en de verkoper."
+
+msgid "If you do not confirm receipt, the seller can automatically claim the funds %d days after your payment is confirmed."
+msgstr "Als je de ontvangst niet bevestigt, kan de verkoper het geld automatisch opeisen %d dagen nadat je betaling is bevestigd."
+
+msgid "If the seller never responds, you can automatically reclaim the funds %d days after your payment is confirmed."
+msgstr "Als de verkoper nooit reageert, kun je het geld automatisch terugvorderen %d dagen nadat je betaling is bevestigd."
+
+msgid "Confirm and generate payment address"
+msgstr "Bevestigen en betaaladres genereren"
+
+msgid "Cancel"
+msgstr "Annuleren"
+
+msgid "Amount"
+msgstr "Bedrag"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "(listing removed)"
+msgstr "(advertentie verwijderd)"
+
+msgid "My Elektron orders"
+msgstr "Mijn Elektron-bestellingen"
+
+msgid "Purchases"
+msgstr "Aankopen"
+
+msgid "Sales"
+msgstr "Verkopen"
+
+msgid "You have not bought anything with Elektron escrow yet."
+msgstr "Je hebt nog niets gekocht met Elektron escrow."
+
+msgid "You have not sold anything with Elektron escrow yet."
+msgstr "Je hebt nog niets verkocht met Elektron escrow."
+
+msgid "View"
+msgstr "Bekijken"
+
+msgid "Awaiting payment"
+msgstr "Wacht op betaling"
+
+msgid "Confirming"
+msgstr "Wordt bevestigd"
+
+msgid "Funded"
+msgstr "Betaald"
+
+msgid "Release pending"
+msgstr "Vrijgave in behandeling"
+
+msgid "Released"
+msgstr "Vrijgegeven"
+
+msgid "Refunded"
+msgstr "Terugbetaald"
+
+msgid "Claimed by seller"
+msgstr "Opgeëist door verkoper"

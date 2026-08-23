@@ -120,6 +120,40 @@ class EscrowOrderDAO extends DAO
     }
 
     /**
+     * Every order (any status, including terminal ones) where $userId is
+     * the buyer, most recent first. Powers the "My Elektron orders" page:
+     * unlike findByItemAndBuyer(), a settled order must still show up here,
+     * since that page is the shop-style order history, not a resume check.
+     *
+     * @return array[] list of order rows
+     */
+    public function findByBuyer(int $userId): array
+    {
+        return $this->findAllByColumn('fk_i_buyer_id', $userId);
+    }
+
+    /**
+     * Same as findByBuyer(), for the seller side of the same page.
+     *
+     * @return array[] list of order rows
+     */
+    public function findBySeller(int $userId): array
+    {
+        return $this->findAllByColumn('fk_i_seller_id', $userId);
+    }
+
+    private function findAllByColumn(string $column, int $userId): array
+    {
+        $this->dao->select();
+        $this->dao->from($this->getTableName());
+        $this->dao->where($column, $userId);
+        $this->dao->orderBy('pk_i_id', 'DESC');
+        $result = $this->dao->get();
+
+        return $result === false ? [] : $result->result();
+    }
+
+    /**
      * True if $userId has any non-terminal order, as buyer or as seller.
      * Used to block changing a connected wallet's public key while an
      * order still depends on the currently connected one (see

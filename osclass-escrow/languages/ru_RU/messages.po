@@ -152,3 +152,75 @@ msgstr "Кошелёк уже подключён. Вставьте другой 
 
 msgid "You have an active escrow order that still needs your currently connected key. It must reach a final state (released, refunded, or claimed) before you can change your public key."
 msgstr "У вас есть активный эскроу-заказ, которому всё ещё нужен ваш текущий подключённый ключ. Прежде чем вы сможете изменить свой публичный ключ, этот заказ должен достичь конечного состояния (переведён, возвращён или востребован)."
+
+msgid "You are about to start an Elektron Net escrow purchase for this listing."
+msgstr "Вы собираетесь начать покупку через эскроу Elektron Net для этого объявления."
+
+msgid "Item"
+msgstr "Товар"
+
+msgid "Price"
+msgstr "Цена"
+
+msgid "A unique payment address is generated only after you confirm below. Funds sent there are held in a 2-of-2 escrow between you and the seller."
+msgstr "Уникальный адрес для оплаты создаётся только после подтверждения ниже. Отправленные туда средства удерживаются в эскроу 2-из-2 между вами и продавцом."
+
+msgid "If you do not confirm receipt, the seller can automatically claim the funds %d days after your payment is confirmed."
+msgstr "Если вы не подтвердите получение, продавец сможет автоматически забрать средства через %d дней после подтверждения вашего платежа."
+
+msgid "If the seller never responds, you can automatically reclaim the funds %d days after your payment is confirmed."
+msgstr "Если продавец так и не ответит, вы сможете автоматически вернуть средства через %d дней после подтверждения вашего платежа."
+
+msgid "Confirm and generate payment address"
+msgstr "Подтвердить и создать адрес для оплаты"
+
+msgid "Cancel"
+msgstr "Отмена"
+
+msgid "Amount"
+msgstr "Сумма"
+
+msgid "Status"
+msgstr "Статус"
+
+msgid "(listing removed)"
+msgstr "(объявление удалено)"
+
+msgid "My Elektron orders"
+msgstr "Мои заказы Elektron"
+
+msgid "Purchases"
+msgstr "Покупки"
+
+msgid "Sales"
+msgstr "Продажи"
+
+msgid "You have not bought anything with Elektron escrow yet."
+msgstr "Вы пока ничего не купили через эскроу Elektron."
+
+msgid "You have not sold anything with Elektron escrow yet."
+msgstr "Вы пока ничего не продали через эскроу Elektron."
+
+msgid "View"
+msgstr "Просмотр"
+
+msgid "Awaiting payment"
+msgstr "Ожидание оплаты"
+
+msgid "Confirming"
+msgstr "Подтверждение"
+
+msgid "Funded"
+msgstr "Оплачено"
+
+msgid "Release pending"
+msgstr "Ожидание передачи средств"
+
+msgid "Released"
+msgstr "Передано"
+
+msgid "Refunded"
+msgstr "Возвращено"
+
+msgid "Claimed by seller"
+msgstr "Забрано продавцом"

@@ -6,9 +6,15 @@ use ElektronNet\Payments\Core\Escrow\OrderStatus;
 
 /**
  * Route: elektron-escrow/checkout?item=<id>
- * Creates (or resumes) this buyer's escrow order for one item and shows the
- * payment address + QR code + countdown. See this plugin's README, "Routes"
- * and "Order lifecycle", for the full spec.
+ * GET shows a preview of the purchase (item, price, timeout policy) without
+ * creating anything -- visiting this URL, or a crawler following the "Buy"
+ * link, must never by itself commit to a real order. Only a POST with the
+ * 'confirm_checkout' marker (and a valid CSRF token) actually creates the
+ * escrow order, after which every further visit (this route, or the "My
+ * Elektron orders" page) redirects straight to that order's own permanent
+ * elektron_escrow_order_status page, which owns showing the payment address,
+ * QR code, amount, and status from then on. See this plugin's README,
+ * "Routes" and "Order lifecycle", for the full spec.
  */
 
 if (!osc_is_web_user_logged_in()) {
@@ -54,10 +60,21 @@ if ($sellerPubKey === null) {
 }
 
 $orderDao = EscrowOrderDAO::newInstance();
-$order = $orderDao->findByItemAndBuyer($itemId, $buyerId);
+$existingOrder = $orderDao->findByItemAndBuyer($itemId, $buyerId);
 
-if ($order === null) {
-    $config = elektron_escrow_config();
+// Already has a live order for this item: nothing left to confirm, and
+// GET must stay side-effect-free either way, so go straight to that
+// order's own permanent details page instead of showing the preview again.
+if ($existingOrder !== null) {
+    osc_redirect_to(osc_route_url('elektron_escrow_order_status', ['order' => $existingOrder['pk_i_id']]));
+    exit;
+}
+
+$config = elektron_escrow_config();
+
+if (Params::getParam('confirm_checkout') === '1') {
+    osc_csrf_check();
+
     $fundedAt = time();
     // Unique per order, so this order's escrow address is unique even if
     // this same buyer and seller transact more than once (possibly within
@@ -88,6 +105,15 @@ if ($order === null) {
     ]);
 
     $order = $orderDao->findByItemAndBuyer($itemId, $buyerId);
+
+    osc_redirect_to(osc_route_url('elektron_escrow_order_status', ['order' => $order['pk_i_id']]));
+    exit;
 }
+
+// GET, no existing order, not confirmed yet: show the preview only. No
+// order, no escrow address, and no other side effect is created here --
+// see this file's own docblock for why that matters.
+$amountElek = (float) $item['f_price'];
+$timeoutPolicy = $config->timeoutPolicy();
 
 require osc_plugins_path() . 'osclass-escrow/views/checkout.php';

@@ -1,38 +1,44 @@
 <?php if (!defined('ABS_PATH')) exit('ABS_PATH is not loaded. Direct access is not allowed.');
-/** @var array $order */
-/** @var array $item */
+/** @var array $item Osclass item row */
+/** @var float $amountElek */
+/** @var \ElektronNet\Payments\Core\Escrow\TimeoutPolicy $timeoutPolicy */
 
-use Endroid\QrCode\QrCode;
-use Endroid\QrCode\Writer\PngWriter;
-
-$amountElek = $order['amount_lep'] / 100000000;
-
-// Encodes the bare address, not a payment URI: no BIP21-style URI scheme
-// for Elektron Net is documented anywhere in this project yet. Once one
-// exists, encode that instead so wallets can prefill the amount.
-$qrCode = new QrCode($order['s_address']);
-$qrPngBase64 = base64_encode((new PngWriter())->write($qrCode)->getString());
+// Preview only: no order, address, or QR code exists yet at this point (see
+// controllers/checkout.php's docblock). Once an order is created, its own
+// permanent elektron_escrow_order_status page is what shows those.
 ?>
 
-<div class="elektron-escrow-checkout">
+<div class="elektron-escrow-checkout-preview">
     <h1><?php echo osc_esc_html($item['s_title']); ?></h1>
 
-    <p><?php echo osc_esc_html(elektron_escrow_t('order.awaiting_payment', ['{amount}' => elektron_escrow_format_amount($amountElek)])); ?></p>
+    <p><?php _e('You are about to start an Elektron Net escrow purchase for this listing.', ELEKTRON_ESCROW_DOMAIN); ?></p>
 
-    <img src="data:image/png;base64,<?php echo $qrPngBase64; ?>" alt="<?php echo osc_esc_html($order['s_address']); ?>" />
+    <table class="table">
+        <tr>
+            <td><?php _e('Item', ELEKTRON_ESCROW_DOMAIN); ?></td>
+            <td><a href="<?php echo osc_esc_html(osc_item_url_from_item($item)); ?>"><?php echo osc_esc_html($item['s_title']); ?></a></td>
+        </tr>
+        <tr>
+            <td><?php _e('Price', ELEKTRON_ESCROW_DOMAIN); ?></td>
+            <td><?php echo osc_esc_html(elektron_escrow_format_amount($amountElek)); ?> ELEK</td>
+        </tr>
+    </table>
 
-    <p class="elektron-escrow-address"><code><?php echo osc_esc_html($order['s_address']); ?></code></p>
+    <p><?php _e('A unique payment address is generated only after you confirm below. Funds sent there are held in a 2-of-2 escrow between you and the seller.', ELEKTRON_ESCROW_DOMAIN); ?></p>
 
-    <?php
-    // 'funded' has a buyer/seller-specific variant in the catalog; this
-    // view is always the buyer's own, so it always resolves to '.buyer'.
-    $statusKey = $order['status'] === 'funded' ? 'order.funded.buyer' : 'order.' . $order['status'];
-    ?>
-    <p class="elektron-escrow-status" data-status="<?php echo osc_esc_html($order['status']); ?>">
-        <?php echo osc_esc_html(elektron_escrow_t($statusKey)); ?>
-    </p>
+    <p><?php printf(
+        __('If you do not confirm receipt, the seller can automatically claim the funds %d days after your payment is confirmed.', ELEKTRON_ESCROW_DOMAIN),
+        $timeoutPolicy->sellerReleaseDays()
+    ); ?></p>
+    <p><?php printf(
+        __('If the seller never responds, you can automatically reclaim the funds %d days after your payment is confirmed.', ELEKTRON_ESCROW_DOMAIN),
+        $timeoutPolicy->buyerRefundDays()
+    ); ?></p>
 
-    <a href="<?php echo osc_route_url('elektron_escrow_order_status', ['order' => $order['pk_i_id']]); ?>">
-        <?php _e('Go to this order\'s status page', ELEKTRON_ESCROW_DOMAIN); ?>
-    </a>
+    <form method="post" action="<?php echo osc_route_url('elektron_escrow_checkout', ['item' => $item['pk_i_id']]); ?>">
+        <?php echo osc_csrf_token_form(); ?>
+        <input type="hidden" name="confirm_checkout" value="1" />
+        <input type="submit" class="btn btn-primary" value="<?php echo osc_esc_html(__('Confirm and generate payment address', ELEKTRON_ESCROW_DOMAIN)); ?>" />
+        <a class="btn btn-default" href="<?php echo osc_esc_html(osc_item_url_from_item($item)); ?>"><?php _e('Cancel', ELEKTRON_ESCROW_DOMAIN); ?></a>
+    </form>
 </div>

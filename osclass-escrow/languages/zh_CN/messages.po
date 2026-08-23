@@ -152,3 +152,75 @@ msgstr "已连接钱包。在下方粘贴不同的公钥即可替换。"
 
 msgid "You have an active escrow order that still needs your currently connected key. It must reach a final state (released, refunded, or claimed) before you can change your public key."
 msgstr "您有一笔活跃的担保交易订单仍需要您当前连接的密钥。该订单必须达到最终状态（已放款、已退款或已由卖家领取）后，您才能更改公钥。"
+
+msgid "You are about to start an Elektron Net escrow purchase for this listing."
+msgstr "您即将为该商品开始一笔 Elektron Net 担保交易(escrow)购买。"
+
+msgid "Item"
+msgstr "商品"
+
+msgid "Price"
+msgstr "价格"
+
+msgid "A unique payment address is generated only after you confirm below. Funds sent there are held in a 2-of-2 escrow between you and the seller."
+msgstr "只有在您下方确认后才会生成唯一的收款地址。发送到该地址的资金将由您和卖家共同持有的 2-of-2 担保账户保管。"
+
+msgid "If you do not confirm receipt, the seller can automatically claim the funds %d days after your payment is confirmed."
+msgstr "如果您未确认收货,卖家可在您的付款确认后 %d 天自动领取资金。"
+
+msgid "If the seller never responds, you can automatically reclaim the funds %d days after your payment is confirmed."
+msgstr "如果卖家一直未作回应,您可在付款确认后 %d 天自动收回资金。"
+
+msgid "Confirm and generate payment address"
+msgstr "确认并生成收款地址"
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "Amount"
+msgstr "金额"
+
+msgid "Status"
+msgstr "状态"
+
+msgid "(listing removed)"
+msgstr "(商品已下架)"
+
+msgid "My Elektron orders"
+msgstr "我的 Elektron 订单"
+
+msgid "Purchases"
+msgstr "购买记录"
+
+msgid "Sales"
+msgstr "销售记录"
+
+msgid "You have not bought anything with Elektron escrow yet."
+msgstr "您还没有通过 Elektron 担保交易购买过任何东西。"
+
+msgid "You have not sold anything with Elektron escrow yet."
+msgstr "您还没有通过 Elektron 担保交易出售过任何东西。"
+
+msgid "View"
+msgstr "查看"
+
+msgid "Awaiting payment"
+msgstr "等待付款"
+
+msgid "Confirming"
+msgstr "确认中"
+
+msgid "Funded"
+msgstr "已付款"
+
+msgid "Release pending"
+msgstr "等待放行"
+
+msgid "Released"
+msgstr "已放行"
+
+msgid "Refunded"
+msgstr "已退款"
+
+msgid "Claimed by seller"
+msgstr "已被卖家领取"

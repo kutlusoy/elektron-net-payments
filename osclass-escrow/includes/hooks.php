@@ -29,11 +29,36 @@ osc_add_hook('user_menu_filter', function (array $options) {
         'url' => osc_route_url('elektron_escrow_wallet'),
         'class' => 'opt_elektron_escrow_wallet',
     );
+    $options[] = array(
+        'name' => __('My Elektron orders', ELEKTRON_ESCROW_DOMAIN),
+        'url' => osc_route_url('elektron_escrow_orders'),
+        'class' => 'opt_elektron_escrow_orders',
+    );
 
     return $options;
 });
 
-osc_add_hook('show_item', function ($item) {
+/**
+ * Hook is 'item_detail', not 'show_item'. 'show_item' fires from inside the
+ * item controller's own doModel() (data-preparation) method -- confirmed in
+ * both a real osclass-classifieds.com v8.3.1 checkout
+ * (oc-includes/osclass/controller/item.php) and mindstellar/shopclass
+ * (CWebItem::doModel()) -- which runs entirely before the theme starts
+ * emitting any page markup at all. Echoing HTML from it does not place that
+ * HTML anywhere on the page; it gets flushed to the response stream ahead
+ * of the theme's own <html> output, which is exactly why this widget was
+ * appearing above everything else, including the page header, on a real
+ * install. 'item_detail' is the hook the *theme's own template* actually
+ * calls (confirmed in the real, currently deployed theme,
+ * oc-content/themes/sigma/item.php: `osc_run_hook('item_detail', osc_item())`
+ * inside the "#item-content" block, right after the description/custom
+ * fields and before the "Contact seller" buttons), so output from it lands
+ * in the correct place in the actual rendered page. osc_item() returns the
+ * exact same array previously passed as show_item's own $item argument
+ * (both call `_exportVariableToView('item', $item)` immediately before
+ * firing their hook), so the callback body did not need to change.
+ */
+osc_add_hook('item_detail', function ($item) {
     if (!osc_logged_user_id() || osc_logged_user_id() === osc_item_user_id()) {
         return;
     }

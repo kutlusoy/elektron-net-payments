@@ -152,3 +152,75 @@ msgstr "Ya hay un monedero conectado. Pega otra clave pública abajo para reempl
 
 msgid "You have an active escrow order that still needs your currently connected key. It must reach a final state (released, refunded, or claimed) before you can change your public key."
 msgstr "Tienes un pedido de depósito en garantía activo que todavía necesita tu clave actualmente conectada. Debe alcanzar un estado final (liberado, reembolsado o reclamado) antes de que puedas cambiar tu clave pública."
+
+msgid "You are about to start an Elektron Net escrow purchase for this listing."
+msgstr "Estás a punto de iniciar una compra en custodia (escrow) de Elektron Net para este anuncio."
+
+msgid "Item"
+msgstr "Artículo"
+
+msgid "Price"
+msgstr "Precio"
+
+msgid "A unique payment address is generated only after you confirm below. Funds sent there are held in a 2-of-2 escrow between you and the seller."
+msgstr "Solo se genera una dirección de pago única después de que confirmes a continuación. Los fondos enviados allí se mantienen en un depósito 2-de-2 entre tú y el vendedor."
+
+msgid "If you do not confirm receipt, the seller can automatically claim the funds %d days after your payment is confirmed."
+msgstr "Si no confirmas la recepción, el vendedor podrá reclamar los fondos automáticamente %d días después de que se confirme tu pago."
+
+msgid "If the seller never responds, you can automatically reclaim the funds %d days after your payment is confirmed."
+msgstr "Si el vendedor nunca responde, podrás recuperar los fondos automáticamente %d días después de que se confirme tu pago."
+
+msgid "Confirm and generate payment address"
+msgstr "Confirmar y generar dirección de pago"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Amount"
+msgstr "Importe"
+
+msgid "Status"
+msgstr "Estado"
+
+msgid "(listing removed)"
+msgstr "(anuncio eliminado)"
+
+msgid "My Elektron orders"
+msgstr "Mis pedidos de Elektron"
+
+msgid "Purchases"
+msgstr "Compras"
+
+msgid "Sales"
+msgstr "Ventas"
+
+msgid "You have not bought anything with Elektron escrow yet."
+msgstr "Aún no has comprado nada con el depósito en garantía de Elektron."
+
+msgid "You have not sold anything with Elektron escrow yet."
+msgstr "Aún no has vendido nada con el depósito en garantía de Elektron."
+
+msgid "View"
+msgstr "Ver"
+
+msgid "Awaiting payment"
+msgstr "Pago pendiente"
+
+msgid "Confirming"
+msgstr "Confirmando"
+
+msgid "Funded"
+msgstr "Pagado"
+
+msgid "Release pending"
+msgstr "Liberación pendiente"
+
+msgid "Released"
+msgstr "Liberado"
+
+msgid "Refunded"
+msgstr "Reembolsado"
+
+msgid "Claimed by seller"
+msgstr "Reclamado por el vendedor"

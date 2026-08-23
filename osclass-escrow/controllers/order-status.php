@@ -6,8 +6,10 @@ use ElektronNet\Payments\Core\Escrow\TimeoutPolicy;
 
 /**
  * Route: elektron-escrow/order?order=<id>
- * Shows one order's status/countdown to whichever of the two parties is
- * looking at it, and (buyer only) the "confirm receipt" action. See this
+ * The permanent details page for one order: item, amount, and (per status)
+ * the payment address + QR code, countdown, or "confirm receipt" action, to
+ * whichever of the two parties is looking at it. This is the one page an
+ * order's details stay reachable from after checkout ends -- see this
  * plugin's README, "Routes" and "Order lifecycle".
  */
 
@@ -30,6 +32,13 @@ if (!$order || ($userId !== (int) $order['fk_i_buyer_id'] && $userId !== (int) $
 $isBuyer = $userId === (int) $order['fk_i_buyer_id'];
 $statusMessage = null;
 $errorMessage = null;
+
+// Not re-derived from the item's *current* price: amount_lep was already
+// frozen on the order at checkout time (see controllers/checkout.php), and
+// an item's price can change after an order exists.
+$item = Item::newInstance()->findByPrimaryKey((int) $order['fk_i_item_id']);
+$amountElek = ((int) $order['amount_lep']) / 100000000;
+$requiredConfirmations = (int) osc_get_preference('required_confirmations', 'plugin-osclass-escrow');
 
 // The 'confirm_receipt' marker alone decides whether this is a
 // submission; the CSRF token itself is deliberately NOT inspected before
