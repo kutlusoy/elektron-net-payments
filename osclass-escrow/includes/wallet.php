@@ -1,6 +1,9 @@
 <?php if (!defined('ABS_PATH')) exit('ABS_PATH is not loaded. Direct access is not allowed.');
 
+use BitWasp\Bitcoin\Base58;
 use BitWasp\Bitcoin\Key\Factory\HierarchicalKeyFactory;
+use BitWasp\Bitcoin\Network\Network;
+use BitWasp\Buffertools\Buffer;
 use ElektronNet\Payments\Core\Escrow\ElektronNetworkFactory;
 use ElektronNet\Payments\Core\Escrow\XpubChildKeyDeriver;
 
@@ -31,6 +34,74 @@ function elektron_escrow_get_user_xpub(int $userId): ?string
 }
 
 /**
+ * SLIP-132 version-byte prefixes some wallets (Elektrum among them, for a
+ * native-segwit BIP84 wallet) use instead of the plain BIP32 "xpub" one,
+ * to hint at the script type the key is meant for. Cryptographically it is
+ * the exact same extended key either way -- only the 4 version bytes at
+ * the front of the base58check payload differ -- so this platform accepts
+ * any of them and rewrites the version bytes to the network's own plain
+ * xpub prefix before ever parsing or storing the key, rather than
+ * rejecting a perfectly valid key just because of which prefix a
+ * particular wallet chose to display it with.
+ *
+ * Values confirmed against SLIP-132 (github.com/satoshilabs/slips/blob/
+ * master/slip-0132.md), the standard this convention comes from.
+ */
+const ELEKTRON_ESCROW_SLIP132_PUBKEY_VERSIONS = [
+    '049d7cb2', // ypub (BIP49, P2SH-P2WPKH)
+    '04b24746', // zpub (BIP84, native P2WPKH)
+    '0295b43f', // Ypub (BIP49 multisig)
+    '02aa7ed3', // Zpub (BIP84 multisig)
+];
+const ELEKTRON_ESCROW_SLIP132_PRIVKEY_VERSIONS = [
+    '0488ade4', // xprv
+    '049d7878', // yprv
+    '04b2430c', // zprv
+    '0295b005', // Yprv
+    '02aa7a99', // Zprv
+];
+
+/**
+ * @return string|null the same key re-encoded with $network's own plain
+ *     xpub version bytes, or null if $xpub does not base58check-decode to
+ *     a recognized extended-public-key version at all (including a
+ *     recognized *private*-key version -- callers must check for that
+ *     themselves via elektron_escrow_is_slip132_private_key() first if
+ *     they want a different message for it)
+ */
+function elektron_escrow_normalize_xpub_prefix(string $xpub, Network $network): ?string
+{
+    try {
+        $raw = Base58::decodeCheck($xpub);
+    } catch (\Throwable $e) {
+        return null;
+    }
+    if ($raw->getSize() !== 78) {
+        return null;
+    }
+
+    $versionHex = strtolower($raw->slice(0, 4)->getHex());
+    if ($versionHex !== $network->getHDPubByte() && !in_array($versionHex, ELEKTRON_ESCROW_SLIP132_PUBKEY_VERSIONS, true)) {
+        return null;
+    }
+
+    $rewritten = Buffer::hex($network->getHDPubByte())->getBinary() . $raw->slice(4)->getBinary();
+
+    return Base58::encodeCheck(new Buffer($rewritten));
+}
+
+function elektron_escrow_is_slip132_private_key(string $xpub): bool
+{
+    try {
+        $raw = Base58::decodeCheck($xpub);
+    } catch (\Throwable $e) {
+        return false;
+    }
+
+    return $raw->getSize() === 78 && in_array(strtolower($raw->slice(0, 4)->getHex()), ELEKTRON_ESCROW_SLIP132_PRIVKEY_VERSIONS, true);
+}
+
+/**
  * @return true on success, or a translated error message string on failure
  */
 function elektron_escrow_save_user_xpub(int $userId, string $xpub)
@@ -40,6 +111,18 @@ function elektron_escrow_save_user_xpub(int $userId, string $xpub)
     if ($xpub === '') {
         return __('Please paste an xpub.', ELEKTRON_ESCROW_DOMAIN);
     }
+
+    if (elektron_escrow_is_slip132_private_key($xpub)) {
+        return __('This is a private extended key (xprv), not a public one (xpub). Never paste a private key or seed phrase anywhere on this site.', ELEKTRON_ESCROW_DOMAIN);
+    }
+
+    // Accepts ypub/zpub/Ypub/Zpub too, not only a plain xpub -- see
+    // elektron_escrow_normalize_xpub_prefix()'s docblock.
+    $normalized = elektron_escrow_normalize_xpub_prefix($xpub, elektron_escrow_network());
+    if ($normalized === null) {
+        return __('This does not look like a valid extended public key (xpub) for this network.', ELEKTRON_ESCROW_DOMAIN);
+    }
+    $xpub = $normalized;
 
     try {
         $account = (new HierarchicalKeyFactory())->fromExtended($xpub, elektron_escrow_network());

@@ -39,6 +39,9 @@
         <p class="help-block">
             <?php _e('Paste your xpub, never a private key, xprv, or seed phrase. Needed once, before you can buy or sell with escrow: a fresh address is derived from it for every order automatically, so you never have to do this again.', ELEKTRON_ESCROW_DOMAIN); ?>
         </p>
+        <p class="help-block">
+            <?php _e('Starts with ypub or zpub instead of xpub? That is fine, paste it as shown -- some wallets use a different prefix to hint at the address type, but it is accepted here either way.', ELEKTRON_ESCROW_DOMAIN); ?>
+        </p>
 
         <details class="elektron-escrow-pubkey-help">
             <summary><?php _e('How do I find my xpub?', ELEKTRON_ESCROW_DOMAIN); ?></summary>

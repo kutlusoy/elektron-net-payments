@@ -419,3 +419,6 @@ msgstr "If this listing is now sold, remember to deactivate it yourself -- this 
 
 msgid "You will be notified once the buyer confirms receipt."
 msgstr "You will be notified once the buyer confirms receipt."
+
+msgid "Starts with ypub or zpub instead of xpub? That is fine, paste it as shown -- some wallets use a different prefix to hint at the address type, but it is accepted here either way."
+msgstr "Starts with ypub or zpub instead of xpub? That is fine, paste it as shown -- some wallets use a different prefix to hint at the address type, but it is accepted here either way."
