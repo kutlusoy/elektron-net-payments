@@ -338,3 +338,9 @@ msgstr "Bu sipariş serbest bırakıldı olarak işaretlensin mi? Bunu yalnızca
 
 msgid "Mark as released"
 msgstr "Serbest bırakıldı olarak işaretle"
+
+msgid "Address"
+msgstr "Adres"
+
+msgid "Redeem script"
+msgstr "Kurtarma betiği"

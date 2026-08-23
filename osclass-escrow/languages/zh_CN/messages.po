@@ -338,3 +338,9 @@ msgstr "将此订单标记为已放行?仅在资金确实已发送到您自己�
 
 msgid "Mark as released"
 msgstr "标记为已放行"
+
+msgid "Address"
+msgstr "地址"
+
+msgid "Redeem script"
+msgstr "赎回脚本"

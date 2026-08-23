@@ -338,3 +338,9 @@ msgstr "Oznaczyć to zamówienie jako zwolnione? Zrób to tylko wtedy, gdy środ
 
 msgid "Mark as released"
 msgstr "Oznacz jako zwolnione"
+
+msgid "Address"
+msgstr "Adres"
+
+msgid "Redeem script"
+msgstr "Skrypt odkupu"

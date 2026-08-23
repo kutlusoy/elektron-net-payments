@@ -338,3 +338,9 @@ msgstr "Diese Bestellung als freigegeben markieren? Tue dies nur, wenn das Gutha
 
 msgid "Mark as released"
 msgstr "Als freigegeben markieren"
+
+msgid "Address"
+msgstr "Adresse"
+
+msgid "Redeem script"
+msgstr "Redeem-Script"

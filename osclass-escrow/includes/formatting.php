@@ -31,10 +31,13 @@ function elektron_escrow_format_amount(float $amountElek): string
 }
 
 /**
- * Prints a small, self-contained <style> block for this plugin's own
- * tables (class "elektron-escrow-table"): borders, a header background, and
- * row separators, regardless of whatever the active theme's own ".table"
- * class does or does not provide.
+ * Prints a small, self-contained <style> block for this plugin's own pages:
+ * tables (class "elektron-escrow-table": borders, a header background, row
+ * separators), paragraph spacing, and a wrapped, monospace block for long
+ * values (class "elektron-escrow-code": addresses, redeem scripts, payment
+ * URIs) -- regardless of whatever the active theme's own CSS does or does
+ * not provide, since a value like a redeem script is long enough to run
+ * straight into surrounding text without it.
  *
  * Not queued via osc_enqueue_style(): that helper only takes effect if
  * called before the theme prints its own <head>, but every one of this
@@ -52,6 +55,23 @@ function elektron_escrow_table_style(): void
         .elektron-escrow-table th, .elektron-escrow-table td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; }
         .elektron-escrow-table th { background: #f0f0f0; font-weight: bold; }
         .elektron-escrow-table tr:nth-child(even) td { background: #fafafa; }
+        .elektron-escrow-order p, .elektron-escrow-checkout-preview p, .elektron-escrow-orders p, .elektron-escrow-notice p {
+            margin: 0.75em 0;
+            line-height: 1.5;
+        }
+        .elektron-escrow-code {
+            display: block;
+            font-family: monospace;
+            font-size: 0.9em;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px 12px;
+            margin: 0.5em 0 1em;
+            overflow-wrap: break-word;
+            word-break: break-all;
+            white-space: pre-wrap;
+        }
     </style>
     <?php
 }

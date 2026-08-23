@@ -338,3 +338,9 @@ msgstr "Deze bestelling markeren als vrijgegeven? Doe dit alleen als het geld da
 
 msgid "Mark as released"
 msgstr "Markeren als vrijgegeven"
+
+msgid "Address"
+msgstr "Adres"
+
+msgid "Redeem script"
+msgstr "Redeem-script"

@@ -338,3 +338,9 @@ msgstr "Contrassegnare questo ordine come rilasciato? Fallo solo se i fondi sono
 
 msgid "Mark as released"
 msgstr "Contrassegna come rilasciato"
+
+msgid "Address"
+msgstr "Indirizzo"
+
+msgid "Redeem script"
+msgstr "Script di riscatto"

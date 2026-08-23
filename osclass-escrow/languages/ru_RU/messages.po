@@ -338,3 +338,9 @@ msgstr "Отметить этот заказ как переданный? Дел
 
 msgid "Mark as released"
 msgstr "Отметить как переданный"
+
+msgid "Address"
+msgstr "Адрес"
+
+msgid "Redeem script"
+msgstr "Скрипт выкупа"
