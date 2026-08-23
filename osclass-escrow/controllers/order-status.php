@@ -14,7 +14,11 @@ use ElektronNet\Payments\Core\Escrow\TimeoutPolicy;
  */
 
 if (!osc_is_web_user_logged_in()) {
-    osc_redirect_to(osc_user_login_url());
+    elektron_escrow_render_notice(
+        __('Please log in to view this order.', ELEKTRON_ESCROW_DOMAIN),
+        osc_user_login_url(),
+        __('Log in', ELEKTRON_ESCROW_DOMAIN)
+    );
     exit;
 }
 
@@ -24,21 +28,17 @@ $order = $orderDao->findByPrimaryKey($orderId);
 $userId = (int) osc_logged_user_id();
 
 if (!$order || ($userId !== (int) $order['fk_i_buyer_id'] && $userId !== (int) $order['fk_i_seller_id'])) {
-    osc_add_flash_error_message(__('Order not found.', ELEKTRON_ESCROW_DOMAIN));
-    osc_redirect_to(osc_base_url());
+    elektron_escrow_render_notice(
+        __('Order not found.', ELEKTRON_ESCROW_DOMAIN),
+        osc_base_url(),
+        __('Back to homepage', ELEKTRON_ESCROW_DOMAIN)
+    );
     exit;
 }
 
 $isBuyer = $userId === (int) $order['fk_i_buyer_id'];
 $statusMessage = null;
 $errorMessage = null;
-
-// Not re-derived from the item's *current* price: amount_lep was already
-// frozen on the order at checkout time (see controllers/checkout.php), and
-// an item's price can change after an order exists.
-$item = Item::newInstance()->findByPrimaryKey((int) $order['fk_i_item_id']);
-$amountElek = ((int) $order['amount_lep']) / 100000000;
-$requiredConfirmations = (int) osc_get_preference('required_confirmations', 'plugin-osclass-escrow');
 
 // The 'confirm_receipt' marker alone decides whether this is a
 // submission; the CSRF token itself is deliberately NOT inspected before
@@ -48,8 +48,8 @@ $requiredConfirmations = (int) osc_get_preference('required_confirmations', 'plu
 // a different real, deployed platform's internals, confirmed wrong live
 // (that platform's actual field is a single 'octoken' input). Renders
 // directly into this same response rather than osc_add_flash_*_message()
-// + a redirect, since a flash message is only shown by whatever the
-// active theme's custom.php/user-custom.php template does with it.
+// + a redirect: see includes/notice.php's docblock for why a same-request
+// render, not a redirect, is what actually works here.
 if ($isBuyer && Params::getParam('confirm_receipt') === '1') {
     osc_csrf_check();
 
@@ -82,4 +82,4 @@ if ($isBuyer && Params::getParam('confirm_receipt') === '1') {
     }
 }
 
-require osc_plugins_path() . 'osclass-escrow/views/order-status.php';
+elektron_escrow_render_order_status($order, $userId, $statusMessage, $errorMessage);

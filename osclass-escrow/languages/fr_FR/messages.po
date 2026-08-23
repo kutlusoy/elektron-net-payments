@@ -224,3 +224,39 @@ msgstr "Remboursé"
 
 msgid "Claimed by seller"
 msgstr "Réclamé par le vendeur"
+
+msgid "A listing is only offered escrow if its currency code is one of these. Osclass stores a currency code as exactly 3 letters, so \"ELEK\" itself can never be one; use a 3-letter contraction such as ELE or ELK instead."
+msgstr "Une annonce n'est proposée en séquestre que si son code de devise est l'un de ceux-ci. Osclass stocke un code de devise sur exactement 3 lettres, donc \"ELEK\" lui-même ne peut jamais en être un ; utilisez plutôt une contraction de 3 lettres comme ELE ou ELK."
+
+msgid "Accepted currency codes (one per line)"
+msgstr "Codes de devise acceptés (un par ligne)"
+
+msgid "Back to homepage"
+msgstr "Retour à l'accueil"
+
+msgid "Back to listing"
+msgstr "Retour à l'annonce"
+
+msgid "Connect your wallet"
+msgstr "Connecter votre wallet"
+
+msgid "Log in"
+msgstr "Se connecter"
+
+msgid "Payment URI (tap to select, then copy)"
+msgstr "URI de paiement (touchez pour sélectionner, puis copiez)"
+
+msgid "Please log in to manage your Elektron Net wallet."
+msgstr "Veuillez vous connecter pour gérer votre wallet Elektron Net."
+
+msgid "Please log in to view this order."
+msgstr "Veuillez vous connecter pour voir cette commande."
+
+msgid "Please log in to view your Elektron orders."
+msgstr "Veuillez vous connecter pour voir vos commandes Elektron."
+
+msgid "This listing has no fixed price, so it cannot be bought with escrow."
+msgstr "Cette annonce n'a pas de prix fixe, elle ne peut donc pas être achetée sous séquestre."
+
+msgid "This listing is not priced in a currency accepted for escrow."
+msgstr "Cette annonce n'est pas libellée dans une devise acceptée pour le séquestre."

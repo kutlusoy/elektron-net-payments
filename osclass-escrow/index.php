@@ -27,6 +27,8 @@ Author URI: https://elektron-net.org
     require_once __DIR__ . '/includes/i18n.php';     // elektron_escrow_t()
     require_once __DIR__ . '/includes/formatting.php'; // elektron_escrow_format_amount()
     require_once __DIR__ . '/includes/wallet.php';   // wallet pubkey get/save helpers
+    require_once __DIR__ . '/includes/notice.php';   // elektron_escrow_render_notice()
+    require_once __DIR__ . '/includes/order-status.php'; // elektron_escrow_render_order_status()
     require_once __DIR__ . '/includes/hooks.php';    // item widget, routes, cron
 
     // Activation / deactivation. See install.php.
@@ -62,15 +64,30 @@ Author URI: https://elektron-net.org
     // Frontend custom pages (checkout + order status). Handler files live
     // under controllers/, which does not match the "/admin/" substring the
     // core custom-page controller (CWebCustom) rejects for frontend routes.
+    //
+    // Every regexp below ends in (?![a-zA-Z]): Rewrite::init() matches with
+    // '#^' . $regexp . '#' -- no trailing anchor at all (confirmed in
+    // oc-includes/osclass/classes/Rewrite.php) -- and takes the first
+    // registered route whose regexp matches as a *prefix* of the request
+    // URI, `break`-ing immediately. Without the lookahead,
+    // 'elektron-escrow/order' is itself a valid prefix match for a request
+    // to 'elektron-escrow/orders', so the order-status route (registered
+    // first) silently claimed every /orders request instead of the orders
+    // route below ever being reached -- confirmed live: it rendered
+    // order-status.php's own "Order not found." message, since
+    // Params::getParam('order') was never set on that URL. The lookahead
+    // requires whatever follows the literal path segment to not be another
+    // letter, so 'order' can no longer match the start of 'orders' (it
+    // still matches 'order' itself, 'order?...', 'order/...').
     osc_add_route(
         'elektron_escrow_checkout',
-        'elektron-escrow/checkout',
+        'elektron-escrow/checkout(?![a-zA-Z])',
         'elektron-escrow/checkout',
         'osclass-escrow/controllers/checkout.php'
     );
     osc_add_route(
         'elektron_escrow_order_status',
-        'elektron-escrow/order',
+        'elektron-escrow/order(?![a-zA-Z])',
         'elektron-escrow/order',
         'osclass-escrow/controllers/order-status.php',
         true // renders inside the account-menu chrome (CWebCustom sets 'in_user_menu'), not just the public
@@ -80,7 +97,7 @@ Author URI: https://elektron-net.org
     );
     osc_add_route(
         'elektron_escrow_wallet',
-        'elektron-escrow/wallet',
+        'elektron-escrow/wallet(?![a-zA-Z])',
         'elektron-escrow/wallet',
         'osclass-escrow/controllers/wallet.php',
         true // same as above: account-menu chrome only, not a menu link by itself. See includes/wallet.php
@@ -89,7 +106,7 @@ Author URI: https://elektron-net.org
     );
     osc_add_route(
         'elektron_escrow_orders',
-        'elektron-escrow/orders',
+        'elektron-escrow/orders(?![a-zA-Z])',
         'elektron-escrow/orders',
         'osclass-escrow/controllers/orders.php',
         true // same as above: account-menu chrome only; includes/hooks.php's 'user_menu_filter' hook

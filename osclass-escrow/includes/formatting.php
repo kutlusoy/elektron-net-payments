@@ -29,3 +29,36 @@ function elektron_escrow_format_amount(float $amountElek): string
 
     return $formattedInteger . osc_locale_dec_point() . $fractionPart;
 }
+
+/**
+ * Plain (locale-independent, '.' decimal point, no thousands separator,
+ * trailing zeros trimmed) decimal string for an ELEK amount. Used inside a
+ * payment URI, which a wallet must parse unambiguously regardless of the
+ * visitor's own locale -- unlike elektron_escrow_format_amount(), which is
+ * for human display only.
+ */
+function elektron_escrow_plain_amount(float $amountElek): string
+{
+    $fixed = number_format($amountElek, 8, '.', '');
+    $trimmed = rtrim(rtrim($fixed, '0'), '.');
+
+    return $trimmed === '' ? '0' : $trimmed;
+}
+
+/**
+ * BIP21-style payment URI for the given address/amount. Scheme is 'elek',
+ * not 'bitcoin': confirmed directly in the actual Elektron Net wallet
+ * fork's own source (kutlusoy/elektron-net-electrum,
+ * electrum/bip21.py: `BITCOIN_BIP21_URI_SCHEME = 'elek'`, deliberately
+ * renamed there specifically so a real bitcoin: URI is never silently
+ * accepted for this, different, chain). `amount` is a plain decimal ELEK
+ * value (matching that same file's create_bip21_uri(), which formats the
+ * amount with format_satoshis_plain() -- i.e. a plain decimal string, not
+ * locale-formatted and not in lepton), so a wallet that understands this
+ * scheme can prefill both the address and the amount from one scan or one
+ * paste.
+ */
+function elektron_escrow_payment_uri(string $address, float $amountElek): string
+{
+    return 'elek:' . $address . '?amount=' . elektron_escrow_plain_amount($amountElek);
+}

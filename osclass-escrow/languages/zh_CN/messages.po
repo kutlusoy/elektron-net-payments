@@ -224,3 +224,39 @@ msgstr "已退款"
 
 msgid "Claimed by seller"
 msgstr "已被卖家领取"
+
+msgid "A listing is only offered escrow if its currency code is one of these. Osclass stores a currency code as exactly 3 letters, so \"ELEK\" itself can never be one; use a 3-letter contraction such as ELE or ELK instead."
+msgstr "只有当商品的货币代码是以下之一时,才提供担保交易(escrow)。Osclass 将货币代码存储为恰好 3 个字母,因此 \"ELEK\" 本身永远不可能是其中之一;请改用 3 字母缩写,例如 ELE 或 ELK。"
+
+msgid "Accepted currency codes (one per line)"
+msgstr "接受的货币代码(每行一个)"
+
+msgid "Back to homepage"
+msgstr "返回首页"
+
+msgid "Back to listing"
+msgstr "返回商品页"
+
+msgid "Connect your wallet"
+msgstr "连接您的钱包"
+
+msgid "Log in"
+msgstr "登录"
+
+msgid "Payment URI (tap to select, then copy)"
+msgstr "支付链接(点击选中,然后复制)"
+
+msgid "Please log in to manage your Elektron Net wallet."
+msgstr "请登录以管理您的 Elektron Net 钱包。"
+
+msgid "Please log in to view this order."
+msgstr "请登录以查看此订单。"
+
+msgid "Please log in to view your Elektron orders."
+msgstr "请登录以查看您的 Elektron 订单。"
+
+msgid "This listing has no fixed price, so it cannot be bought with escrow."
+msgstr "此商品没有固定价格,因此无法通过担保交易购买。"
+
+msgid "This listing is not priced in a currency accepted for escrow."
+msgstr "此商品的定价货币不被担保交易接受。"

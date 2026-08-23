@@ -224,3 +224,39 @@ msgstr "تم الاسترداد"
 
 msgid "Claimed by seller"
 msgstr "طالب به البائع"
+
+msgid "A listing is only offered escrow if its currency code is one of these. Osclass stores a currency code as exactly 3 letters, so \"ELEK\" itself can never be one; use a 3-letter contraction such as ELE or ELK instead."
+msgstr "يُعرض الإعلان بالضمان فقط إذا كان رمز عملته أحد هذه الرموز. يخزّن Osclass رمز العملة بثلاثة أحرف بالضبط، لذا لا يمكن أن يكون \"ELEK\" نفسه أحدها أبدًا؛ استخدم بدلاً من ذلك اختصارًا من 3 أحرف مثل ELE أو ELK."
+
+msgid "Accepted currency codes (one per line)"
+msgstr "رموز العملات المقبولة (واحد في كل سطر)"
+
+msgid "Back to homepage"
+msgstr "العودة إلى الصفحة الرئيسية"
+
+msgid "Back to listing"
+msgstr "العودة إلى الإعلان"
+
+msgid "Connect your wallet"
+msgstr "ربط محفظتك"
+
+msgid "Log in"
+msgstr "تسجيل الدخول"
+
+msgid "Payment URI (tap to select, then copy)"
+msgstr "رابط الدفع (اضغط للتحديد، ثم انسخ)"
+
+msgid "Please log in to manage your Elektron Net wallet."
+msgstr "يرجى تسجيل الدخول لإدارة محفظة Elektron Net الخاصة بك."
+
+msgid "Please log in to view this order."
+msgstr "يرجى تسجيل الدخول لعرض هذا الطلب."
+
+msgid "Please log in to view your Elektron orders."
+msgstr "يرجى تسجيل الدخول لعرض طلبات Elektron الخاصة بك."
+
+msgid "This listing has no fixed price, so it cannot be bought with escrow."
+msgstr "ليس لهذا الإعلان سعر ثابت، لذا لا يمكن شراؤه بالضمان."
+
+msgid "This listing is not priced in a currency accepted for escrow."
+msgstr "هذا الإعلان غير مسعّر بعملة مقبولة للضمان."

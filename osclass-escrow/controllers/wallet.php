@@ -7,7 +7,11 @@
  */
 
 if (!osc_is_web_user_logged_in()) {
-    osc_redirect_to(osc_user_login_url());
+    elektron_escrow_render_notice(
+        __('Please log in to manage your Elektron Net wallet.', ELEKTRON_ESCROW_DOMAIN),
+        osc_user_login_url(),
+        __('Log in', ELEKTRON_ESCROW_DOMAIN)
+    );
     exit;
 }
 
