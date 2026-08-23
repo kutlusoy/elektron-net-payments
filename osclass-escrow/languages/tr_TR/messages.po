@@ -152,3 +152,75 @@ msgstr "Bir cüzdan zaten bağlı. Değiştirmek için aşağıya farklı bir ge
 
 msgid "You have an active escrow order that still needs your currently connected key. It must reach a final state (released, refunded, or claimed) before you can change your public key."
 msgstr "Hâlâ şu anda bağlı olan anahtarınıza ihtiyaç duyan aktif bir emanet (escrow) siparişiniz var. Genel anahtarınızı değiştirebilmeniz için bu siparişin nihai bir duruma ulaşması gerekir (serbest bırakıldı, iade edildi veya talep edildi)."
+
+msgid "You are about to start an Elektron Net escrow purchase for this listing."
+msgstr "Bu ilan için Elektron Net emanet (escrow) satın alımı başlatmak üzeresiniz."
+
+msgid "Item"
+msgstr "Ürün"
+
+msgid "Price"
+msgstr "Fiyat"
+
+msgid "A unique payment address is generated only after you confirm below. Funds sent there are held in a 2-of-2 escrow between you and the seller."
+msgstr "Benzersiz bir ödeme adresi yalnızca aşağıda onayladıktan sonra oluşturulur. Oraya gönderilen fonlar, siz ve satıcı arasında 2'den 2'ye bir emanet hesabında tutulur."
+
+msgid "If you do not confirm receipt, the seller can automatically claim the funds %d days after your payment is confirmed."
+msgstr "Teslim alındığını onaylamazsanız, satıcı ödemeniz onaylandıktan %d gün sonra fonları otomatik olarak talep edebilir."
+
+msgid "If the seller never responds, you can automatically reclaim the funds %d days after your payment is confirmed."
+msgstr "Satıcı hiç yanıt vermezse, ödemeniz onaylandıktan %d gün sonra fonları otomatik olarak geri alabilirsiniz."
+
+msgid "Confirm and generate payment address"
+msgstr "Onayla ve ödeme adresi oluştur"
+
+msgid "Cancel"
+msgstr "İptal"
+
+msgid "Amount"
+msgstr "Tutar"
+
+msgid "Status"
+msgstr "Durum"
+
+msgid "(listing removed)"
+msgstr "(ilan kaldırıldı)"
+
+msgid "My Elektron orders"
+msgstr "Elektron siparişlerim"
+
+msgid "Purchases"
+msgstr "Satın alımlar"
+
+msgid "Sales"
+msgstr "Satışlar"
+
+msgid "You have not bought anything with Elektron escrow yet."
+msgstr "Elektron emaneti ile henüz bir şey satın almadınız."
+
+msgid "You have not sold anything with Elektron escrow yet."
+msgstr "Elektron emaneti ile henüz bir şey satmadınız."
+
+msgid "View"
+msgstr "Görüntüle"
+
+msgid "Awaiting payment"
+msgstr "Ödeme bekleniyor"
+
+msgid "Confirming"
+msgstr "Onaylanıyor"
+
+msgid "Funded"
+msgstr "Ödendi"
+
+msgid "Release pending"
+msgstr "Serbest bırakma bekleniyor"
+
+msgid "Released"
+msgstr "Serbest bırakıldı"
+
+msgid "Refunded"
+msgstr "İade edildi"
+
+msgid "Claimed by seller"
+msgstr "Satıcı tarafından talep edildi"

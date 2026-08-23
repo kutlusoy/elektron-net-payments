@@ -152,3 +152,75 @@ msgstr "تم ربط محفظة بالفعل. الصق مفتاحًا عامًا 
 
 msgid "You have an active escrow order that still needs your currently connected key. It must reach a final state (released, refunded, or claimed) before you can change your public key."
 msgstr "لديك طلب ضمان (escrow) نشط لا يزال بحاجة إلى مفتاحك المتصل حاليًا. يجب أن يصل إلى حالة نهائية (تم التحرير، أو الاسترداد، أو المطالبة) قبل أن تتمكن من تغيير مفتاحك العام."
+
+msgid "You are about to start an Elektron Net escrow purchase for this listing."
+msgstr "أنت على وشك بدء عملية شراء بضمان (escrow) عبر Elektron Net لهذا الإعلان."
+
+msgid "Item"
+msgstr "العنصر"
+
+msgid "Price"
+msgstr "السعر"
+
+msgid "A unique payment address is generated only after you confirm below. Funds sent there are held in a 2-of-2 escrow between you and the seller."
+msgstr "لن يُنشأ عنوان دفع فريد إلا بعد التأكيد أدناه. تُحفظ الأموال المرسلة إليه في ضمان 2 من 2 بينك وبين البائع."
+
+msgid "If you do not confirm receipt, the seller can automatically claim the funds %d days after your payment is confirmed."
+msgstr "إذا لم تؤكد الاستلام، يمكن للبائع المطالبة بالأموال تلقائيًا بعد %d يومًا من تأكيد دفعتك."
+
+msgid "If the seller never responds, you can automatically reclaim the funds %d days after your payment is confirmed."
+msgstr "إذا لم يستجب البائع أبدًا، يمكنك استرداد الأموال تلقائيًا بعد %d يومًا من تأكيد دفعتك."
+
+msgid "Confirm and generate payment address"
+msgstr "تأكيد وإنشاء عنوان الدفع"
+
+msgid "Cancel"
+msgstr "إلغاء"
+
+msgid "Amount"
+msgstr "المبلغ"
+
+msgid "Status"
+msgstr "الحالة"
+
+msgid "(listing removed)"
+msgstr "(تمت إزالة الإعلان)"
+
+msgid "My Elektron orders"
+msgstr "طلبات Elektron الخاصة بي"
+
+msgid "Purchases"
+msgstr "المشتريات"
+
+msgid "Sales"
+msgstr "المبيعات"
+
+msgid "You have not bought anything with Elektron escrow yet."
+msgstr "لم تشترِ بعد أي شيء عبر ضمان Elektron."
+
+msgid "You have not sold anything with Elektron escrow yet."
+msgstr "لم تبِع بعد أي شيء عبر ضمان Elektron."
+
+msgid "View"
+msgstr "عرض"
+
+msgid "Awaiting payment"
+msgstr "بانتظار الدفع"
+
+msgid "Confirming"
+msgstr "جارٍ التأكيد"
+
+msgid "Funded"
+msgstr "تم الدفع"
+
+msgid "Release pending"
+msgstr "بانتظار الإفراج"
+
+msgid "Released"
+msgstr "تم الإفراج"
+
+msgid "Refunded"
+msgstr "تم الاسترداد"
+
+msgid "Claimed by seller"
+msgstr "طالب به البائع"
