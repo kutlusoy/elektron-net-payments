@@ -494,3 +494,12 @@ msgstr "This does not look like a signed version of the release PSBT shown below
 
 msgid "Your signature was added. The seller can now sign and broadcast the release from their own wallet."
 msgstr "Your signature was added. The seller can now sign and broadcast the release from their own wallet."
+
+msgid "Try again"
+msgstr "Try again"
+
+msgid "The release transaction was prepared. Please continue below."
+msgstr "The release transaction was prepared. Please continue below."
+
+msgid "Still could not prepare the release transaction automatically. Please try again later, or cooperate manually using the redeem script below."
+msgstr "Still could not prepare the release transaction automatically. Please try again later, or cooperate manually using the redeem script below."

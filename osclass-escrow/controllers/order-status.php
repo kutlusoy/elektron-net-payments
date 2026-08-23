@@ -139,6 +139,9 @@ if ($isBuyer && Params::getParam('confirm_receipt') === '1') {
             $updateFields['psbt_signature_count'] = $relay->signatureCount();
         } catch (\Throwable $e) {
             // Fall through with no PSBT; see this block's own comment above.
+            // Logged (not silently swallowed) since this is meant to be the
+            // rare case, not something to lose visibility into.
+            error_log('elektron-escrow: could not build release PSBT for order ' . $orderId . ': ' . $e);
         }
 
         $orderDao->updateByPrimaryKey($updateFields, $orderId);
@@ -146,6 +149,36 @@ if ($isBuyer && Params::getParam('confirm_receipt') === '1') {
         // renders the new status without a second database round trip.
         $order = array_merge($order, $updateFields);
         $statusMessage = __('Receipt confirmed.', ELEKTRON_ESCROW_DOMAIN);
+    }
+}
+
+// Either party can trigger this: once an order is in
+// RELEASE_PENDING_SELLER_SIGNATURE with no PSBT (the rare
+// elektron_escrow_build_release_psbt() failure case above), there was
+// previously no way to ever get one -- the state machine only builds it on
+// the FUNDED -> RELEASE_PENDING_SELLER_SIGNATURE transition itself, which
+// this order has already made. This lets either side ask for another
+// attempt (e.g. after a split payment fully confirms, or a chain-data
+// endpoint recovers) without falling back to the manual redeem-script path
+// for good.
+if (Params::getParam('retry_psbt') === '1') {
+    osc_csrf_check();
+
+    if ($order['status'] === OrderStatus::RELEASE_PENDING_SELLER_SIGNATURE && $order['psbt_base64'] === null) {
+        try {
+            $relay = elektron_escrow_build_release_psbt($order);
+            $updateFields = [
+                'psbt_base64' => $relay->base64(),
+                'psbt_signature_count' => $relay->signatureCount(),
+                'dt_mod_date' => date('Y-m-d H:i:s'),
+            ];
+            $orderDao->updateByPrimaryKey($updateFields, $orderId);
+            $order = array_merge($order, $updateFields);
+            $statusMessage = __('The release transaction was prepared. Please continue below.', ELEKTRON_ESCROW_DOMAIN);
+        } catch (\Throwable $e) {
+            error_log('elektron-escrow: could not build release PSBT for order ' . $orderId . ': ' . $e);
+            $errorMessage = __('Still could not prepare the release transaction automatically. Please try again later, or cooperate manually using the redeem script below.', ELEKTRON_ESCROW_DOMAIN);
+        }
     }
 }
 
