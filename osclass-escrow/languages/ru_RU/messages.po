@@ -326,3 +326,15 @@ msgstr "Проверить платёж сейчас"
 
 msgid "Check payment"
 msgstr "Проверить платёж"
+
+msgid "Order marked as released."
+msgstr "Заказ отмечен как переданный."
+
+msgid "This plugin cannot yet build or relay the release transaction itself; the two parties currently have to cooperatively sign and broadcast it using their own wallets, with the redeem script below."
+msgstr "Этот плагин пока не может самостоятельно создать или передать транзакцию передачи средств; обеим сторонам сейчас нужно совместно подписать и транслировать её с помощью собственных кошельков, используя скрипт выкупа ниже."
+
+msgid "Mark this order as released? Only do this once the funds have actually been sent to your own wallet."
+msgstr "Отметить этот заказ как переданный? Делайте это только если средства уже действительно отправлены на ваш собственный кошелёк."
+
+msgid "Mark as released"
+msgstr "Отметить как переданный"

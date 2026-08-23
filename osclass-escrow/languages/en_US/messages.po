@@ -326,3 +326,15 @@ msgstr "Check payment now"
 
 msgid "Check payment"
 msgstr "Check payment"
+
+msgid "Order marked as released."
+msgstr "Order marked as released."
+
+msgid "This plugin cannot yet build or relay the release transaction itself; the two parties currently have to cooperatively sign and broadcast it using their own wallets, with the redeem script below."
+msgstr "This plugin cannot yet build or relay the release transaction itself; the two parties currently have to cooperatively sign and broadcast it using their own wallets, with the redeem script below."
+
+msgid "Mark this order as released? Only do this once the funds have actually been sent to your own wallet."
+msgstr "Mark this order as released? Only do this once the funds have actually been sent to your own wallet."
+
+msgid "Mark as released"
+msgstr "Mark as released"

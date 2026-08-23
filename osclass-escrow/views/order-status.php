@@ -134,7 +134,17 @@ elektron_escrow_table_style();
 
     <?php } elseif ($order['status'] === OrderStatus::RELEASE_PENDING_SELLER_SIGNATURE) { ?>
         <p><?php echo osc_esc_html(elektron_escrow_t('order.release_pending_seller_signature')); ?></p>
-        <p class="text-muted"><?php _e('Release PSBT construction is not implemented yet in this draft; nothing has actually moved on chain.', ELEKTRON_ESCROW_DOMAIN); ?></p>
+        <p class="text-muted"><?php _e('This plugin cannot yet build or relay the release transaction itself; the two parties currently have to cooperatively sign and broadcast it using their own wallets, with the redeem script below.', ELEKTRON_ESCROW_DOMAIN); ?></p>
+
+        <p class="elektron-escrow-address"><code><?php echo osc_esc_html($order['redeem_script_hex']); ?></code></p>
+
+        <?php if (!$isBuyer) { ?>
+            <form method="post" action="<?php echo osc_route_url('elektron_escrow_order_status', ['order' => $order['pk_i_id']]); ?>" onsubmit="return confirm('<?php echo osc_esc_js(__('Mark this order as released? Only do this once the funds have actually been sent to your own wallet.', ELEKTRON_ESCROW_DOMAIN)); ?>');">
+                <?php echo osc_csrf_token_form(); ?>
+                <input type="hidden" name="mark_released" value="1" />
+                <input type="submit" class="btn btn-primary" value="<?php echo osc_esc_html(__('Mark as released', ELEKTRON_ESCROW_DOMAIN)); ?>" />
+            </form>
+        <?php } ?>
 
     <?php } else { ?>
         <p><?php echo osc_esc_html(elektron_escrow_t('order.' . $order['status'])); ?></p>

@@ -326,3 +326,15 @@ msgstr "Comprobar pago ahora"
 
 msgid "Check payment"
 msgstr "Comprobar pago"
+
+msgid "Order marked as released."
+msgstr "Pedido marcado como liberado."
+
+msgid "This plugin cannot yet build or relay the release transaction itself; the two parties currently have to cooperatively sign and broadcast it using their own wallets, with the redeem script below."
+msgstr "Este plugin todavía no puede crear ni transmitir la transacción de liberación por sí mismo; ambas partes deben firmarla y transmitirla cooperativamente con sus propias wallets, usando el script de rescate de abajo."
+
+msgid "Mark this order as released? Only do this once the funds have actually been sent to your own wallet."
+msgstr "¿Marcar este pedido como liberado? Hazlo solo si los fondos ya se han enviado realmente a tu propia wallet."
+
+msgid "Mark as released"
+msgstr "Marcar como liberado"

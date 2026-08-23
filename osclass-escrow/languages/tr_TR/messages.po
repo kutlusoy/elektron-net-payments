@@ -326,3 +326,15 @@ msgstr "Ödemeyi şimdi kontrol et"
 
 msgid "Check payment"
 msgstr "Ödemeyi kontrol et"
+
+msgid "Order marked as released."
+msgstr "Sipariş serbest bırakıldı olarak işaretlendi."
+
+msgid "This plugin cannot yet build or relay the release transaction itself; the two parties currently have to cooperatively sign and broadcast it using their own wallets, with the redeem script below."
+msgstr "Bu eklenti serbest bırakma işlemini henüz kendisi oluşturamıyor veya iletemiyor; şu anda her iki taraf, aşağıdaki kurtarma betiğini kullanarak kendi cüzdanlarıyla işbirliği içinde imzalayıp yayınlamak zorunda."
+
+msgid "Mark this order as released? Only do this once the funds have actually been sent to your own wallet."
+msgstr "Bu sipariş serbest bırakıldı olarak işaretlensin mi? Bunu yalnızca fonlar gerçekten kendi cüzdanınıza gönderildiyse yapın."
+
+msgid "Mark as released"
+msgstr "Serbest bırakıldı olarak işaretle"

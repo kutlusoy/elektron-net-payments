@@ -139,4 +139,25 @@ if ($isBuyer && Params::getParam('confirm_receipt') === '1') {
     }
 }
 
+// Seller-only: records that the cooperative release has actually happened
+// (both parties signed and broadcast a spend from the escrow address to the
+// seller's own wallet, outside this plugin -- see ReleasePsbtBuilderInterface's
+// docblock in ../shared: there is no reference implementation yet, so this
+// plugin cannot build or relay that PSBT itself today). This is a pure
+// database status change with no on-chain effect of its own; it exists
+// because RELEASE_PENDING_SELLER_SIGNATURE otherwise has no way to ever
+// reach RELEASED at all, even after a real, successful release.
+if (!$isBuyer && Params::getParam('mark_released') === '1') {
+    osc_csrf_check();
+
+    if (OrderStateMachine::canTransition($order['status'], OrderStatus::RELEASED)) {
+        $orderDao->updateByPrimaryKey(
+            ['status' => OrderStatus::RELEASED, 'dt_mod_date' => date('Y-m-d H:i:s')],
+            $orderId
+        );
+        $order['status'] = OrderStatus::RELEASED;
+        $statusMessage = __('Order marked as released.', ELEKTRON_ESCROW_DOMAIN);
+    }
+}
+
 elektron_escrow_render_order_status($order, $userId, $statusMessage, $errorMessage);

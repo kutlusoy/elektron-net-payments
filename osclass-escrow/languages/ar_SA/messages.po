@@ -326,3 +326,15 @@ msgstr "تحقق من الدفع الآن"
 
 msgid "Check payment"
 msgstr "تحقق من الدفع"
+
+msgid "Order marked as released."
+msgstr "تم وضع علامة على الطلب على أنه تم الإفراج عنه."
+
+msgid "This plugin cannot yet build or relay the release transaction itself; the two parties currently have to cooperatively sign and broadcast it using their own wallets, with the redeem script below."
+msgstr "لا يمكن لهذا المكوّن الإضافي بعد إنشاء أو ترحيل معاملة الإفراج بنفسه؛ يتعين على الطرفين حاليًا توقيعها وبثها بشكل تعاوني باستخدام محفظتيهما الخاصتين، باستخدام نص الاسترداد أدناه."
+
+msgid "Mark this order as released? Only do this once the funds have actually been sent to your own wallet."
+msgstr "هل تريد وضع علامة على هذا الطلب كمُفرج عنه؟ افعل ذلك فقط إذا تم إرسال الأموال بالفعل إلى محفظتك الخاصة."
+
+msgid "Mark as released"
+msgstr "وضع علامة كمُفرج عنه"
