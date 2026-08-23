@@ -33,6 +33,13 @@ final class FallbackChainDataProvider implements ChainDataProviderInterface
         });
     }
 
+    public function getFundingOutputs(string $address): array
+    {
+        return $this->withFallback(function (ChainDataProviderInterface $provider) use ($address) {
+            return $provider->getFundingOutputs($address);
+        });
+    }
+
     public function getConfirmations(string $txid): int
     {
         return $this->withFallback(function (ChainDataProviderInterface $provider) use ($txid) {

@@ -3,6 +3,8 @@
 use ElektronNet\Payments\Core\Escrow\OrderStateMachine;
 use ElektronNet\Payments\Core\Escrow\OrderStatus;
 use ElektronNet\Payments\Core\Escrow\TimeoutPolicy;
+use ElektronNet\Payments\Core\Psbt\PsbtRelay;
+use ElektronNet\Payments\Core\Psbt\PsbtSignatureInspector;
 
 /**
  * Route: elektron-escrow/order?order=<id>
@@ -123,19 +125,77 @@ if ($isBuyer && Params::getParam('confirm_receipt') === '1') {
         // seller funds are coming while the buyer can still reclaim them.
         $errorMessage = elektron_escrow_t('order.confirm_receipt.too_close_to_refund');
     } else {
-        $orderDao->updateByPrimaryKey(
-            ['status' => OrderStatus::RELEASE_PENDING_SELLER_SIGNATURE, 'dt_mod_date' => date('Y-m-d H:i:s')],
-            $orderId
-        );
+        $updateFields = ['status' => OrderStatus::RELEASE_PENDING_SELLER_SIGNATURE, 'dt_mod_date' => date('Y-m-d H:i:s')];
+
+        // Best-effort: building the PSBT needs a live chain-data lookup for
+        // the exact funding outpoint (see includes/psbt.php's docblock for
+        // the cases this can fail on, e.g. a split payment). A failure here
+        // still lets the order move to RELEASE_PENDING_SELLER_SIGNATURE --
+        // the view falls back to the raw redeem script for that rare case
+        // rather than blocking the buyer's "confirm receipt" action on it.
+        try {
+            $relay = elektron_escrow_build_release_psbt($order);
+            $updateFields['psbt_base64'] = $relay->base64();
+            $updateFields['psbt_signature_count'] = $relay->signatureCount();
+        } catch (\Throwable $e) {
+            // Fall through with no PSBT; see this block's own comment above.
+        }
+
+        $orderDao->updateByPrimaryKey($updateFields, $orderId);
         // Reflects the just-applied change locally so the view below
         // renders the new status without a second database round trip.
-        $order['status'] = OrderStatus::RELEASE_PENDING_SELLER_SIGNATURE;
-        // TODO: build the actual release PSBT here once a
-        // ReleasePsbtBuilderInterface implementation exists (see
-        // shared/README.md, "Open items") and store it via PsbtRelay. Until
-        // then the status change is recorded but no PSBT is generated yet,
-        // which the status view below says explicitly.
+        $order = array_merge($order, $updateFields);
         $statusMessage = __('Receipt confirmed.', ELEKTRON_ESCROW_DOMAIN);
+    }
+}
+
+// Buyer-only: the buyer is the first of the two parties to sign the release
+// PSBT (see OrderStatus::RELEASE_PENDING_SELLER_SIGNATURE's own docblock --
+// by the time it is "pending the seller's signature", the buyer's is
+// already supposed to be on it), done entirely in the buyer's own wallet
+// (see the README, "Trustless by design": the platform never signs). This
+// only relays what the buyer's wallet already produced; PsbtSignatureInspector
+// is what actually checks it did not change anything besides adding a
+// signature under the buyer's own pubkey before this plugin ever shows it to
+// the seller.
+if ($isBuyer && Params::getParam('submit_signed_psbt') === '1') {
+    osc_csrf_check();
+
+    $submitted = trim((string) Params::getParam('signed_psbt'));
+
+    if ($order['status'] !== OrderStatus::RELEASE_PENDING_SELLER_SIGNATURE
+        || $order['psbt_base64'] === null
+        || (int) $order['psbt_signature_count'] > 0
+    ) {
+        // Stale page, double submit, or already past this step: silent
+        // no-op, matching this page's existing convention for that case
+        // (see the 'confirm_receipt' block above).
+    } elseif ($submitted === '') {
+        $errorMessage = __('Please paste your signed PSBT.', ELEKTRON_ESCROW_DOMAIN);
+    } else {
+        $signatureCount = null;
+        try {
+            $signatureCount = PsbtSignatureInspector::countSignaturesForInput0($submitted, $order['psbt_base64']);
+        } catch (\Throwable $e) {
+            // Falls through to the generic error message below; the
+            // specific reason (wrong tx, tampered field, wrong pubkey) is
+            // not shown to the user -- none of them are actionable
+            // information for a buyer pasting from their own wallet, only
+            // "try again with the PSBT shown above" is.
+        }
+
+        if ($signatureCount === null || $signatureCount < 1) {
+            $errorMessage = __('This does not look like a signed version of the release PSBT shown below. Please sign the exact PSBT shown here in your own wallet and paste the result back.', ELEKTRON_ESCROW_DOMAIN);
+        } else {
+            $relay = new PsbtRelay($submitted, $signatureCount);
+            $orderDao->updateByPrimaryKey(
+                ['psbt_base64' => $relay->base64(), 'psbt_signature_count' => $relay->signatureCount(), 'dt_mod_date' => date('Y-m-d H:i:s')],
+                $orderId
+            );
+            $order['psbt_base64'] = $relay->base64();
+            $order['psbt_signature_count'] = $relay->signatureCount();
+            $statusMessage = __('Your signature was added. The seller can now sign and broadcast the release from their own wallet.', ELEKTRON_ESCROW_DOMAIN);
+        }
     }
 }
 

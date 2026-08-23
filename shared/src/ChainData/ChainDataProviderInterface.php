@@ -15,6 +15,17 @@ interface ChainDataProviderInterface
      */
     public function getAddressTransactions(string $address): array;
 
+    /**
+     * Every specific output across every known transaction that pays
+     * $address directly. Needed to build a release/refund PSBT's input,
+     * which references one exact (txid, vout) outpoint -- unlike
+     * getAddressTransactions(), which only totals value per transaction and
+     * does not identify which output(s) it came from.
+     *
+     * @return FundingOutput[]
+     */
+    public function getFundingOutputs(string $address): array;
+
     /** Current confirmation count for a given transaction, 0 if unconfirmed/unknown. */
     public function getConfirmations(string $txid): int;
 

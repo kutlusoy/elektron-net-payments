@@ -422,3 +422,75 @@ msgstr "You will be notified once the buyer confirms receipt."
 
 msgid "Starts with ypub or zpub instead of xpub? That is fine, paste it as shown -- some wallets use a different prefix to hint at the address type, but it is accepted here either way."
 msgstr "Starts with ypub or zpub instead of xpub? That is fine, paste it as shown -- some wallets use a different prefix to hint at the address type, but it is accepted here either way."
+
+msgid "Shipping details"
+msgstr "Shipping details"
+
+msgid "Only shared with the seller once your payment is confirmed, so they can send the item to you."
+msgstr "Only shared with the seller once your payment is confirmed, so they can send the item to you."
+
+msgid "Full name"
+msgstr "Full name"
+
+msgid "Shipping address"
+msgstr "Shipping address"
+
+msgid "Street, postal code, city, country"
+msgstr "Street, postal code, city, country"
+
+msgid "Phone number"
+msgstr "Phone number"
+
+msgid "Contact email for this order"
+msgstr "Contact email for this order"
+
+msgid "Please fill in all shipping details."
+msgstr "Please fill in all shipping details."
+
+msgid "Please enter a valid contact email."
+msgstr "Please enter a valid contact email."
+
+msgid "Ship to:"
+msgstr "Ship to:"
+
+msgid "This release could not be prepared automatically (this is rare -- it can happen if the payment arrived in more than one transaction). The two parties will have to cooperatively sign and broadcast a spend from the escrow address using their own wallets, with the script below."
+msgstr "This release could not be prepared automatically (this is rare -- it can happen if the payment arrived in more than one transaction). The two parties will have to cooperatively sign and broadcast a spend from the escrow address using their own wallets, with the script below."
+
+msgid "Scan this into your own wallet (or copy the text below) and sign it there. This platform never sees or handles your private key."
+msgstr "Scan this into your own wallet (or copy the text below) and sign it there. This platform never sees or handles your private key."
+
+msgid "Release transaction (unsigned)"
+msgstr "Release transaction (unsigned)"
+
+msgid "Release transaction (unsigned, tap to select, then copy)"
+msgstr "Release transaction (unsigned, tap to select, then copy)"
+
+msgid "Once signed, paste the result from your wallet here"
+msgstr "Once signed, paste the result from your wallet here"
+
+msgid "Submit my signature"
+msgstr "Submit my signature"
+
+msgid "You already signed. Waiting for the seller to sign and broadcast the release from their own wallet."
+msgstr "You already signed. Waiting for the seller to sign and broadcast the release from their own wallet."
+
+msgid "Waiting for the buyer to sign the release first."
+msgstr "Waiting for the buyer to sign the release first."
+
+msgid "Scan this into your own wallet (or copy the text below). It already carries the buyer's signature; your wallet only needs to add yours. Sign and broadcast it there -- this platform never does either for you."
+msgstr "Scan this into your own wallet (or copy the text below). It already carries the buyer's signature; your wallet only needs to add yours. Sign and broadcast it there -- this platform never does either for you."
+
+msgid "Release transaction (buyer signed)"
+msgstr "Release transaction (buyer signed)"
+
+msgid "Release transaction (buyer signed, tap to select, then copy)"
+msgstr "Release transaction (buyer signed, tap to select, then copy)"
+
+msgid "Please paste your signed PSBT."
+msgstr "Please paste your signed PSBT."
+
+msgid "This does not look like a signed version of the release PSBT shown below. Please sign the exact PSBT shown here in your own wallet and paste the result back."
+msgstr "This does not look like a signed version of the release PSBT shown below. Please sign the exact PSBT shown here in your own wallet and paste the result back."
+
+msgid "Your signature was added. The seller can now sign and broadcast the release from their own wallet."
+msgstr "Your signature was added. The seller can now sign and broadcast the release from their own wallet."
