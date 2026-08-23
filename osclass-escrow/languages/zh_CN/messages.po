@@ -311,3 +311,18 @@ msgstr "您的 Elektron Net 担保交易订单 #%d 已取消"
 
 msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
 msgstr "您针对\"%s\"的担保交易订单已取消。未发生任何付款。"
+
+msgid "No new payment detected yet."
+msgstr "尚未检测到新的付款。"
+
+msgid "Payment status updated."
+msgstr "付款状态已更新。"
+
+msgid "Checked for new payments."
+msgstr "已检查新付款。"
+
+msgid "Check payment now"
+msgstr "立即检查付款"
+
+msgid "Check payment"
+msgstr "检查付款"

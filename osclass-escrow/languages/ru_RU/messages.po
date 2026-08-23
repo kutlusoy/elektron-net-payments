@@ -311,3 +311,18 @@ msgstr "Ваш заказ через эскроу Elektron Net #%d был отм
 
 msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
 msgstr "Ваш заказ через эскроу для \"%s\" был отменён. Оплата не производилась."
+
+msgid "No new payment detected yet."
+msgstr "Новый платёж пока не обнаружен."
+
+msgid "Payment status updated."
+msgstr "Статус платежа обновлён."
+
+msgid "Checked for new payments."
+msgstr "Проверка новых платежей выполнена."
+
+msgid "Check payment now"
+msgstr "Проверить платёж сейчас"
+
+msgid "Check payment"
+msgstr "Проверить платёж"

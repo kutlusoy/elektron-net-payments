@@ -311,3 +311,18 @@ msgstr "Je Elektron Net escrow-bestelling #%d is geannuleerd"
 
 msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
 msgstr "Je escrow-bestelling voor \"%s\" is geannuleerd. Er is niet betaald."
+
+msgid "No new payment detected yet."
+msgstr "Nog geen nieuwe betaling gedetecteerd."
+
+msgid "Payment status updated."
+msgstr "Betaalstatus bijgewerkt."
+
+msgid "Checked for new payments."
+msgstr "Gecontroleerd op nieuwe betalingen."
+
+msgid "Check payment now"
+msgstr "Betaling nu controleren"
+
+msgid "Check payment"
+msgstr "Betaling controleren"

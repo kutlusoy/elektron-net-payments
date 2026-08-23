@@ -311,3 +311,18 @@ msgstr "Deine Elektron-Net-Escrow-Bestellung #%d wurde storniert"
 
 msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
 msgstr "Deine Escrow-Bestellung für \"%s\" wurde storniert. Es wurde nicht bezahlt."
+
+msgid "No new payment detected yet."
+msgstr "Noch keine neue Zahlung erkannt."
+
+msgid "Payment status updated."
+msgstr "Zahlungsstatus aktualisiert."
+
+msgid "Checked for new payments."
+msgstr "Auf neue Zahlungen geprüft."
+
+msgid "Check payment now"
+msgstr "Zahlung jetzt prüfen"
+
+msgid "Check payment"
+msgstr "Zahlung prüfen"

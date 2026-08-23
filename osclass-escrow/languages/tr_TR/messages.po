@@ -311,3 +311,18 @@ msgstr "Elektron Net emanet siparişiniz #%d iptal edildi"
 
 msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
 msgstr "\"%s\" için emanet siparişiniz iptal edildi. Herhangi bir ödeme yapılmadı."
+
+msgid "No new payment detected yet."
+msgstr "Henüz yeni bir ödeme algılanmadı."
+
+msgid "Payment status updated."
+msgstr "Ödeme durumu güncellendi."
+
+msgid "Checked for new payments."
+msgstr "Yeni ödemeler kontrol edildi."
+
+msgid "Check payment now"
+msgstr "Ödemeyi şimdi kontrol et"
+
+msgid "Check payment"
+msgstr "Ödemeyi kontrol et"

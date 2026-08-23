@@ -311,3 +311,18 @@ msgstr "Seu pedido de garantia da Elektron Net #%d foi cancelado"
 
 msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
 msgstr "Seu pedido de garantia para \"%s\" foi cancelado. Nenhum pagamento foi feito."
+
+msgid "No new payment detected yet."
+msgstr "Nenhum pagamento novo detectado ainda."
+
+msgid "Payment status updated."
+msgstr "Status do pagamento atualizado."
+
+msgid "Checked for new payments."
+msgstr "Verificação de novos pagamentos concluída."
+
+msgid "Check payment now"
+msgstr "Verificar pagamento agora"
+
+msgid "Check payment"
+msgstr "Verificar pagamento"

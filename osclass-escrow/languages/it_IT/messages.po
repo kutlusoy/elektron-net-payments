@@ -311,3 +311,18 @@ msgstr "Il tuo ordine in deposito a garanzia Elektron Net #%d è stato annullato
 
 msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
 msgstr "Il tuo ordine in deposito a garanzia per \"%s\" è stato annullato. Non è stato effettuato alcun pagamento."
+
+msgid "No new payment detected yet."
+msgstr "Nessun nuovo pagamento rilevato per ora."
+
+msgid "Payment status updated."
+msgstr "Stato del pagamento aggiornato."
+
+msgid "Checked for new payments."
+msgstr "Controllo di nuovi pagamenti effettuato."
+
+msgid "Check payment now"
+msgstr "Controlla il pagamento ora"
+
+msgid "Check payment"
+msgstr "Controlla il pagamento"

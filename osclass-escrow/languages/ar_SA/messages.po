@@ -311,3 +311,18 @@ msgstr "تم إلغاء طلب ضمان Elektron Net الخاص بك رقم #%d"
 
 msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
 msgstr "تم إلغاء طلب الضمان الخاص بك لـ \"%s\". لم يتم إجراء أي دفعة."
+
+msgid "No new payment detected yet."
+msgstr "لم يتم رصد أي دفعة جديدة بعد."
+
+msgid "Payment status updated."
+msgstr "تم تحديث حالة الدفع."
+
+msgid "Checked for new payments."
+msgstr "تم التحقق من الدفعات الجديدة."
+
+msgid "Check payment now"
+msgstr "تحقق من الدفع الآن"
+
+msgid "Check payment"
+msgstr "تحقق من الدفع"

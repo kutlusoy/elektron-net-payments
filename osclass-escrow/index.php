@@ -30,6 +30,7 @@ Author URI: https://elektron-net.org
     require_once __DIR__ . '/includes/notice.php';   // elektron_escrow_render_notice()
     require_once __DIR__ . '/includes/order-status.php'; // elektron_escrow_render_order_status()
     require_once __DIR__ . '/includes/mail.php';     // order created/cancelled email notifications
+    require_once __DIR__ . '/includes/payment-watcher.php'; // elektron_escrow_check_payment()
     require_once __DIR__ . '/includes/hooks.php';    // item widget, routes, cron
 
     // Activation / deactivation. See install.php.

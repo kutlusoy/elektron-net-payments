@@ -311,3 +311,18 @@ msgstr "Votre commande de séquestre Elektron Net #%d a été annulée"
 
 msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
 msgstr "Votre commande de séquestre pour \"%s\" a été annulée. Aucun paiement n'a été effectué."
+
+msgid "No new payment detected yet."
+msgstr "Aucun nouveau paiement détecté pour l'instant."
+
+msgid "Payment status updated."
+msgstr "Statut du paiement mis à jour."
+
+msgid "Checked for new payments."
+msgstr "Vérification des nouveaux paiements effectuée."
+
+msgid "Check payment now"
+msgstr "Vérifier le paiement maintenant"
+
+msgid "Check payment"
+msgstr "Vérifier le paiement"

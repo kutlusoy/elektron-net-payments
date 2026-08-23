@@ -311,3 +311,18 @@ msgstr "Your Elektron Net escrow order #%d was cancelled"
 
 msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
 msgstr "Your escrow order for \"%s\" has been cancelled. No payment was made."
+
+msgid "No new payment detected yet."
+msgstr "No new payment detected yet."
+
+msgid "Payment status updated."
+msgstr "Payment status updated."
+
+msgid "Checked for new payments."
+msgstr "Checked for new payments."
+
+msgid "Check payment now"
+msgstr "Check payment now"
+
+msgid "Check payment"
+msgstr "Check payment"

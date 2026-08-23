@@ -40,6 +40,21 @@ $isBuyer = $userId === (int) $order['fk_i_buyer_id'];
 $statusMessage = null;
 $errorMessage = null;
 
+// Either party can trigger this: it only ever reads the chain and, if
+// justified, advances this order's own status -- there is nothing
+// buyer/seller-specific about asking "has this been paid yet?". See
+// elektron_escrow_check_payment()'s docblock (includes/payment-watcher.php)
+// for why this manual action exists alongside the 'cron_minutely' watcher.
+if (Params::getParam('check_payment') === '1') {
+    osc_csrf_check();
+
+    $statusBefore = $order['status'];
+    $order = elektron_escrow_check_payment($order);
+    $statusMessage = $order['status'] === $statusBefore
+        ? __('No new payment detected yet.', ELEKTRON_ESCROW_DOMAIN)
+        : __('Payment status updated.', ELEKTRON_ESCROW_DOMAIN);
+}
+
 // Buyer-only, and only while still awaiting_payment: cancelling deletes the
 // order outright rather than moving it to some new "cancelled" status (see
 // EscrowOrderDAO::cancelByBuyer()'s docblock), so there is nothing left to

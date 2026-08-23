@@ -67,7 +67,7 @@ elektron_escrow_table_style();
         // prefill both from one scan. Scheme confirmed against the actual
         // Elektron Net wallet fork's own source, not invented here -- see
         // elektron_escrow_payment_uri()'s docblock (includes/formatting.php).
-        $paymentUri = elektron_escrow_payment_uri($order['s_address'], $amountElek);
+        $paymentUri = elektron_escrow_payment_uri($order['s_address'], $amountElek, (int) $order['pk_i_id']);
         $qrCode = new QrCode($paymentUri);
         $qrPngBase64 = base64_encode((new PngWriter())->write($qrCode)->getString());
         ?>
@@ -79,6 +79,14 @@ elektron_escrow_table_style();
             <label for="elektron-escrow-uri-<?php echo (int) $order['pk_i_id']; ?>"><?php _e('Payment URI (tap to select, then copy)', ELEKTRON_ESCROW_DOMAIN); ?></label>
             <input type="text" id="elektron-escrow-uri-<?php echo (int) $order['pk_i_id']; ?>" readonly="readonly" value="<?php echo osc_esc_html($paymentUri); ?>" onclick="this.select();" />
         </p>
+    <?php } ?>
+
+    <?php if ($showPaymentDetails) { ?>
+        <form method="post" action="<?php echo osc_route_url('elektron_escrow_order_status', ['order' => $order['pk_i_id']]); ?>">
+            <?php echo osc_csrf_token_form(); ?>
+            <input type="hidden" name="check_payment" value="1" />
+            <input type="submit" class="btn btn-default" value="<?php echo osc_esc_html(__('Check payment now', ELEKTRON_ESCROW_DOMAIN)); ?>" />
+        </form>
     <?php } ?>
 
     <?php if ($order['status'] === OrderStatus::AWAITING_PAYMENT) { ?>
