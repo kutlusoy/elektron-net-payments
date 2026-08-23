@@ -1,7 +1,6 @@
 <?php if (!defined('ABS_PATH')) exit('ABS_PATH is not loaded. Direct access is not allowed.');
 
 use ElektronNet\Payments\Core\ChainData\FeeRateResolver;
-use ElektronNet\Payments\Core\ChainData\FundingOutput;
 use ElektronNet\Payments\Core\Escrow\EscrowAddress;
 use ElektronNet\Payments\Core\Escrow\XpubChildKeyDeriver;
 use ElektronNet\Payments\Core\Psbt\Bip174PsbtBuilder;
@@ -24,13 +23,14 @@ use ElektronNet\Payments\Core\Psbt\PsbtRelay;
  * @throws RuntimeException if either party's xpub is gone (should not
  *     happen: EscrowOrderDAO::hasActiveOrderForUser() blocks changing a
  *     connected xpub while an order still needs it), or if the escrow
- *     address's on-chain funding does not resolve to exactly one output
- *     covering the order amount (e.g. the buyer paid in more than one
- *     transaction -- see the README, "Open Questions", "no partial-payment
- *     handling"). Either case leaves the order in
- *     RELEASE_PENDING_SELLER_SIGNATURE with no PSBT yet; the order-status
- *     view falls back to showing the raw redeem script for the two parties
- *     to cooperate manually outside the platform in that rare case.
+ *     address has no confirmed, unspent funding at all (should not happen
+ *     for an order already past `funded`). Every confirmed UTXO at the
+ *     address is swept together, regardless of how many there are or how
+ *     their total compares to `amount_lep` -- see
+ *     Bip174PsbtBuilder's docblock for why (nothing else could ever
+ *     legitimately be sent to a one-time address, so all of it belongs to
+ *     this order, including e.g. a second payment from a buyer who resumed
+ *     an old, never-completed order at a since-changed price).
  */
 function elektron_escrow_build_release_psbt(array $order): PsbtRelay
 {
@@ -44,19 +44,12 @@ function elektron_escrow_build_release_psbt(array $order): PsbtRelay
     }
 
     $chainData = elektron_escrow_chain_data();
-    $fundingOutputs = array_values(array_filter(
-        $chainData->getFundingOutputs($order['s_address']),
-        function (FundingOutput $output) use ($order) {
-            return $output->amountLep() >= (int) $order['amount_lep'];
-        }
-    ));
-    if (count($fundingOutputs) !== 1) {
+    $fundingOutputs = $chainData->getFundingOutputs($order['s_address']);
+    if (count($fundingOutputs) < 1) {
         throw new RuntimeException(
-            "elektron_escrow_build_release_psbt(): order {$order['pk_i_id']} does not have exactly one funding "
-            . 'output covering its amount (found ' . count($fundingOutputs) . '); cannot build the release PSBT automatically.'
+            "elektron_escrow_build_release_psbt(): order {$order['pk_i_id']} has no confirmed, unspent funding at its escrow address; cannot build the release PSBT."
         );
     }
-    $fundingOutput = $fundingOutputs[0];
 
     $feeRateLepPerVByte = FeeRateResolver::resolve($chainData, $config->feeRateLepPerVByte());
 
@@ -75,9 +68,7 @@ function elektron_escrow_build_release_psbt(array $order): PsbtRelay
 
     $psbtBase64 = (new Bip174PsbtBuilder())->buildReleasePsbt(
         $escrowAddress,
-        $fundingOutput->txid(),
-        $fundingOutput->vout(),
-        $fundingOutput->amountLep(),
+        $fundingOutputs,
         new PsbtKeyOrigin($order['buyer_pubkey'], $buyerXpub, (int) $order['buyer_pubkey_index']),
         new PsbtKeyOrigin($order['seller_pubkey'], $sellerXpub, (int) $order['seller_pubkey_index']),
         $order['seller_payout_address'],

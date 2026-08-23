@@ -3,6 +3,7 @@
 namespace ElektronNet\Payments\Core\Psbt;
 
 use BitWasp\Bitcoin\Network\Network;
+use ElektronNet\Payments\Core\ChainData\FundingOutput;
 use ElektronNet\Payments\Core\Escrow\EscrowAddress;
 
 /**
@@ -20,9 +21,12 @@ use ElektronNet\Payments\Core\Escrow\EscrowAddress;
 interface ReleasePsbtBuilderInterface
 {
     /**
-     * @param string $fundingTxid txid of the confirmed payment into the escrow address
-     * @param int $fundingVout output index paying the escrow address
-     * @param int $fundingAmountLep amount held by the escrow UTXO, in lep
+     * @param FundingOutput[] $fundingOutputs every confirmed, unspent output
+     *     at the escrow address -- usually exactly one, but see
+     *     ChainData\ChainDataProviderInterface::getFundingOutputs()'s
+     *     docblock for why it can legitimately be more; all of them are
+     *     swept together into a single output, since nothing else could
+     *     ever legitimately be sent to a one-time address
      * @param PsbtKeyOrigin $buyerKey buyer's half of the 2-of-2 script
      * @param PsbtKeyOrigin $sellerKey seller's half of the 2-of-2 script
      * @param string $sellerPayoutAddress payout address chosen by the seller's wallet
@@ -37,9 +41,7 @@ interface ReleasePsbtBuilderInterface
      */
     public function buildReleasePsbt(
         EscrowAddress $escrowAddress,
-        string $fundingTxid,
-        int $fundingVout,
-        int $fundingAmountLep,
+        array $fundingOutputs,
         PsbtKeyOrigin $buyerKey,
         PsbtKeyOrigin $sellerKey,
         string $sellerPayoutAddress,
