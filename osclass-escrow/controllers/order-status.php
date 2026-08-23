@@ -42,6 +42,19 @@ $isBuyer = $userId === (int) $order['fk_i_buyer_id'];
 $statusMessage = null;
 $errorMessage = null;
 
+// Either party, GET only, no state change: downloads a ready-to-run
+// Electrum console script with this order's *current* PSBT already
+// filled in, so the only thing left to do is paste it into Electrum's own
+// Tools > Console and run it -- see tools/console-sign-release-psbt.py's
+// docblock for why this exists at all (a standard Electrum wallet's own
+// Sign button refuses, by design, to touch a foreign multisig input; the
+// Elektron Net node wallet does not have this problem and needs no
+// workaround, see the README).
+if (Params::getParam('download_electrum_script') === '1' && $order['psbt_base64'] !== null) {
+    elektron_escrow_download_electrum_script($order['psbt_base64'], $orderId);
+    exit;
+}
+
 // Either party can trigger this: it only ever reads the chain and, if
 // justified, advances this order's own status -- there is nothing
 // buyer/seller-specific about asking "has this been paid yet?". See

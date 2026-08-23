@@ -503,3 +503,9 @@ msgstr "The release transaction was prepared. Please continue below."
 
 msgid "Still could not prepare the release transaction automatically. Please try again later, or cooperate manually using the redeem script below."
 msgstr "Still could not prepare the release transaction automatically. Please try again later, or cooperate manually using the redeem script below."
+
+msgid "Standard Electrum wallets refuse to sign this directly (a deliberate Electrum safety limitation, not a bug here). If your \"Sign\" button does nothing, download a ready-to-run script for Electrum's own Console instead."
+msgstr "Standard Electrum wallets refuse to sign this directly (a deliberate Electrum safety limitation, not a bug here). If your \"Sign\" button does nothing, download a ready-to-run script for Electrum's own Console instead."
+
+msgid "Download Electrum console script"
+msgstr "Download Electrum console script"

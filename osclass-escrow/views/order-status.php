@@ -187,6 +187,8 @@ elektron_escrow_table_style();
                 <p><label for="elektron-escrow-psbt-unsigned-<?php echo (int) $order['pk_i_id']; ?>"><?php _e('Release transaction (unsigned, tap to select, then copy)', ELEKTRON_ESCROW_DOMAIN); ?></label></p>
                 <textarea id="elektron-escrow-psbt-unsigned-<?php echo (int) $order['pk_i_id']; ?>" class="elektron-escrow-code" readonly="readonly" rows="4" style="width: 100%; box-sizing: border-box;" onclick="this.select();"><?php echo osc_esc_html($order['psbt_base64']); ?></textarea>
 
+                <p class="help-block"><?php _e('Standard Electrum wallets refuse to sign this directly (a deliberate Electrum safety limitation, not a bug here). If your "Sign" button does nothing, download a ready-to-run script for Electrum\'s own Console instead.', ELEKTRON_ESCROW_DOMAIN); ?> <a href="<?php echo osc_esc_html(osc_route_url('elektron_escrow_order_status', ['order' => $order['pk_i_id'], 'download_electrum_script' => 1])); ?>"><?php _e('Download Electrum console script', ELEKTRON_ESCROW_DOMAIN); ?></a></p>
+
                 <form method="post" action="<?php echo osc_route_url('elektron_escrow_order_status', ['order' => $order['pk_i_id']]); ?>">
                     <?php echo osc_csrf_token_form(); ?>
                     <input type="hidden" name="submit_signed_psbt" value="1" />
@@ -211,6 +213,8 @@ elektron_escrow_table_style();
 
                 <p><label for="elektron-escrow-psbt-partial-<?php echo (int) $order['pk_i_id']; ?>"><?php _e('Release transaction (buyer signed, tap to select, then copy)', ELEKTRON_ESCROW_DOMAIN); ?></label></p>
                 <textarea id="elektron-escrow-psbt-partial-<?php echo (int) $order['pk_i_id']; ?>" class="elektron-escrow-code" readonly="readonly" rows="4" style="width: 100%; box-sizing: border-box;" onclick="this.select();"><?php echo osc_esc_html($order['psbt_base64']); ?></textarea>
+
+                <p class="help-block"><?php _e('Standard Electrum wallets refuse to sign this directly (a deliberate Electrum safety limitation, not a bug here). If your "Sign" button does nothing, download a ready-to-run script for Electrum\'s own Console instead.', ELEKTRON_ESCROW_DOMAIN); ?> <a href="<?php echo osc_esc_html(osc_route_url('elektron_escrow_order_status', ['order' => $order['pk_i_id'], 'download_electrum_script' => 1])); ?>"><?php _e('Download Electrum console script', ELEKTRON_ESCROW_DOMAIN); ?></a></p>
             <?php } ?>
         <?php } ?>
 

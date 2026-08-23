@@ -79,3 +79,28 @@ function elektron_escrow_build_release_psbt(array $order): PsbtRelay
 
     return new PsbtRelay($psbtBase64, 0);
 }
+
+/**
+ * Serves tools/console-sign-release-psbt.py with $psbtBase64 already
+ * filled in, so a party stuck on a standard Electrum wallet's refusal to
+ * sign a foreign multisig input (see that script's own docblock) only has
+ * to add their wallet password, if any, then run it in Electrum's own
+ * Tools > Console -- no manual copy-pasting of the PSBT text required.
+ * Only ever called for a party who already passed this page's own
+ * buyer/seller access check; this itself performs no further
+ * authorization, matching every other read-only action on this page.
+ *
+ * Never used for the Elektron Net node wallet: that one signs and
+ * broadcasts these PSBTs directly through its own normal "Sign"/"Broadcast"
+ * actions, with no workaround needed (verified for real -- see the README).
+ */
+function elektron_escrow_download_electrum_script(string $psbtBase64, int $orderId): void
+{
+    $template = file_get_contents(__DIR__ . '/../tools/console-sign-release-psbt.py');
+    $script = str_replace('PASTE THE PSBT TEXT FROM THE ORDER PAGE HERE', $psbtBase64, $template);
+
+    header('Content-Type: text/x-python; charset=utf-8');
+    header('Content-Disposition: attachment; filename="elektron-escrow-order-' . $orderId . '-sign.py"');
+    header('Content-Length: ' . strlen($script));
+    echo $script;
+}
