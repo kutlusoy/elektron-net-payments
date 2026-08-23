@@ -50,16 +50,23 @@ $showPaymentDetails = $order['status'] === OrderStatus::AWAITING_PAYMENT || $ord
 
     <?php if ($showPaymentDetails) { ?>
         <?php
-        // Encodes the bare address, not a payment URI: no BIP21-style URI
-        // scheme for Elektron Net is documented anywhere in this project
-        // yet. Once one exists, encode that instead so wallets can prefill
-        // the amount.
-        $qrCode = new QrCode($order['s_address']);
+        // Encodes the full elek: payment URI (address + amount), not just
+        // the bare address, so a wallet that understands the scheme can
+        // prefill both from one scan. Scheme confirmed against the actual
+        // Elektron Net wallet fork's own source, not invented here -- see
+        // elektron_escrow_payment_uri()'s docblock (includes/formatting.php).
+        $paymentUri = elektron_escrow_payment_uri($order['s_address'], $amountElek);
+        $qrCode = new QrCode($paymentUri);
         $qrPngBase64 = base64_encode((new PngWriter())->write($qrCode)->getString());
         ?>
-        <img src="data:image/png;base64,<?php echo $qrPngBase64; ?>" alt="<?php echo osc_esc_html($order['s_address']); ?>" />
+        <img src="data:image/png;base64,<?php echo $qrPngBase64; ?>" alt="<?php echo osc_esc_html($paymentUri); ?>" />
 
         <p class="elektron-escrow-address"><code><?php echo osc_esc_html($order['s_address']); ?></code></p>
+
+        <p class="elektron-escrow-uri">
+            <label for="elektron-escrow-uri-<?php echo (int) $order['pk_i_id']; ?>"><?php _e('Payment URI (tap to select, then copy)', ELEKTRON_ESCROW_DOMAIN); ?></label>
+            <input type="text" id="elektron-escrow-uri-<?php echo (int) $order['pk_i_id']; ?>" readonly="readonly" value="<?php echo osc_esc_html($paymentUri); ?>" onclick="this.select();" />
+        </p>
     <?php } ?>
 
     <?php if ($order['status'] === OrderStatus::AWAITING_PAYMENT) { ?>

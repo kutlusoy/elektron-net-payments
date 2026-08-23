@@ -224,3 +224,39 @@ msgstr "Zwrócone"
 
 msgid "Claimed by seller"
 msgstr "Przejęte przez sprzedawcę"
+
+msgid "A listing is only offered escrow if its currency code is one of these. Osclass stores a currency code as exactly 3 letters, so \"ELEK\" itself can never be one; use a 3-letter contraction such as ELE or ELK instead."
+msgstr "Ogłoszenie jest oferowane w escrow tylko wtedy, gdy jego kod waluty jest jednym z poniższych. Osclass zapisuje kod waluty jako dokładnie 3 litery, więc samo \"ELEK\" nigdy nie może nim być; użyj zamiast tego 3-literowego skrótu, np. ELE lub ELK."
+
+msgid "Accepted currency codes (one per line)"
+msgstr "Akceptowane kody walut (jeden na linię)"
+
+msgid "Back to homepage"
+msgstr "Powrót do strony głównej"
+
+msgid "Back to listing"
+msgstr "Powrót do ogłoszenia"
+
+msgid "Connect your wallet"
+msgstr "Połącz portfel"
+
+msgid "Log in"
+msgstr "Zaloguj się"
+
+msgid "Payment URI (tap to select, then copy)"
+msgstr "URI płatności (dotknij, aby zaznaczyć, a następnie skopiuj)"
+
+msgid "Please log in to manage your Elektron Net wallet."
+msgstr "Zaloguj się, aby zarządzać swoim portfelem Elektron Net."
+
+msgid "Please log in to view this order."
+msgstr "Zaloguj się, aby zobaczyć to zamówienie."
+
+msgid "Please log in to view your Elektron orders."
+msgstr "Zaloguj się, aby zobaczyć swoje zamówienia Elektron."
+
+msgid "This listing has no fixed price, so it cannot be bought with escrow."
+msgstr "To ogłoszenie nie ma stałej ceny, więc nie można go kupić przez escrow."
+
+msgid "This listing is not priced in a currency accepted for escrow."
+msgstr "To ogłoszenie nie jest wycenione w walucie akceptowanej dla escrow."

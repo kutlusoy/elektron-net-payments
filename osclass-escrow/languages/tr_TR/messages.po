@@ -224,3 +224,39 @@ msgstr "İade edildi"
 
 msgid "Claimed by seller"
 msgstr "Satıcı tarafından talep edildi"
+
+msgid "A listing is only offered escrow if its currency code is one of these. Osclass stores a currency code as exactly 3 letters, so \"ELEK\" itself can never be one; use a 3-letter contraction such as ELE or ELK instead."
+msgstr "Bir ilan yalnızca para birimi kodu bunlardan biriyse emanet ile sunulur. Osclass bir para birimi kodunu tam olarak 3 harf olarak saklar, bu yüzden \"ELEK\"in kendisi asla bu olamaz; bunun yerine ELE veya ELK gibi 3 harfli bir kısaltma kullanın."
+
+msgid "Accepted currency codes (one per line)"
+msgstr "Kabul edilen para birimi kodları (satır başına bir tane)"
+
+msgid "Back to homepage"
+msgstr "Ana sayfaya dön"
+
+msgid "Back to listing"
+msgstr "İlana dön"
+
+msgid "Connect your wallet"
+msgstr "Cüzdanını bağla"
+
+msgid "Log in"
+msgstr "Giriş yap"
+
+msgid "Payment URI (tap to select, then copy)"
+msgstr "Ödeme URI'si (seçmek için dokun, sonra kopyala)"
+
+msgid "Please log in to manage your Elektron Net wallet."
+msgstr "Elektron Net cüzdanınızı yönetmek için lütfen giriş yapın."
+
+msgid "Please log in to view this order."
+msgstr "Bu siparişi görüntülemek için lütfen giriş yapın."
+
+msgid "Please log in to view your Elektron orders."
+msgstr "Elektron siparişlerinizi görüntülemek için lütfen giriş yapın."
+
+msgid "This listing has no fixed price, so it cannot be bought with escrow."
+msgstr "Bu ilanın sabit bir fiyatı yok, bu yüzden emanet ile satın alınamaz."
+
+msgid "This listing is not priced in a currency accepted for escrow."
+msgstr "Bu ilan, emanet için kabul edilen bir para biriminde fiyatlandırılmamış."

@@ -56,6 +56,32 @@ function elektron_escrow_currency_codes(): array
 }
 
 /**
+ * The item's price in ELEK, or null if Osclass has no numeric price set for
+ * it at all ("price on request" listings leave `i_price` empty; escrow has
+ * no fixed amount to encode into an address in that case).
+ *
+ * Reads `i_price`, not the also-present `f_price` column on `t_item`: a
+ * real installation's own item-submission code
+ * (oc-includes/osclass/controller/item.php) never writes `f_price` at all,
+ * only `i_price` (confirmed by grepping a real checkout for every write
+ * site of either column); `osc_item_price()`/`osc_format_price()` read
+ * `i_price` and divide by 1,000,000 to get the actual price, which is the
+ * scale this function matches. `f_price` is a legacy/unused column that
+ * always reads back empty, which is why an earlier version of this
+ * function (reading `f_price`) always computed an amount of 0 ELEK.
+ *
+ * @param array $item Osclass item row
+ */
+function elektron_escrow_item_price_elek(array $item): ?float
+{
+    if (($item['i_price'] ?? '') === '' || $item['i_price'] === null) {
+        return null;
+    }
+
+    return ((int) $item['i_price']) / 1000000;
+}
+
+/**
  * Chain-data provider built from the same config, with automatic failover
  * across every configured endpoint (see shared/README.md, "ChainData\*").
  */
