@@ -338,3 +338,9 @@ msgstr "هل تريد وضع علامة على هذا الطلب كمُفرج ع
 
 msgid "Mark as released"
 msgstr "وضع علامة كمُفرج عنه"
+
+msgid "Address"
+msgstr "العنوان"
+
+msgid "Redeem script"
+msgstr "نص الاسترداد"

@@ -338,3 +338,9 @@ msgstr "Mark this order as released? Only do this once the funds have actually b
 
 msgid "Mark as released"
 msgstr "Mark as released"
+
+msgid "Address"
+msgstr "Address"
+
+msgid "Redeem script"
+msgstr "Redeem script"

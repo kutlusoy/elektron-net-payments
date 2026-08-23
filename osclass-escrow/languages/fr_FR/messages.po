@@ -338,3 +338,9 @@ msgstr "Marquer cette commande comme libérée ? Ne le faites que si les fonds o
 
 msgid "Mark as released"
 msgstr "Marquer comme libérée"
+
+msgid "Address"
+msgstr "Adresse"
+
+msgid "Redeem script"
+msgstr "Script de rachat"

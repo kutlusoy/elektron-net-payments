@@ -73,12 +73,11 @@ elektron_escrow_table_style();
         ?>
         <img src="data:image/png;base64,<?php echo $qrPngBase64; ?>" alt="<?php echo osc_esc_html($paymentUri); ?>" />
 
-        <p class="elektron-escrow-address"><code><?php echo osc_esc_html($order['s_address']); ?></code></p>
+        <p><?php _e('Address', ELEKTRON_ESCROW_DOMAIN); ?></p>
+        <code class="elektron-escrow-code"><?php echo osc_esc_html($order['s_address']); ?></code>
 
-        <p class="elektron-escrow-uri">
-            <label for="elektron-escrow-uri-<?php echo (int) $order['pk_i_id']; ?>"><?php _e('Payment URI (tap to select, then copy)', ELEKTRON_ESCROW_DOMAIN); ?></label>
-            <input type="text" id="elektron-escrow-uri-<?php echo (int) $order['pk_i_id']; ?>" readonly="readonly" value="<?php echo osc_esc_html($paymentUri); ?>" onclick="this.select();" />
-        </p>
+        <p><label for="elektron-escrow-uri-<?php echo (int) $order['pk_i_id']; ?>"><?php _e('Payment URI (tap to select, then copy)', ELEKTRON_ESCROW_DOMAIN); ?></label></p>
+        <input type="text" id="elektron-escrow-uri-<?php echo (int) $order['pk_i_id']; ?>" class="elektron-escrow-code" readonly="readonly" value="<?php echo osc_esc_html($paymentUri); ?>" onclick="this.select();" style="width: 100%; box-sizing: border-box; border: none;" />
     <?php } ?>
 
     <?php if ($showPaymentDetails) { ?>
@@ -136,7 +135,8 @@ elektron_escrow_table_style();
         <p><?php echo osc_esc_html(elektron_escrow_t('order.release_pending_seller_signature')); ?></p>
         <p class="text-muted"><?php _e('This plugin cannot yet build or relay the release transaction itself; the two parties currently have to cooperatively sign and broadcast it using their own wallets, with the redeem script below.', ELEKTRON_ESCROW_DOMAIN); ?></p>
 
-        <p class="elektron-escrow-address"><code><?php echo osc_esc_html($order['redeem_script_hex']); ?></code></p>
+        <p><?php _e('Redeem script', ELEKTRON_ESCROW_DOMAIN); ?></p>
+        <code class="elektron-escrow-code"><?php echo osc_esc_html($order['redeem_script_hex']); ?></code>
 
         <?php if (!$isBuyer) { ?>
             <form method="post" action="<?php echo osc_route_url('elektron_escrow_order_status', ['order' => $order['pk_i_id']]); ?>" onsubmit="return confirm('<?php echo osc_esc_js(__('Mark this order as released? Only do this once the funds have actually been sent to your own wallet.', ELEKTRON_ESCROW_DOMAIN)); ?>');">

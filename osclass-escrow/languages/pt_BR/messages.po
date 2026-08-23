@@ -338,3 +338,9 @@ msgstr "Marcar este pedido como liberado? Faça isso somente se os fundos já ti
 
 msgid "Mark as released"
 msgstr "Marcar como liberado"
+
+msgid "Address"
+msgstr "Endereço"
+
+msgid "Redeem script"
+msgstr "Script de resgate"
