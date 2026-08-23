@@ -401,3 +401,21 @@ msgstr "This is a private extended key (xprv), not a public one (xpub). Never pa
 
 msgid "You have an active escrow order that still needs a key derived from your currently connected xpub. It must reach a final state (released, refunded, or claimed) before you can change your xpub."
 msgstr "You have an active escrow order that still needs a key derived from your currently connected xpub. It must reach a final state (released, refunded, or claimed) before you can change your xpub."
+
+msgid "Your payment of %s ELEK for \"%s\" is confirmed."
+msgstr "Your payment of %s ELEK for \"%s\" is confirmed."
+
+msgid "Please confirm receipt on the order page once the item arrives."
+msgstr "Please confirm receipt on the order page once the item arrives."
+
+msgid "Payment confirmed for your Elektron Net escrow order #%d"
+msgstr "Payment confirmed for your Elektron Net escrow order #%d"
+
+msgid "The buyer's payment of %s ELEK for \"%s\" is confirmed."
+msgstr "The buyer's payment of %s ELEK for \"%s\" is confirmed."
+
+msgid "If this listing is now sold, remember to deactivate it yourself -- this is not done automatically."
+msgstr "If this listing is now sold, remember to deactivate it yourself -- this is not done automatically."
+
+msgid "You will be notified once the buyer confirms receipt."
+msgstr "You will be notified once the buyer confirms receipt."
