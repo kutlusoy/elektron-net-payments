@@ -30,6 +30,27 @@ private key is derived and used entirely inside this already-running,
 already-unlocked Electrum process; nothing here reads, writes, or
 transmits it anywhere.
 
+There is a second wrinkle this script also has to work around: a
+PartialTxInput's `pubkeys` property (which every signing/counting path
+reads) is empty unless its `script_descriptor` has been set --
+electrum/transaction.py:
+
+    @property
+    def pubkeys(self) -> Set[bytes]:
+        if desc := self.script_descriptor:
+            return desc.get_all_pubkeys()
+        return set()
+
+`script_descriptor` is never reconstructed from a PSBT's raw witness
+script bytes automatically; every place that sets it (wallet.py's
+add_input_info(), commands.py's signtransaction_with_privkey()) only does
+so for a script the wallet already recognizes as one of its own. For a
+freshly-loaded, foreign escrow PSBT it is simply never set, which silently
+makes every counting/signing path see zero required signatures. This
+script builds that descriptor itself -- straight from the two pubkeys
+already embedded in the PSBT's own BIP32 derivation entries, so nothing
+needs to be typed in -- and assigns it before signing.
+
 HOW TO USE
 1. Open this file in a plain text editor.
 2. Paste the PSBT text from the order page (the unsigned one if you are
@@ -51,10 +72,26 @@ HOW TO USE
    transaction). This tool never broadcasts anything on its own.
 """
 
+from electrum.descriptor import PubkeyProvider, MultisigDescriptor, WSHDescriptor
+
 PSBT_TEXT = "PASTE THE PSBT TEXT FROM THE ORDER PAGE HERE"
 WALLET_PASSWORD = None  # replace with 'your-password' (in quotes) if your wallet has one
 
 tx = electrum.transaction.tx_from_any(PSBT_TEXT)
+
+# See this file's docblock: without this, every input looks like it needs
+# zero signatures, because script_descriptor is never set for a foreign
+# PSBT automatically. The two pubkeys come straight from the PSBT's own
+# embedded BIP32_DERIVATION entries, in whatever order they happen to be
+# in -- order does not matter here (unlike in the real escrow script
+# itself) since the actual signing script comes from the PSBT's own
+# witness_script field, already correctly set, which this does not
+# overwrite.
+for txin in tx.inputs():
+    if txin.script_descriptor is None and txin.bip32_paths:
+        providers = [PubkeyProvider.parse(pk.hex()) for pk in txin.bip32_paths.keys()]
+        txin.script_descriptor = WSHDescriptor(MultisigDescriptor(providers, thresh=2, is_sorted=False))
+
 before_have, needed = tx.signature_count()
 
 for ks in wallet.get_keystores():
