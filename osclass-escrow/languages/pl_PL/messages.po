@@ -311,3 +311,30 @@ msgstr "Twoje zamówienie w depozycie escrow Elektron Net #%d zostało anulowane
 
 msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
 msgstr "Twoje zamówienie escrow dla \"%s\" zostało anulowane. Nie dokonano żadnej płatności."
+
+msgid "No new payment detected yet."
+msgstr "Nie wykryto jeszcze nowej płatności."
+
+msgid "Payment status updated."
+msgstr "Status płatności zaktualizowany."
+
+msgid "Checked for new payments."
+msgstr "Sprawdzono nowe płatności."
+
+msgid "Check payment now"
+msgstr "Sprawdź płatność teraz"
+
+msgid "Check payment"
+msgstr "Sprawdź płatność"
+
+msgid "Order marked as released."
+msgstr "Zamówienie oznaczone jako zwolnione."
+
+msgid "This plugin cannot yet build or relay the release transaction itself; the two parties currently have to cooperatively sign and broadcast it using their own wallets, with the redeem script below."
+msgstr "Ta wtyczka nie potrafi jeszcze samodzielnie zbudować ani przekazać transakcji zwolnienia; obie strony muszą obecnie wspólnie ją podpisać i nadać za pomocą własnych portfeli, korzystając z poniższego skryptu odkupu."
+
+msgid "Mark this order as released? Only do this once the funds have actually been sent to your own wallet."
+msgstr "Oznaczyć to zamówienie jako zwolnione? Zrób to tylko wtedy, gdy środki rzeczywiście zostały już wysłane na Twój własny portfel."
+
+msgid "Mark as released"
+msgstr "Oznacz jako zwolnione"

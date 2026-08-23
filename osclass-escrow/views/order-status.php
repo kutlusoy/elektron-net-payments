@@ -67,7 +67,7 @@ elektron_escrow_table_style();
         // prefill both from one scan. Scheme confirmed against the actual
         // Elektron Net wallet fork's own source, not invented here -- see
         // elektron_escrow_payment_uri()'s docblock (includes/formatting.php).
-        $paymentUri = elektron_escrow_payment_uri($order['s_address'], $amountElek);
+        $paymentUri = elektron_escrow_payment_uri($order['s_address'], $amountElek, (int) $order['pk_i_id']);
         $qrCode = new QrCode($paymentUri);
         $qrPngBase64 = base64_encode((new PngWriter())->write($qrCode)->getString());
         ?>
@@ -79,6 +79,14 @@ elektron_escrow_table_style();
             <label for="elektron-escrow-uri-<?php echo (int) $order['pk_i_id']; ?>"><?php _e('Payment URI (tap to select, then copy)', ELEKTRON_ESCROW_DOMAIN); ?></label>
             <input type="text" id="elektron-escrow-uri-<?php echo (int) $order['pk_i_id']; ?>" readonly="readonly" value="<?php echo osc_esc_html($paymentUri); ?>" onclick="this.select();" />
         </p>
+    <?php } ?>
+
+    <?php if ($showPaymentDetails) { ?>
+        <form method="post" action="<?php echo osc_route_url('elektron_escrow_order_status', ['order' => $order['pk_i_id']]); ?>">
+            <?php echo osc_csrf_token_form(); ?>
+            <input type="hidden" name="check_payment" value="1" />
+            <input type="submit" class="btn btn-default" value="<?php echo osc_esc_html(__('Check payment now', ELEKTRON_ESCROW_DOMAIN)); ?>" />
+        </form>
     <?php } ?>
 
     <?php if ($order['status'] === OrderStatus::AWAITING_PAYMENT) { ?>
@@ -126,7 +134,17 @@ elektron_escrow_table_style();
 
     <?php } elseif ($order['status'] === OrderStatus::RELEASE_PENDING_SELLER_SIGNATURE) { ?>
         <p><?php echo osc_esc_html(elektron_escrow_t('order.release_pending_seller_signature')); ?></p>
-        <p class="text-muted"><?php _e('Release PSBT construction is not implemented yet in this draft; nothing has actually moved on chain.', ELEKTRON_ESCROW_DOMAIN); ?></p>
+        <p class="text-muted"><?php _e('This plugin cannot yet build or relay the release transaction itself; the two parties currently have to cooperatively sign and broadcast it using their own wallets, with the redeem script below.', ELEKTRON_ESCROW_DOMAIN); ?></p>
+
+        <p class="elektron-escrow-address"><code><?php echo osc_esc_html($order['redeem_script_hex']); ?></code></p>
+
+        <?php if (!$isBuyer) { ?>
+            <form method="post" action="<?php echo osc_route_url('elektron_escrow_order_status', ['order' => $order['pk_i_id']]); ?>" onsubmit="return confirm('<?php echo osc_esc_js(__('Mark this order as released? Only do this once the funds have actually been sent to your own wallet.', ELEKTRON_ESCROW_DOMAIN)); ?>');">
+                <?php echo osc_csrf_token_form(); ?>
+                <input type="hidden" name="mark_released" value="1" />
+                <input type="submit" class="btn btn-primary" value="<?php echo osc_esc_html(__('Mark as released', ELEKTRON_ESCROW_DOMAIN)); ?>" />
+            </form>
+        <?php } ?>
 
     <?php } else { ?>
         <p><?php echo osc_esc_html(elektron_escrow_t('order.' . $order['status'])); ?></p>

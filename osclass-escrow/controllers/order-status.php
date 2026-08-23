@@ -40,6 +40,21 @@ $isBuyer = $userId === (int) $order['fk_i_buyer_id'];
 $statusMessage = null;
 $errorMessage = null;
 
+// Either party can trigger this: it only ever reads the chain and, if
+// justified, advances this order's own status -- there is nothing
+// buyer/seller-specific about asking "has this been paid yet?". See
+// elektron_escrow_check_payment()'s docblock (includes/payment-watcher.php)
+// for why this manual action exists alongside the 'cron_minutely' watcher.
+if (Params::getParam('check_payment') === '1') {
+    osc_csrf_check();
+
+    $statusBefore = $order['status'];
+    $order = elektron_escrow_check_payment($order);
+    $statusMessage = $order['status'] === $statusBefore
+        ? __('No new payment detected yet.', ELEKTRON_ESCROW_DOMAIN)
+        : __('Payment status updated.', ELEKTRON_ESCROW_DOMAIN);
+}
+
 // Buyer-only, and only while still awaiting_payment: cancelling deletes the
 // order outright rather than moving it to some new "cancelled" status (see
 // EscrowOrderDAO::cancelByBuyer()'s docblock), so there is nothing left to
@@ -121,6 +136,27 @@ if ($isBuyer && Params::getParam('confirm_receipt') === '1') {
         // then the status change is recorded but no PSBT is generated yet,
         // which the status view below says explicitly.
         $statusMessage = __('Receipt confirmed.', ELEKTRON_ESCROW_DOMAIN);
+    }
+}
+
+// Seller-only: records that the cooperative release has actually happened
+// (both parties signed and broadcast a spend from the escrow address to the
+// seller's own wallet, outside this plugin -- see ReleasePsbtBuilderInterface's
+// docblock in ../shared: there is no reference implementation yet, so this
+// plugin cannot build or relay that PSBT itself today). This is a pure
+// database status change with no on-chain effect of its own; it exists
+// because RELEASE_PENDING_SELLER_SIGNATURE otherwise has no way to ever
+// reach RELEASED at all, even after a real, successful release.
+if (!$isBuyer && Params::getParam('mark_released') === '1') {
+    osc_csrf_check();
+
+    if (OrderStateMachine::canTransition($order['status'], OrderStatus::RELEASED)) {
+        $orderDao->updateByPrimaryKey(
+            ['status' => OrderStatus::RELEASED, 'dt_mod_date' => date('Y-m-d H:i:s')],
+            $orderId
+        );
+        $order['status'] = OrderStatus::RELEASED;
+        $statusMessage = __('Order marked as released.', ELEKTRON_ESCROW_DOMAIN);
     }
 }
 

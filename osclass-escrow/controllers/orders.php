@@ -22,6 +22,26 @@ if (!osc_is_web_user_logged_in()) {
 
 $userId = (int) osc_logged_user_id();
 $orderDao = EscrowOrderDAO::newInstance();
+$statusMessage = null;
+
+// Same manual check as the order-status page's own "Check payment now"
+// button (see elektron_escrow_check_payment()'s docblock), reachable
+// straight from this list so a party does not have to open an order first
+// just to ask "has this been paid yet?". Re-checks that the order actually
+// belongs to this user (as buyer or seller) rather than trusting the
+// posted id, even though checking an order that is not this user's own
+// would not itself leak anything this list does not already show them.
+if (Params::getParam('check_payment') === '1') {
+    osc_csrf_check();
+
+    $checkedOrderId = (int) Params::getParam('order');
+    $checkedOrder = $orderDao->findByPrimaryKey($checkedOrderId);
+    if ($checkedOrder !== false && ($userId === (int) $checkedOrder['fk_i_buyer_id'] || $userId === (int) $checkedOrder['fk_i_seller_id'])) {
+        elektron_escrow_check_payment($checkedOrder);
+    }
+
+    $statusMessage = __('Checked for new payments.', ELEKTRON_ESCROW_DOMAIN);
+}
 
 $purchases = $orderDao->findByBuyer($userId);
 $sales = $orderDao->findBySeller($userId);

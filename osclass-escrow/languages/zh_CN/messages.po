@@ -311,3 +311,30 @@ msgstr "您的 Elektron Net 担保交易订单 #%d 已取消"
 
 msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
 msgstr "您针对\"%s\"的担保交易订单已取消。未发生任何付款。"
+
+msgid "No new payment detected yet."
+msgstr "尚未检测到新的付款。"
+
+msgid "Payment status updated."
+msgstr "付款状态已更新。"
+
+msgid "Checked for new payments."
+msgstr "已检查新付款。"
+
+msgid "Check payment now"
+msgstr "立即检查付款"
+
+msgid "Check payment"
+msgstr "检查付款"
+
+msgid "Order marked as released."
+msgstr "订单已标记为已放行。"
+
+msgid "This plugin cannot yet build or relay the release transaction itself; the two parties currently have to cooperatively sign and broadcast it using their own wallets, with the redeem script below."
+msgstr "本插件目前尚无法自行构建或转发放行交易;双方目前需要使用各自的钱包,借助下方的赎回脚本,协作签署并广播该交易。"
+
+msgid "Mark this order as released? Only do this once the funds have actually been sent to your own wallet."
+msgstr "将此订单标记为已放行?仅在资金确实已发送到您自己的钱包后才这样做。"
+
+msgid "Mark as released"
+msgstr "标记为已放行"

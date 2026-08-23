@@ -311,3 +311,30 @@ msgstr "Il tuo ordine in deposito a garanzia Elektron Net #%d è stato annullato
 
 msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
 msgstr "Il tuo ordine in deposito a garanzia per \"%s\" è stato annullato. Non è stato effettuato alcun pagamento."
+
+msgid "No new payment detected yet."
+msgstr "Nessun nuovo pagamento rilevato per ora."
+
+msgid "Payment status updated."
+msgstr "Stato del pagamento aggiornato."
+
+msgid "Checked for new payments."
+msgstr "Controllo di nuovi pagamenti effettuato."
+
+msgid "Check payment now"
+msgstr "Controlla il pagamento ora"
+
+msgid "Check payment"
+msgstr "Controlla il pagamento"
+
+msgid "Order marked as released."
+msgstr "Ordine contrassegnato come rilasciato."
+
+msgid "This plugin cannot yet build or relay the release transaction itself; the two parties currently have to cooperatively sign and broadcast it using their own wallets, with the redeem script below."
+msgstr "Questo plugin non può ancora creare o inoltrare da solo la transazione di rilascio; al momento le due parti devono firmarla e trasmetterla in modo cooperativo con i propri wallet, usando lo script di riscatto qui sotto."
+
+msgid "Mark this order as released? Only do this once the funds have actually been sent to your own wallet."
+msgstr "Contrassegnare questo ordine come rilasciato? Fallo solo se i fondi sono già stati effettivamente inviati al tuo wallet."
+
+msgid "Mark as released"
+msgstr "Contrassegna come rilasciato"

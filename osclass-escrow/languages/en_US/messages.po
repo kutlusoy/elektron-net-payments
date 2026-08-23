@@ -311,3 +311,30 @@ msgstr "Your Elektron Net escrow order #%d was cancelled"
 
 msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
 msgstr "Your escrow order for \"%s\" has been cancelled. No payment was made."
+
+msgid "No new payment detected yet."
+msgstr "No new payment detected yet."
+
+msgid "Payment status updated."
+msgstr "Payment status updated."
+
+msgid "Checked for new payments."
+msgstr "Checked for new payments."
+
+msgid "Check payment now"
+msgstr "Check payment now"
+
+msgid "Check payment"
+msgstr "Check payment"
+
+msgid "Order marked as released."
+msgstr "Order marked as released."
+
+msgid "This plugin cannot yet build or relay the release transaction itself; the two parties currently have to cooperatively sign and broadcast it using their own wallets, with the redeem script below."
+msgstr "This plugin cannot yet build or relay the release transaction itself; the two parties currently have to cooperatively sign and broadcast it using their own wallets, with the redeem script below."
+
+msgid "Mark this order as released? Only do this once the funds have actually been sent to your own wallet."
+msgstr "Mark this order as released? Only do this once the funds have actually been sent to your own wallet."
+
+msgid "Mark as released"
+msgstr "Mark as released"

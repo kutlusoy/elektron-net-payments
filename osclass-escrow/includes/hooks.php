@@ -74,17 +74,14 @@ osc_add_hook('item_detail', function ($item) {
  * an order's own escrow address was never checked against the chain at all,
  * so no order could ever leave awaiting_payment on its own no matter what a
  * buyer actually sent (see README, "Order lifecycle" and "Open Questions").
- *
- * Checks total value received *at the order's own address*
- * (ChainDataProviderInterface::getAddressTransactions()), never who sent
- * it or from where -- the escrow address itself is what a buyer's payment
- * has to reach; nothing about the connected pubkeys is a "from" address it
- * has to match. An order still short of its full amount_lep is left in
- * awaiting_payment (no partial-payment handling yet, see "Open Questions");
- * once the received total covers it, the order moves to confirming
- * immediately (even at 0 confirmations -- "seen on chain" already, per
- * OrderStatus's own docblock) and to funded once the best confirmation
- * count among its transactions reaches the admin-configured threshold.
+ * The actual check is elektron_escrow_check_payment()
+ * (includes/payment-watcher.php), shared with the manual "Check payment
+ * now" action on the order-status and "My Elektron orders" pages -- that
+ * manual action exists because this hook alone is not reliable: it only
+ * fires opportunistically at the end of a page load if Osclass's own
+ * `auto_cron` admin setting is on, or from a real system cron the
+ * marketplace operator has to configure separately, so a fully confirmed
+ * payment can otherwise sit unnoticed until one of those actually runs.
  *
  * Hooked on 'cron_minutely' (throttled server-side to at most once every 5
  * minutes regardless of how often it fires, see oc-includes/osclass/
@@ -93,36 +90,8 @@ osc_add_hook('item_detail', function ($item) {
  * undetected for up to a day.
  */
 osc_add_hook('cron_minutely', function () {
-    $dao = EscrowOrderDAO::newInstance();
-    $chainData = elektron_escrow_chain_data();
-    $requiredConfirmations = (int) osc_get_preference('required_confirmations', 'plugin-osclass-escrow');
-
-    foreach ($dao->findAwaitingPaymentOrConfirming() as $order) {
-        $transactions = $chainData->getAddressTransactions($order['s_address']);
-
-        $receivedLep = 0;
-        $bestConfirmations = 0;
-        foreach ($transactions as $transaction) {
-            $receivedLep += $transaction->receivedLep();
-            $bestConfirmations = max($bestConfirmations, $transaction->confirmations());
-        }
-
-        if ($receivedLep < (int) $order['amount_lep']) {
-            continue; // not (fully) paid yet
-        }
-
-        $newStatus = $bestConfirmations >= $requiredConfirmations
-            ? \ElektronNet\Payments\Core\Escrow\OrderStatus::FUNDED
-            : \ElektronNet\Payments\Core\Escrow\OrderStatus::CONFIRMING;
-
-        if ($newStatus === $order['status']) {
-            continue;
-        }
-
-        $dao->updateByPrimaryKey(
-            ['status' => $newStatus, 'dt_mod_date' => date('Y-m-d H:i:s')],
-            $order['pk_i_id']
-        );
+    foreach (EscrowOrderDAO::newInstance()->findAwaitingPaymentOrConfirming() as $order) {
+        elektron_escrow_check_payment($order);
     }
 });
 

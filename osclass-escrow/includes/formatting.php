@@ -72,9 +72,9 @@ function elektron_escrow_plain_amount(float $amountElek): string
 }
 
 /**
- * BIP21-style payment URI for the given address/amount. Scheme is 'elek',
- * not 'bitcoin': confirmed directly in the actual Elektron Net wallet
- * fork's own source (kutlusoy/elektron-net-electrum,
+ * BIP21-style payment URI for the given address/amount/order. Scheme is
+ * 'elek', not 'bitcoin': confirmed directly in the actual Elektron Net
+ * wallet fork's own source (kutlusoy/elektron-net-electrum,
  * electrum/bip21.py: `BITCOIN_BIP21_URI_SCHEME = 'elek'`, deliberately
  * renamed there specifically so a real bitcoin: URI is never silently
  * accepted for this, different, chain). `amount` is a plain decimal ELEK
@@ -83,8 +83,21 @@ function elektron_escrow_plain_amount(float $amountElek): string
  * locale-formatted and not in lepton), so a wallet that understands this
  * scheme can prefill both the address and the amount from one scan or one
  * paste.
+ *
+ * `label` is standard BIP21 (not this fork's own invention): that same
+ * parser reads any query parameter it does not special-case straight into
+ * its result array, so `label` arrives as `$out['label']` even though
+ * `create_bip21_uri()` itself never sets one; several wallets show it on
+ * their own send screen. Used here to carry this order's own id, so it is
+ * still identifiable once it reaches whichever wallet the buyer pays from,
+ * not only on this order's own status page. `rawurlencode()`, not
+ * `urlencode()`: matches `urllib.parse.quote()`, which is what that same
+ * Python `create_bip21_uri()` uses to encode its own `message` parameter
+ * (percent-encoded spaces, not `+`).
  */
-function elektron_escrow_payment_uri(string $address, float $amountElek): string
+function elektron_escrow_payment_uri(string $address, float $amountElek, int $orderId): string
 {
-    return 'elek:' . $address . '?amount=' . elektron_escrow_plain_amount($amountElek);
+    return 'elek:' . $address
+        . '?amount=' . elektron_escrow_plain_amount($amountElek)
+        . '&label=' . rawurlencode(__('Elektron order', ELEKTRON_ESCROW_DOMAIN) . ' #' . $orderId);
 }
