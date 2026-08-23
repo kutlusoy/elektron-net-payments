@@ -85,6 +85,29 @@ class EscrowOrderDAO extends DAO
     }
 
     /**
+     * Deletes the order outright, but only if it still belongs to $buyerId
+     * and is still `awaiting_payment` -- both checked in the same query, not
+     * as a separate lookup beforehand, so this can never delete a different
+     * buyer's order or one that already has a real payment associated with
+     * it (`confirming` or later). A cancelled order is deleted rather than
+     * moved to a new "cancelled" status: nothing about it (no address ever
+     * paid to, no history worth keeping) is different from an order that
+     * was never created in the first place.
+     *
+     * @return bool true if a row was actually deleted
+     */
+    public function cancelByBuyer(int $orderId, int $buyerId): bool
+    {
+        $affected = $this->delete([
+            $this->getPrimaryKey() => $orderId,
+            'fk_i_buyer_id' => $buyerId,
+            'status' => OrderStatus::AWAITING_PAYMENT,
+        ]);
+
+        return is_int($affected) && $affected > 0;
+    }
+
+    /**
      * Every order still waiting on the buyer's own confirmation, i.e. one
      * whose buyer_refund_locktime the daily cron sweep needs to check
      * against Notifications\ReminderScheduler. Not filtered by how close
@@ -97,6 +120,24 @@ class EscrowOrderDAO extends DAO
         $this->dao->select();
         $this->dao->from($this->getTableName());
         $this->dao->where('status', 'funded');
+        $result = $this->dao->get();
+
+        return $result === false ? [] : $result->result();
+    }
+
+    /**
+     * Every order the payment watcher (includes/hooks.php's 'cron_minutely'
+     * hook) still needs to check against the chain: one whose own escrow
+     * address might have received a payment that has not been reflected in
+     * `status` yet.
+     *
+     * @return array[] list of order rows
+     */
+    public function findAwaitingPaymentOrConfirming(): array
+    {
+        $this->dao->select();
+        $this->dao->from($this->getTableName());
+        $this->dao->whereIn('status', [OrderStatus::AWAITING_PAYMENT, OrderStatus::CONFIRMING]);
         $result = $this->dao->get();
 
         return $result === false ? [] : $result->result();

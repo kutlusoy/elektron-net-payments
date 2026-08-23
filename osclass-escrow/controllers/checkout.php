@@ -132,6 +132,7 @@ if (Params::getParam('confirm_checkout') === '1') {
 
     $order = $orderDao->findByItemAndBuyer($itemId, $buyerId);
 
+    elektron_escrow_send_order_created_emails($order, $item, $amountElek);
     elektron_escrow_render_order_status($order, $buyerId);
     exit;
 }

@@ -260,3 +260,54 @@ msgstr "此商品没有固定价格,因此无法通过担保交易购买。"
 
 msgid "This listing is not priced in a currency accepted for escrow."
 msgstr "此商品的定价货币不被担保交易接受。"
+
+msgid "A buyer started an Elektron Net escrow purchase for your listing \"%s\"."
+msgstr "买家已为您的商品\"%s\"发起 Elektron Net 担保交易购买。"
+
+msgid "An Elektron Net escrow order for your listing was cancelled"
+msgstr "您商品的 Elektron Net 担保交易订单已取消"
+
+msgid "Back to your orders"
+msgstr "返回您的订单"
+
+msgid "Cancel order"
+msgstr "取消订单"
+
+msgid "Cancel this order? This cannot be undone."
+msgstr "取消此订单?此操作无法撤销。"
+
+msgid "Hello %s,"
+msgstr "您好 %s,"
+
+msgid "New Elektron Net escrow order for your listing"
+msgstr "您的商品有新的 Elektron Net 担保交易订单"
+
+msgid "Payment seen, waiting for {confirmations} confirmation(s) before it counts as funded."
+msgstr "已检测到付款,在计为已付款前等待 {confirmations} 次确认。"
+
+msgid "The buyer cancelled their escrow order for your listing \"%s\". No payment was made."
+msgstr "买家已取消其针对您商品\"%s\"的担保交易订单。未发生任何付款。"
+
+msgid "This order can no longer be cancelled."
+msgstr "此订单已无法取消。"
+
+msgid "This order has been cancelled."
+msgstr "此订单已取消。"
+
+msgid "Waiting for the buyer to send {amount} ELEK."
+msgstr "正在等待买家发送 {amount} ELEK。"
+
+msgid "You started an Elektron Net escrow purchase for \"%s\"."
+msgstr "您已为\"%s\"发起 Elektron Net 担保交易购买。"
+
+msgid "You will be notified once the payment is confirmed."
+msgstr "付款确认后将通知您。"
+
+msgid "Your Elektron Net escrow order #%d"
+msgstr "您的 Elektron Net 担保交易订单 #%d"
+
+msgid "Your Elektron Net escrow order #%d was cancelled"
+msgstr "您的 Elektron Net 担保交易订单 #%d 已取消"
+
+msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
+msgstr "您针对\"%s\"的担保交易订单已取消。未发生任何付款。"

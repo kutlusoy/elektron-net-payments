@@ -260,3 +260,54 @@ msgstr "Diese Anzeige hat keinen festen Preis und kann daher nicht per Escrow ge
 
 msgid "This listing is not priced in a currency accepted for escrow."
 msgstr "Diese Anzeige ist nicht in einer für Escrow akzeptierten Währung angegeben."
+
+msgid "A buyer started an Elektron Net escrow purchase for your listing \"%s\"."
+msgstr "Ein Käufer hat einen Elektron-Net-Escrow-Kauf für deine Anzeige \"%s\" gestartet."
+
+msgid "An Elektron Net escrow order for your listing was cancelled"
+msgstr "Eine Elektron-Net-Escrow-Bestellung für deine Anzeige wurde storniert"
+
+msgid "Back to your orders"
+msgstr "Zurück zu deinen Bestellungen"
+
+msgid "Cancel order"
+msgstr "Bestellung stornieren"
+
+msgid "Cancel this order? This cannot be undone."
+msgstr "Diese Bestellung stornieren? Das kann nicht rückgängig gemacht werden."
+
+msgid "Hello %s,"
+msgstr "Hallo %s,"
+
+msgid "New Elektron Net escrow order for your listing"
+msgstr "Neue Elektron-Net-Escrow-Bestellung für deine Anzeige"
+
+msgid "Payment seen, waiting for {confirmations} confirmation(s) before it counts as funded."
+msgstr "Zahlung erkannt, warte auf {confirmations} Bestätigung(en), bevor sie als bezahlt gilt."
+
+msgid "The buyer cancelled their escrow order for your listing \"%s\". No payment was made."
+msgstr "Der Käufer hat seine Escrow-Bestellung für deine Anzeige \"%s\" storniert. Es wurde nicht bezahlt."
+
+msgid "This order can no longer be cancelled."
+msgstr "Diese Bestellung kann nicht mehr storniert werden."
+
+msgid "This order has been cancelled."
+msgstr "Diese Bestellung wurde storniert."
+
+msgid "Waiting for the buyer to send {amount} ELEK."
+msgstr "Warte darauf, dass der Käufer {amount} ELEK sendet."
+
+msgid "You started an Elektron Net escrow purchase for \"%s\"."
+msgstr "Du hast einen Elektron-Net-Escrow-Kauf für \"%s\" gestartet."
+
+msgid "You will be notified once the payment is confirmed."
+msgstr "Du wirst benachrichtigt, sobald die Zahlung bestätigt ist."
+
+msgid "Your Elektron Net escrow order #%d"
+msgstr "Deine Elektron-Net-Escrow-Bestellung #%d"
+
+msgid "Your Elektron Net escrow order #%d was cancelled"
+msgstr "Deine Elektron-Net-Escrow-Bestellung #%d wurde storniert"
+
+msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
+msgstr "Deine Escrow-Bestellung für \"%s\" wurde storniert. Es wurde nicht bezahlt."

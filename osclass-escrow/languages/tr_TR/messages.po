@@ -260,3 +260,54 @@ msgstr "Bu ilanın sabit bir fiyatı yok, bu yüzden emanet ile satın alınamaz
 
 msgid "This listing is not priced in a currency accepted for escrow."
 msgstr "Bu ilan, emanet için kabul edilen bir para biriminde fiyatlandırılmamış."
+
+msgid "A buyer started an Elektron Net escrow purchase for your listing \"%s\"."
+msgstr "Bir alıcı, \"%s\" ilanınız için Elektron Net emanet satın alımı başlattı."
+
+msgid "An Elektron Net escrow order for your listing was cancelled"
+msgstr "İlanınız için bir Elektron Net emanet siparişi iptal edildi"
+
+msgid "Back to your orders"
+msgstr "Siparişlerinize dön"
+
+msgid "Cancel order"
+msgstr "Siparişi iptal et"
+
+msgid "Cancel this order? This cannot be undone."
+msgstr "Bu sipariş iptal edilsin mi? Bu işlem geri alınamaz."
+
+msgid "Hello %s,"
+msgstr "Merhaba %s,"
+
+msgid "New Elektron Net escrow order for your listing"
+msgstr "İlanınız için yeni bir Elektron Net emanet siparişi"
+
+msgid "Payment seen, waiting for {confirmations} confirmation(s) before it counts as funded."
+msgstr "Ödeme algılandı, ödenmiş sayılmadan önce {confirmations} onay bekleniyor."
+
+msgid "The buyer cancelled their escrow order for your listing \"%s\". No payment was made."
+msgstr "Alıcı, \"%s\" ilanınız için emanet siparişini iptal etti. Herhangi bir ödeme yapılmadı."
+
+msgid "This order can no longer be cancelled."
+msgstr "Bu sipariş artık iptal edilemez."
+
+msgid "This order has been cancelled."
+msgstr "Bu sipariş iptal edildi."
+
+msgid "Waiting for the buyer to send {amount} ELEK."
+msgstr "Alıcının {amount} ELEK göndermesi bekleniyor."
+
+msgid "You started an Elektron Net escrow purchase for \"%s\"."
+msgstr "\"%s\" için bir Elektron Net emanet satın alımı başlattınız."
+
+msgid "You will be notified once the payment is confirmed."
+msgstr "Ödeme onaylandığında bilgilendirileceksiniz."
+
+msgid "Your Elektron Net escrow order #%d"
+msgstr "Elektron Net emanet siparişiniz #%d"
+
+msgid "Your Elektron Net escrow order #%d was cancelled"
+msgstr "Elektron Net emanet siparişiniz #%d iptal edildi"
+
+msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
+msgstr "\"%s\" için emanet siparişiniz iptal edildi. Herhangi bir ödeme yapılmadı."

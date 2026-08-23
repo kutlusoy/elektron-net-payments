@@ -14,12 +14,14 @@ use ElektronNet\Payments\Core\Escrow\OrderStatus;
 $now = time();
 $pastT1 = $now >= (int) $order['buyer_refund_locktime'];
 $showPaymentDetails = $order['status'] === OrderStatus::AWAITING_PAYMENT || $order['status'] === OrderStatus::CONFIRMING;
+
+elektron_escrow_table_style();
 ?>
 
 <div class="elektron-escrow-order">
     <h1><?php _e('Elektron order', ELEKTRON_ESCROW_DOMAIN); ?> #<?php echo (int) $order['pk_i_id']; ?></h1>
 
-    <table class="table">
+    <table class="elektron-escrow-table">
         <tr>
             <td><?php _e('Item', ELEKTRON_ESCROW_DOMAIN); ?></td>
             <td>
@@ -48,7 +50,17 @@ $showPaymentDetails = $order['status'] === OrderStatus::AWAITING_PAYMENT || $ord
         <p class="elektron-escrow-error"><?php echo osc_esc_html($errorMessage); ?></p>
     <?php } ?>
 
-    <?php if ($showPaymentDetails) { ?>
+    <?php
+    // Payment details (address, QR code, payment URI) and the "send X ELEK"
+    // instruction are buyer-only: the seller has nothing to pay and no
+    // action to take yet, so showing them the buyer's own payment
+    // instructions here was confusing -- a real install showed the seller
+    // "the same payment page as the buyer". The seller instead gets a
+    // status message written for them (MessageCatalog's
+    // 'order.awaiting_payment.seller' / 'order.confirming.seller', see
+    // shared/src/I18n/MessageCatalog.php), with no payment details at all.
+    ?>
+    <?php if ($showPaymentDetails && $isBuyer) { ?>
         <?php
         // Encodes the full elek: payment URI (address + amount), not just
         // the bare address, so a wallet that understands the scheme can
@@ -70,12 +82,20 @@ $showPaymentDetails = $order['status'] === OrderStatus::AWAITING_PAYMENT || $ord
     <?php } ?>
 
     <?php if ($order['status'] === OrderStatus::AWAITING_PAYMENT) { ?>
-        <p><?php echo osc_esc_html(elektron_escrow_t('order.awaiting_payment', [
+        <p><?php echo osc_esc_html(elektron_escrow_t($isBuyer ? 'order.awaiting_payment' : 'order.awaiting_payment.seller', [
             '{amount}' => elektron_escrow_format_amount($amountElek),
         ])); ?></p>
 
+        <?php if ($isBuyer) { ?>
+            <form method="post" action="<?php echo osc_route_url('elektron_escrow_order_status', ['order' => $order['pk_i_id']]); ?>" onsubmit="return confirm('<?php echo osc_esc_js(__('Cancel this order? This cannot be undone.', ELEKTRON_ESCROW_DOMAIN)); ?>');">
+                <?php echo osc_csrf_token_form(); ?>
+                <input type="hidden" name="cancel_order" value="1" />
+                <input type="submit" class="btn btn-default" value="<?php echo osc_esc_html(__('Cancel order', ELEKTRON_ESCROW_DOMAIN)); ?>" />
+            </form>
+        <?php } ?>
+
     <?php } elseif ($order['status'] === OrderStatus::CONFIRMING) { ?>
-        <p><?php echo osc_esc_html(elektron_escrow_t('order.confirming', [
+        <p><?php echo osc_esc_html(elektron_escrow_t($isBuyer ? 'order.confirming' : 'order.confirming.seller', [
             '{confirmations}' => (string) $requiredConfirmations,
         ])); ?></p>
 

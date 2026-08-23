@@ -31,6 +31,32 @@ function elektron_escrow_format_amount(float $amountElek): string
 }
 
 /**
+ * Prints a small, self-contained <style> block for this plugin's own
+ * tables (class "elektron-escrow-table"): borders, a header background, and
+ * row separators, regardless of whatever the active theme's own ".table"
+ * class does or does not provide.
+ *
+ * Not queued via osc_enqueue_style(): that helper only takes effect if
+ * called before the theme prints its own <head>, but every one of this
+ * plugin's pages is rendered through Osclass's custom-route pipeline,
+ * which -- like osc_redirect_to() (see includes/notice.php's docblock) --
+ * always renders the theme's header.php, and so its <head>, *before* this
+ * plugin's own controller/view code ever runs. An inline <style> block
+ * printed directly in the page body works regardless of that ordering.
+ */
+function elektron_escrow_table_style(): void
+{
+    ?>
+    <style>
+        .elektron-escrow-table { width: 100%; border-collapse: collapse; margin: 1em 0; }
+        .elektron-escrow-table th, .elektron-escrow-table td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; }
+        .elektron-escrow-table th { background: #f0f0f0; font-weight: bold; }
+        .elektron-escrow-table tr:nth-child(even) td { background: #fafafa; }
+    </style>
+    <?php
+}
+
+/**
  * Plain (locale-independent, '.' decimal point, no thousands separator,
  * trailing zeros trimmed) decimal string for an ELEK amount. Used inside a
  * payment URI, which a wallet must parse unambiguously regardless of the

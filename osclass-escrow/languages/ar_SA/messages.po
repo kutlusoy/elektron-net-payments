@@ -260,3 +260,54 @@ msgstr "ليس لهذا الإعلان سعر ثابت، لذا لا يمكن ش
 
 msgid "This listing is not priced in a currency accepted for escrow."
 msgstr "هذا الإعلان غير مسعّر بعملة مقبولة للضمان."
+
+msgid "A buyer started an Elektron Net escrow purchase for your listing \"%s\"."
+msgstr "بدأ أحد المشترين عملية شراء بضمان Elektron Net لإعلانك \"%s\"."
+
+msgid "An Elektron Net escrow order for your listing was cancelled"
+msgstr "تم إلغاء طلب ضمان Elektron Net الخاص بإعلانك"
+
+msgid "Back to your orders"
+msgstr "العودة إلى طلباتك"
+
+msgid "Cancel order"
+msgstr "إلغاء الطلب"
+
+msgid "Cancel this order? This cannot be undone."
+msgstr "هل تريد إلغاء هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء."
+
+msgid "Hello %s,"
+msgstr "مرحبًا %s،"
+
+msgid "New Elektron Net escrow order for your listing"
+msgstr "طلب ضمان Elektron Net جديد لإعلانك"
+
+msgid "Payment seen, waiting for {confirmations} confirmation(s) before it counts as funded."
+msgstr "تم رصد الدفع، بانتظار {confirmations} تأكيد(ات) قبل احتسابه كمدفوع."
+
+msgid "The buyer cancelled their escrow order for your listing \"%s\". No payment was made."
+msgstr "ألغى المشتري طلب الضمان الخاص بإعلانك \"%s\". لم يتم إجراء أي دفعة."
+
+msgid "This order can no longer be cancelled."
+msgstr "لم يعد بالإمكان إلغاء هذا الطلب."
+
+msgid "This order has been cancelled."
+msgstr "تم إلغاء هذا الطلب."
+
+msgid "Waiting for the buyer to send {amount} ELEK."
+msgstr "بانتظار إرسال المشتري لمبلغ {amount} ELEK."
+
+msgid "You started an Elektron Net escrow purchase for \"%s\"."
+msgstr "بدأت عملية شراء بضمان Elektron Net لـ \"%s\"."
+
+msgid "You will be notified once the payment is confirmed."
+msgstr "سيتم إعلامك بمجرد تأكيد الدفع."
+
+msgid "Your Elektron Net escrow order #%d"
+msgstr "طلب ضمان Elektron Net الخاص بك رقم #%d"
+
+msgid "Your Elektron Net escrow order #%d was cancelled"
+msgstr "تم إلغاء طلب ضمان Elektron Net الخاص بك رقم #%d"
+
+msgid "Your escrow order for \"%s\" has been cancelled. No payment was made."
+msgstr "تم إلغاء طلب الضمان الخاص بك لـ \"%s\". لم يتم إجراء أي دفعة."

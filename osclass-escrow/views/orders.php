@@ -1,6 +1,8 @@
 <?php if (!defined('ABS_PATH')) exit('ABS_PATH is not loaded. Direct access is not allowed.');
 /** @var array[] $purchases EscrowOrderDAO rows where the logged-in user is the buyer */
 /** @var array[] $sales EscrowOrderDAO rows where the logged-in user is the seller */
+
+elektron_escrow_table_style();
 ?>
 
 <div class="elektron-escrow-orders">
@@ -10,7 +12,7 @@
     <?php if (empty($purchases)) { ?>
         <p><?php _e('You have not bought anything with Elektron escrow yet.', ELEKTRON_ESCROW_DOMAIN); ?></p>
     <?php } else { ?>
-        <table class="table">
+        <table class="elektron-escrow-table">
             <tr>
                 <th><?php _e('Item', ELEKTRON_ESCROW_DOMAIN); ?></th>
                 <th><?php _e('Amount', ELEKTRON_ESCROW_DOMAIN); ?></th>
@@ -33,7 +35,7 @@
     <?php if (empty($sales)) { ?>
         <p><?php _e('You have not sold anything with Elektron escrow yet.', ELEKTRON_ESCROW_DOMAIN); ?></p>
     <?php } else { ?>
-        <table class="table">
+        <table class="elektron-escrow-table">
             <tr>
                 <th><?php _e('Item', ELEKTRON_ESCROW_DOMAIN); ?></th>
                 <th><?php _e('Amount', ELEKTRON_ESCROW_DOMAIN); ?></th>
