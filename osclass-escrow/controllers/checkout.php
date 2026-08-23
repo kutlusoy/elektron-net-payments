@@ -1,8 +1,9 @@
 <?php if (!defined('ABS_PATH')) exit('ABS_PATH is not loaded. Direct access is not allowed.');
 
-use ElektronNet\Payments\Core\Escrow\BitwaspEscrowScriptBuilder;
+use ElektronNet\Payments\Core\Escrow\PlainMultisigEscrowScriptBuilder;
 use ElektronNet\Payments\Core\Escrow\EscrowAddress;
 use ElektronNet\Payments\Core\Escrow\OrderStatus;
+use ElektronNet\Payments\Core\Escrow\XpubChildKeyDeriver;
 
 /**
  * Route: elektron-escrow/checkout?item=<id>
@@ -66,10 +67,11 @@ if ($amountElek === null) {
     exit;
 }
 
-$buyerPubKey = elektron_escrow_get_user_pubkey($buyerId);
-$sellerPubKey = elektron_escrow_get_user_pubkey((int) $item['fk_i_user_id']);
+$sellerId = (int) $item['fk_i_user_id'];
+$buyerXpub = elektron_escrow_get_user_xpub($buyerId);
+$sellerXpub = elektron_escrow_get_user_xpub($sellerId);
 
-if ($buyerPubKey === null) {
+if ($buyerXpub === null) {
     elektron_escrow_render_notice(
         __('Connect an Elektron Net wallet to your account first, then come back to this listing.', ELEKTRON_ESCROW_DOMAIN),
         osc_route_url('elektron_escrow_wallet'),
@@ -77,7 +79,7 @@ if ($buyerPubKey === null) {
     );
     exit;
 }
-if ($sellerPubKey === null) {
+if ($sellerXpub === null) {
     elektron_escrow_render_notice(
         __('The seller has not connected an Elektron Net wallet yet, so this listing cannot be bought with escrow right now.', ELEKTRON_ESCROW_DOMAIN),
         osc_item_url_from_item($item),
@@ -102,24 +104,36 @@ if (Params::getParam('confirm_checkout') === '1') {
     osc_csrf_check();
 
     $fundedAt = time();
-    // Unique per order, so this order's escrow address is unique even if
-    // this same buyer and seller transact more than once (possibly within
-    // the same second) -- see EscrowScriptBuilderInterface's docblock.
-    $orderNonceHex = bin2hex(random_bytes(16));
 
-    // See EscrowScriptBuilderInterface's docblock: reference implementation,
-    // not yet verified on a live Elektron Net node.
-    $scriptBuilder = new BitwaspEscrowScriptBuilder(elektron_escrow_network());
-    $escrowAddress = $scriptBuilder->build($buyerPubKey, $sellerPubKey, $orderNonceHex, $config->timeoutPolicy(), $fundedAt);
+    // A fresh child key per order, derived from each party's own xpub,
+    // replaces the old order-nonce-in-script approach for guaranteeing a
+    // unique escrow address per order -- see PlainMultisigEscrowScriptBuilder's
+    // and XpubChildKeyDeriver's docblocks for why. Each call permanently
+    // consumes one derivation index for that user, so this must only run
+    // once per order actually created below.
+    $buyerPubKey = elektron_escrow_derive_order_pubkey($buyerId);
+    $sellerPubKey = elektron_escrow_derive_order_pubkey($sellerId);
+
+    // A plain, stable address for the eventual payout, not the escrow
+    // address itself: reused across every order for this seller (fine --
+    // unlike the escrow address, nothing here ever polls it for incoming
+    // payments, so it is not subject to the same chain-data pagination
+    // assumption; see EsploraChainDataProvider's docblock). Always index 0,
+    // separate from the per-order signing-key indices above.
+    $sellerPayoutAddress = (new XpubChildKeyDeriver())->deriveChildAddress($sellerXpub, 0, elektron_escrow_network());
+
+    $scriptBuilder = new PlainMultisigEscrowScriptBuilder(elektron_escrow_network());
+    $escrowAddress = $scriptBuilder->build($buyerPubKey, $sellerPubKey, $config->timeoutPolicy(), $fundedAt);
 
     $amountLep = (int) round($amountElek * 100000000);
 
     $orderDao->insert([
         'fk_i_item_id' => $itemId,
         'fk_i_buyer_id' => $buyerId,
-        'fk_i_seller_id' => (int) $item['fk_i_user_id'],
+        'fk_i_seller_id' => $sellerId,
         'buyer_pubkey' => $buyerPubKey,
         'seller_pubkey' => $sellerPubKey,
+        'seller_payout_address' => $sellerPayoutAddress,
         's_address' => $escrowAddress->address(),
         'redeem_script_hex' => $escrowAddress->redeemScriptHex(),
         'buyer_refund_locktime' => $escrowAddress->buyerRefundLocktime(),

@@ -16,7 +16,7 @@ if (!in_array(strtoupper((string) ($item['fk_c_currency_code'] ?? '')), elektron
 if (elektron_escrow_item_price_elek($item) === null) {
     return; // "price on request": no fixed amount to encode into an address
 }
-if (elektron_escrow_get_user_pubkey((int) $item['fk_i_user_id']) === null) {
+if (elektron_escrow_get_user_xpub((int) $item['fk_i_user_id']) === null) {
     return; // seller has not connected a wallet yet, nothing to pay into
 }
 ?>

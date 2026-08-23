@@ -21,15 +21,8 @@ $justSaved = false;
 
 // The 'save' marker alone decides whether this is a submission; the CSRF
 // token itself is deliberately NOT inspected here before calling
-// osc_csrf_check(). An earlier version also required
-// Params::getParam('CSRFName') !== '', which hardcoded Shopclass's own
-// token field name as an assumption about a *different* real, deployed
-// platform's internals -- confirmed wrong live: that platform's actual
-// CSRF field is a single 'octoken' input, not a 'CSRFName'/'CSRFToken'
-// pair, so the guard was always false and osc_csrf_check() never even ran.
-// osc_csrf_check() is already responsible for rejecting a missing/invalid
-// token on whichever platform is actually running underneath; this plugin
-// has no business assuming what that token looks like.
+// osc_csrf_check(). See git history for why an earlier version's extra
+// guard here was itself wrong on a real deployed platform.
 if (Params::getParam('save') === 'elektron_escrow_wallet') {
     osc_csrf_check();
 
@@ -38,7 +31,7 @@ if (Params::getParam('save') === 'elektron_escrow_wallet') {
     // same route. A flash message is only shown by whatever the *active
     // theme's* custom.php/user-custom.php template does with it, which is
     // entirely outside this plugin's control.
-    $result = elektron_escrow_save_user_pubkey($userId, (string) Params::getParam('pubkey_hex'));
+    $result = elektron_escrow_save_user_xpub($userId, (string) Params::getParam('xpub'));
     if ($result === true) {
         $justSaved = true;
     } else {
@@ -46,6 +39,7 @@ if (Params::getParam('save') === 'elektron_escrow_wallet') {
     }
 }
 
-$currentPubKey = elektron_escrow_get_user_pubkey($userId);
+$currentXpub = elektron_escrow_get_user_xpub($userId);
+$previewAddress = $currentXpub !== null ? elektron_escrow_preview_address_for_xpub($currentXpub) : null;
 
 require osc_plugins_path() . 'osclass-escrow/views/wallet.php';
