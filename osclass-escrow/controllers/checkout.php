@@ -131,8 +131,8 @@ if (Params::getParam('confirm_checkout') === '1') {
     // and XpubChildKeyDeriver's docblocks for why. Each call permanently
     // consumes one derivation index for that user, so this must only run
     // once per order actually created below.
-    $buyerPubKey = elektron_escrow_derive_order_pubkey($buyerId);
-    $sellerPubKey = elektron_escrow_derive_order_pubkey($sellerId);
+    $buyerKey = elektron_escrow_derive_order_pubkey($buyerId);
+    $sellerKey = elektron_escrow_derive_order_pubkey($sellerId);
 
     // A plain, stable address for the eventual payout, not the escrow
     // address itself: reused across every order for this seller (fine --
@@ -140,10 +140,11 @@ if (Params::getParam('confirm_checkout') === '1') {
     // payments, so it is not subject to the same chain-data pagination
     // assumption; see EsploraChainDataProvider's docblock). Always index 0,
     // separate from the per-order signing-key indices above.
-    $sellerPayoutAddress = (new XpubChildKeyDeriver())->deriveChildAddress($sellerXpub, 0, elektron_escrow_network());
+    $sellerPayoutIndex = 0;
+    $sellerPayoutAddress = (new XpubChildKeyDeriver())->deriveChildAddress($sellerXpub, $sellerPayoutIndex, elektron_escrow_network());
 
     $scriptBuilder = new PlainMultisigEscrowScriptBuilder(elektron_escrow_network());
-    $escrowAddress = $scriptBuilder->build($buyerPubKey, $sellerPubKey, $config->timeoutPolicy(), $fundedAt);
+    $escrowAddress = $scriptBuilder->build($buyerKey['pubkeyHex'], $sellerKey['pubkeyHex'], $config->timeoutPolicy(), $fundedAt);
 
     $amountLep = (int) round($amountElek * 100000000);
 
@@ -151,9 +152,12 @@ if (Params::getParam('confirm_checkout') === '1') {
         'fk_i_item_id' => $itemId,
         'fk_i_buyer_id' => $buyerId,
         'fk_i_seller_id' => $sellerId,
-        'buyer_pubkey' => $buyerPubKey,
-        'seller_pubkey' => $sellerPubKey,
+        'buyer_pubkey' => $buyerKey['pubkeyHex'],
+        'buyer_pubkey_index' => $buyerKey['index'],
+        'seller_pubkey' => $sellerKey['pubkeyHex'],
+        'seller_pubkey_index' => $sellerKey['index'],
         'seller_payout_address' => $sellerPayoutAddress,
+        'seller_payout_index' => $sellerPayoutIndex,
         'buyer_shipping_name' => $shippingName,
         'buyer_shipping_address' => $shippingAddress,
         'buyer_shipping_phone' => $shippingPhone,

@@ -176,8 +176,16 @@ function elektron_escrow_preview_address_for_xpub(string $xpub): ?string
  * once for the same order: each call consumes a derivation index that is
  * never reused (EscrowWalletDAO::allocateNextIndex()), so calling it twice
  * for one order would burn an index without using it.
+ *
+ * The caller MUST persist both the returned pubkey and index on the order
+ * row (see EscrowOrderDAO's buyer/seller_pubkey_index columns): the index
+ * is not recoverable from the pubkey alone, and is required later to embed
+ * a PSBT_IN_BIP32_DERIVATION entry for this key when building the release
+ * PSBT (see Bip174PsbtBuilder).
+ *
+ * @return array{pubkeyHex: string, index: int}
  */
-function elektron_escrow_derive_order_pubkey(int $userId): string
+function elektron_escrow_derive_order_pubkey(int $userId): array
 {
     $xpub = elektron_escrow_get_user_xpub($userId);
     if ($xpub === null) {
@@ -185,6 +193,7 @@ function elektron_escrow_derive_order_pubkey(int $userId): string
     }
 
     $index = EscrowWalletDAO::newInstance()->allocateNextIndex($userId);
+    $pubkeyHex = (new XpubChildKeyDeriver())->deriveChildPubKeyHex($xpub, $index, elektron_escrow_network());
 
-    return (new XpubChildKeyDeriver())->deriveChildPubKeyHex($xpub, $index, elektron_escrow_network());
+    return ['pubkeyHex' => $pubkeyHex, 'index' => $index];
 }

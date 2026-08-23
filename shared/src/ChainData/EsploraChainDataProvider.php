@@ -51,6 +51,22 @@ final class EsploraChainDataProvider implements ChainDataProviderInterface
         return $result;
     }
 
+    public function getFundingOutputs(string $address): array
+    {
+        $json = $this->getJson('/address/' . rawurlencode($address) . '/txs');
+
+        $result = [];
+        foreach ($json as $tx) {
+            foreach ($tx['vout'] ?? [] as $index => $vout) {
+                if (($vout['scriptpubkey_address'] ?? null) === $address) {
+                    $result[] = new FundingOutput($tx['txid'], (int) $index, (int) ($vout['value'] ?? 0));
+                }
+            }
+        }
+
+        return $result;
+    }
+
     public function getConfirmations(string $txid): int
     {
         $status = $this->getJson('/tx/' . rawurlencode($txid) . '/status');
