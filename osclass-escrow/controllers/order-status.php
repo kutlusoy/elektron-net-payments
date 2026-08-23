@@ -208,7 +208,7 @@ if ($isBuyer && Params::getParam('submit_signed_psbt') === '1') {
     } else {
         $signatureCount = null;
         try {
-            $signatureCount = PsbtSignatureInspector::countSignaturesForInput0($submitted, $order['psbt_base64']);
+            $signatureCount = PsbtSignatureInspector::countSignatures($submitted, $order['psbt_base64']);
         } catch (\Throwable $e) {
             // Falls through to the generic error message below; the
             // specific reason (wrong tx, tampered field, wrong pubkey) is

@@ -17,21 +17,27 @@ use RuntimeException;
  * would.
  *
  * Every field this project's own Bip174PsbtBuilder writes (the unsigned
- * transaction, witness UTXO, witness script, and both parties' BIP32
- * derivation entries) must come back byte-for-byte identical; only new
- * PSBT_IN_PARTIAL_SIG entries may be added, and only under a pubkey this
- * order's own script actually uses.
+ * transaction, and per input the witness UTXO, witness script, and both
+ * parties' BIP32 derivation entries) must come back byte-for-byte
+ * identical; only new PSBT_IN_PARTIAL_SIG entries may be added, only under
+ * a pubkey this order's own script actually uses, and consistently across
+ * every input -- Bip174PsbtBuilder can produce more than one input (see its
+ * docblock: a resumed order whose buyer paid more than once), and a real
+ * wallet signs every input it holds a key for in one pass, so a PSBT that
+ * signed some of its inputs but not others is treated as invalid rather
+ * than guessed at.
  */
 final class PsbtSignatureInspector
 {
     /**
-     * @return int how many valid, expected partial signatures are present
-     *     on input 0 of $submittedPsbtBase64
+     * @return int how many valid, expected partial signatures are present,
+     *     consistently across every input, of $submittedPsbtBase64
      * @throws RuntimeException if $submittedPsbtBase64 differs from
      *     $originalPsbtBase64 in anything other than added partial
-     *     signatures under one of this order's own two pubkeys
+     *     signatures under one of this order's own two pubkeys, applied
+     *     identically to every input
      */
-    public static function countSignaturesForInput0(string $submittedPsbtBase64, string $originalPsbtBase64): int
+    public static function countSignatures(string $submittedPsbtBase64, string $originalPsbtBase64): int
     {
         $submittedRaw = base64_decode($submittedPsbtBase64, true);
         if ($submittedRaw === false) {
@@ -44,25 +50,36 @@ final class PsbtSignatureInspector
         if ($submitted['unsignedTx']->getBinary() !== $original['unsignedTx']->getBinary()) {
             throw new RuntimeException('Submitted PSBT does not match the original unsigned transaction.');
         }
-        if (!isset($submitted['inputs'][0])) {
-            throw new RuntimeException('Submitted PSBT is missing its input map.');
+        if (count($submitted['inputs']) !== count($original['inputs'])) {
+            throw new RuntimeException('Submitted PSBT has a different number of inputs.');
         }
 
-        $originalNonSigPairs = self::withoutPartialSigs($original['inputs'][0]);
-        $submittedNonSigPairs = self::withoutPartialSigs($submitted['inputs'][0]);
-        if ($originalNonSigPairs !== $submittedNonSigPairs) {
-            throw new RuntimeException('Submitted PSBT changed a field other than its signatures (witness UTXO, witness script, or derivation info).');
-        }
+        $signatureCount = null;
+        foreach ($original['inputs'] as $index => $originalInputMap) {
+            $submittedInputMap = $submitted['inputs'][$index];
 
-        $expectedPubKeys = array_keys(Bip174Reader::bip32Pubkeys($original['inputs'][0]));
-        $signatures = Bip174Reader::partialSignatures($submitted['inputs'][0]);
-        foreach (array_keys($signatures) as $pubKeyBinary) {
-            if (!in_array($pubKeyBinary, $expectedPubKeys, true)) {
-                throw new RuntimeException('Submitted PSBT contains a signature under an unexpected pubkey.');
+            $originalNonSigPairs = self::withoutPartialSigs($originalInputMap);
+            $submittedNonSigPairs = self::withoutPartialSigs($submittedInputMap);
+            if ($originalNonSigPairs !== $submittedNonSigPairs) {
+                throw new RuntimeException("Submitted PSBT changed a field other than its signatures on input {$index} (witness UTXO, witness script, or derivation info).");
+            }
+
+            $expectedPubKeys = array_keys(Bip174Reader::bip32Pubkeys($originalInputMap));
+            $signatures = Bip174Reader::partialSignatures($submittedInputMap);
+            foreach (array_keys($signatures) as $pubKeyBinary) {
+                if (!in_array($pubKeyBinary, $expectedPubKeys, true)) {
+                    throw new RuntimeException("Submitted PSBT contains a signature under an unexpected pubkey on input {$index}.");
+                }
+            }
+
+            if ($signatureCount === null) {
+                $signatureCount = count($signatures);
+            } elseif ($signatureCount !== count($signatures)) {
+                throw new RuntimeException('Submitted PSBT signed some inputs but not others.');
             }
         }
 
-        return count($signatures);
+        return $signatureCount ?? 0;
     }
 
     /**

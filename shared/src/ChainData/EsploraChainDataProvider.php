@@ -11,9 +11,13 @@ use Throwable;
  *
  * Deliberately does not paginate past the API's first page (up to ~25
  * confirmed transactions): every address this plugin ever queries is a
- * one-time escrow address with at most a funding and a spending
- * transaction, so a second page is never needed for this use case. See the
- * repository's design notes on address reuse for why that assumption holds.
+ * one-time escrow address, normally touched by a funding and a spending
+ * transaction and nothing else. That is usually but not always exactly
+ * one funding transaction, though -- observed for real: a buyer resuming a
+ * stale, never-completed order (see the plugin README's "Open Questions")
+ * paid the same address twice -- so getFundingOutputs() does not assume
+ * there is only one; it is only the ~25-transaction page limit itself that
+ * this assumes will never be hit for a single escrow address.
  */
 final class EsploraChainDataProvider implements ChainDataProviderInterface
 {
@@ -51,16 +55,28 @@ final class EsploraChainDataProvider implements ChainDataProviderInterface
         return $result;
     }
 
+    /**
+     * Calls `GET {baseUrl}/address/{address}/utxo`, confirmed against
+     * elektron-net-mempool's own backend/src/api/bitcoin/bitcoin.routes.ts
+     * and esplora-api.interface.ts: response shape is
+     * `[{txid, vout, status: {confirmed, ...}, value}]`, already limited to
+     * outputs not yet spent -- unlike reconstructing this from `/txs` (this
+     * method's previous implementation), which cannot tell an unspent
+     * output from one a later transaction already consumed, and would wrongly
+     * treat both the same. Only confirmed entries are returned: a release
+     * transaction must not depend on an output that could still disappear
+     * in a reorg (this plugin already requires
+     * `required_confirmations` before an order even reaches `funded`, so
+     * this is consistent with that, not stricter).
+     */
     public function getFundingOutputs(string $address): array
     {
-        $json = $this->getJson('/address/' . rawurlencode($address) . '/txs');
+        $json = $this->getJson('/address/' . rawurlencode($address) . '/utxo');
 
         $result = [];
-        foreach ($json as $tx) {
-            foreach ($tx['vout'] ?? [] as $index => $vout) {
-                if (($vout['scriptpubkey_address'] ?? null) === $address) {
-                    $result[] = new FundingOutput($tx['txid'], (int) $index, (int) ($vout['value'] ?? 0));
-                }
+        foreach ($json as $utxo) {
+            if (!empty($utxo['status']['confirmed'])) {
+                $result[] = new FundingOutput($utxo['txid'], (int) $utxo['vout'], (int) $utxo['value']);
             }
         }
 
