@@ -125,6 +125,7 @@ final class SettingsController
             'default_display_currency' => $_POST['default_display_currency'] ?? null,
             'success_url' => $_POST['success_url'] ?? null,
             'cancel_url' => $_POST['cancel_url'] ?? null,
+            'enabled_fiat_currencies' => $_POST['enabled_fiat_currencies'] ?? [],
         ];
 
         try {

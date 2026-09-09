@@ -83,7 +83,8 @@ final class MerchantRepository
      *     underpayment_tolerance_percent: float,
      *     default_display_currency: ?string,
      *     success_url: ?string,
-     *     cancel_url: ?string
+     *     cancel_url: ?string,
+     *     enabled_fiat_currencies: string[]
      * } $fields
      */
     public function updateSettings(string $merchantId, array $fields): void
@@ -95,7 +96,8 @@ final class MerchantRepository
                  underpayment_tolerance_percent = :underpayment_tolerance_percent,
                  default_display_currency = :default_display_currency,
                  success_url = :success_url,
-                 cancel_url = :cancel_url
+                 cancel_url = :cancel_url,
+                 enabled_fiat_currencies = :enabled_fiat_currencies
              WHERE id = :id'
         );
         $stmt->execute([
@@ -105,6 +107,7 @@ final class MerchantRepository
             'default_display_currency' => $fields['default_display_currency'],
             'success_url' => $fields['success_url'],
             'cancel_url' => $fields['cancel_url'],
+            'enabled_fiat_currencies' => json_encode($fields['enabled_fiat_currencies'] ?? []),
             'id' => $merchantId,
         ]);
     }

@@ -67,13 +67,23 @@ final class OrderRepository
      *     findOpenByMerchantAndExternalReference() inside the same
      *     transaction.
      */
+    /**
+     * $fiatCurrency/$fiatAmount/$exchangeRateUsed are set together, only
+     * when this order was priced in fiat and converted to $amountLep at
+     * creation time (section 12); the rate is frozen here permanently,
+     * never recomputed afterward, exactly like T1/T2 are frozen elsewhere
+     * in this design.
+     */
     public function insertDirectOrder(
         string $merchantId,
         int $amountLep,
         string $address,
         ?string $externalReference,
         string $expiresAt,
-        int $requiredConfirmations
+        int $requiredConfirmations,
+        ?string $fiatCurrency = null,
+        ?float $fiatAmount = null,
+        ?float $exchangeRateUsed = null
     ): Order {
         $id = $this->generateUuid();
         $nonceHex = bin2hex(random_bytes(16));
@@ -81,10 +91,12 @@ final class OrderRepository
         $stmt = $this->pdo->prepare(
             'INSERT INTO orders (
                 id, merchant_id, mode, status, amount_lep, address,
-                order_nonce_hex, external_reference, expires_at, required_confirmations
+                order_nonce_hex, external_reference, expires_at, required_confirmations,
+                fiat_currency, fiat_amount, exchange_rate_used
             ) VALUES (
                 :id, :merchant_id, :mode, :status, :amount_lep, :address,
-                :order_nonce_hex, :external_reference, :expires_at, :required_confirmations
+                :order_nonce_hex, :external_reference, :expires_at, :required_confirmations,
+                :fiat_currency, :fiat_amount, :exchange_rate_used
             )'
         );
         $stmt->execute([
@@ -98,6 +110,9 @@ final class OrderRepository
             'external_reference' => $externalReference,
             'expires_at' => $expiresAt,
             'required_confirmations' => $requiredConfirmations,
+            'fiat_currency' => $fiatCurrency,
+            'fiat_amount' => $fiatAmount,
+            'exchange_rate_used' => $exchangeRateUsed,
         ]);
 
         $order = $this->find($id);

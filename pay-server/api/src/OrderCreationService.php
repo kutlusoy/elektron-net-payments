@@ -2,9 +2,11 @@
 
 namespace ElektronNet\Payments\PayServer;
 
+use ElektronNet\Payments\Core\PriceFeed\PriceFeedProviderInterface;
 use ElektronNet\Payments\PayServer\Db\Merchant;
 use ElektronNet\Payments\PayServer\Db\MerchantRepository;
 use ElektronNet\Payments\PayServer\Db\OrderRepository;
+use ElektronNet\Payments\PayServer\Http\ApiException;
 use PDO;
 use Throwable;
 
@@ -25,19 +27,22 @@ final class OrderCreationService
     private OrderRepository $orders;
     private OrderAddressAllocator $addressAllocator;
     private bool $escrowEnabled;
+    private ?PriceFeedProviderInterface $priceFeed;
 
     public function __construct(
         PDO $pdo,
         MerchantRepository $merchants,
         OrderRepository $orders,
         OrderAddressAllocator $addressAllocator,
-        bool $escrowEnabled
+        bool $escrowEnabled,
+        ?PriceFeedProviderInterface $priceFeed = null
     ) {
         $this->pdo = $pdo;
         $this->merchants = $merchants;
         $this->orders = $orders;
         $this->addressAllocator = $addressAllocator;
         $this->escrowEnabled = $escrowEnabled;
+        $this->priceFeed = $priceFeed;
     }
 
     /**
@@ -46,8 +51,9 @@ final class OrderCreationService
      */
     public function createDirectOrder(Merchant $merchant, array $payload): OrderCreationResult
     {
-        OrderValidation::validateCreateOrderPayload($payload, $merchant, $this->escrowEnabled);
+        OrderValidation::validateCreateOrderPayload($payload, $merchant, $this->escrowEnabled, $this->priceFeed !== null);
 
+        $currency = isset($payload['currency']) ? (string) $payload['currency'] : $merchant->baseCurrency;
         $externalReference = isset($payload['external_reference']) ? (string) $payload['external_reference'] : null;
 
         $this->pdo->beginTransaction();
@@ -69,7 +75,35 @@ final class OrderCreationService
             $childIndex = $this->merchants->claimNextReceivingIndex($merchant->id);
             $address = $this->addressAllocator->deriveDirectAddress($merchant->receivingXpub, $childIndex);
 
-            $amountLep = (int) round(((float) $payload['amount']) * OrderRepository::LEP_PER_ELEK);
+            $fiatCurrency = null;
+            $fiatAmount = null;
+            $exchangeRateUsed = null;
+
+            if ($currency === 'ELEK') {
+                $amountLep = (int) round(((float) $payload['amount']) * OrderRepository::LEP_PER_ELEK);
+            } else {
+                // Section 12's fiat-as-base-currency freeze: converted via
+                // the feed and permanently frozen into amount_lep here,
+                // never recomputed afterward even if the market rate
+                // moves before the order is paid. OrderValidation already
+                // confirmed a price feed is configured and this merchant
+                // enabled $currency, so $this->priceFeed is non-null here.
+                $fiatAmount = (float) $payload['amount'];
+                $rate = $this->priceFeed->getElekPriceInFiat($currency);
+                if ($rate === null || $rate <= 0) {
+                    throw ApiException::validationError(
+                        "No {$currency} rate is available right now; try again shortly or use ELEK directly.",
+                        'price_unavailable'
+                    );
+                }
+                $fiatCurrency = $currency;
+                $exchangeRateUsed = $rate;
+                $amountLep = (int) round(($fiatAmount / $rate) * OrderRepository::LEP_PER_ELEK);
+                if ($amountLep <= 0) {
+                    throw ApiException::validationError('Converted amount must be greater than zero.');
+                }
+            }
+
             $expiresAt = (new \DateTimeImmutable())
                 ->modify("+{$merchant->orderExpiryMinutes} minutes")
                 ->format(DATE_ATOM);
@@ -80,7 +114,10 @@ final class OrderCreationService
                 $address,
                 $externalReference,
                 $expiresAt,
-                $merchant->defaultRequiredConfirmations
+                $merchant->defaultRequiredConfirmations,
+                $fiatCurrency,
+                $fiatAmount,
+                $exchangeRateUsed
             );
 
             $this->pdo->commit();

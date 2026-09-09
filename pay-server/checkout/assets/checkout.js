@@ -101,6 +101,17 @@
     }, REDIRECT_DELAY_MS);
   }
 
+  // Kiosk/terminal mode (/admin/terminal): the order page is opened on the
+  // same staff device that created it, standing in as a register-facing
+  // payment terminal rather than being handed to the buyer's own browser.
+  // Once the order reaches a terminal state it always cycles back to a
+  // fresh amount-entry screen for the next customer, regardless of
+  // whatever success_url/cancel_url the merchant has configured for their
+  // own site -- those are for the buyer's own session, not the till.
+  function isKioskMode() {
+    return /(?:^|[?&])kiosk=1(?:&|$)/.test(window.location.search);
+  }
+
   function applyStatus(status) {
     document.documentElement.setAttribute('data-status', status);
     var badge = document.getElementById('status-badge');
@@ -115,7 +126,9 @@
         countdownEl.textContent = '';
       }
 
-      if (status === 'settled') {
+      if (isKioskMode()) {
+        redirectAfterDelay('/admin/terminal');
+      } else if (status === 'settled') {
         redirectAfterDelay(window.SUCCESS_URL);
       } else if (status === 'expired' || status === 'invalid') {
         redirectAfterDelay(window.CANCEL_URL);

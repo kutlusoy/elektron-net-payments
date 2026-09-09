@@ -14,6 +14,9 @@ use ElektronNet\Payments\PayServer\Bip21;
   <dt>Status</dt><dd><span class="status-pill status-pill--<?php echo htmlspecialchars($order->status, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($order->status, ENT_QUOTES, 'UTF-8'); ?></span></dd>
   <dt>Mode</dt><dd><?php echo htmlspecialchars($order->mode, ENT_QUOTES, 'UTF-8'); ?></dd>
   <dt>Amount</dt><dd><?php echo htmlspecialchars(Bip21::plainAmount($order->amountLep), ENT_QUOTES, 'UTF-8'); ?> ELEK</dd>
+  <?php if ($order->fiatCurrency !== null): ?>
+  <dt>Charged as</dt><dd><?php echo htmlspecialchars($order->fiatAmount, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlspecialchars($order->fiatCurrency, ENT_QUOTES, 'UTF-8'); ?> (rate frozen at creation: 1 ELEK = <?php echo htmlspecialchars($order->exchangeRateUsed, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlspecialchars($order->fiatCurrency, ENT_QUOTES, 'UTF-8'); ?>)</dd>
+  <?php endif; ?>
   <dt>Address</dt><dd><code><?php echo htmlspecialchars($order->address, ENT_QUOTES, 'UTF-8'); ?></code></dd>
   <dt>External reference</dt><dd><?php echo htmlspecialchars($order->externalReference ?? '-', ENT_QUOTES, 'UTF-8'); ?></dd>
   <dt>Expires at</dt><dd><?php echo htmlspecialchars($order->expiresAt, ENT_QUOTES, 'UTF-8'); ?></dd>

@@ -26,6 +26,8 @@ final class Merchant
     public int $orderExpiryMinutes;
     public int $defaultRequiredConfirmations;
     public string $underpaymentTolerancePercent;
+    /** @var string[] ISO currency codes accepted for live-converted order creation (section 12), e.g. at /admin/terminal */
+    public array $enabledFiatCurrencies;
 
     /**
      * @param array<string, mixed> $row
@@ -55,6 +57,8 @@ final class Merchant
         $merchant->orderExpiryMinutes = (int) $row['order_expiry_minutes'];
         $merchant->defaultRequiredConfirmations = (int) $row['default_required_confirmations'];
         $merchant->underpaymentTolerancePercent = (string) $row['underpayment_tolerance_percent'];
+        $decodedFiatCurrencies = isset($row['enabled_fiat_currencies']) ? json_decode((string) $row['enabled_fiat_currencies'], true) : [];
+        $merchant->enabledFiatCurrencies = is_array($decodedFiatCurrencies) ? array_values($decodedFiatCurrencies) : [];
 
         return $merchant;
     }

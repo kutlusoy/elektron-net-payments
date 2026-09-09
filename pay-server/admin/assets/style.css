@@ -139,6 +139,43 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
 .login-card button { margin-top: 10px; padding: 10px; border: none; border-radius: 8px; background: var(--brand); color: #fff; font-weight: 600; cursor: pointer; }
 .login-error { background: #fdeaea; color: var(--danger); padding: 8px 10px; border-radius: 6px; font-size: 13px; margin: 0; }
 
+.terminal-body { margin: 0; background: #0d1117; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.terminal-shell { width: 100%; max-width: 420px; padding: 24px 20px 40px; display: flex; flex-direction: column; gap: 16px; }
+.terminal-topbar { display: flex; align-items: center; justify-content: space-between; }
+.terminal-topbar__brand { color: #8b949e; font-size: 13px; }
+.terminal-topbar__exit { color: #8b949e; font-size: 13px; text-decoration: underline; }
+.terminal-error { margin: 0; }
+
+.terminal-display {
+  background: #161b22; border: 1px solid #30363d; border-radius: 14px; padding: 28px 20px;
+  text-align: right; color: #e6edf3; font-size: 48px; font-weight: 700;
+  display: flex; align-items: baseline; justify-content: flex-end; gap: 8px; overflow-x: auto;
+}
+.terminal-display__unit { font-size: 18px; font-weight: 600; color: #8b949e; }
+
+.terminal-currency-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+.terminal-currency-tab {
+  padding: 8px 14px; border-radius: 999px; border: 1px solid #30363d; background: #161b22;
+  color: #8b949e; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.terminal-currency-tab.is-active { background: var(--brand); border-color: var(--brand); color: #fff; }
+.terminal-convert-hint { color: #8b949e; margin: -8px 0 0; }
+
+.terminal-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.terminal-key {
+  padding: 20px 0; border-radius: 12px; border: 1px solid #30363d; background: #161b22;
+  color: #e6edf3; font-size: 22px; font-weight: 600; cursor: pointer;
+}
+.terminal-key:active { background: #21262d; }
+.terminal-key--clear { color: #f0d78c; }
+.terminal-key--wide { width: 100%; padding: 14px 0; font-size: 15px; color: #8b949e; }
+
+.terminal-charge-btn {
+  width: 100%; padding: 18px 0; border-radius: 12px; border: none; background: var(--brand);
+  color: #fff; font-size: 18px; font-weight: 700; cursor: pointer;
+}
+.terminal-charge-btn:disabled { background: #30363d; color: #6b7280; cursor: not-allowed; }
+
 @media (prefers-color-scheme: dark) {
   :root { --bg: #0d1117; --card-bg: #161b22; --text: #e6edf3; --text-dim: #8b949e; --border: #30363d; }
   .admin-table th { background: #1b1f24; }

@@ -20,8 +20,12 @@ final class OrderValidation
      * @param array<string, mixed> $payload
      * @throws ApiException on any validation failure, with a typed error code
      */
-    public static function validateCreateOrderPayload(array $payload, Merchant $merchant, bool $escrowEnabled): void
-    {
+    public static function validateCreateOrderPayload(
+        array $payload,
+        Merchant $merchant,
+        bool $escrowEnabled,
+        bool $priceFeedConfigured = false
+    ): void {
         $mode = $payload['mode'] ?? OrderMode::DIRECT;
         if (!is_string($mode) || !in_array($mode, [OrderMode::DIRECT, OrderMode::ESCROW], true)) {
             throw ApiException::validationError('mode must be "direct" or "escrow".');
@@ -52,14 +56,27 @@ final class OrderValidation
         if (!is_string($currency) || $currency === '') {
             throw ApiException::validationError('currency must be a non-empty string.');
         }
-        // Section 12: base_currency (and so any order priced against it)
-        // MUST be locked to ELEK whenever no price-feed implementation is
-        // configured server-wide -- true for every deployment today, since
-        // PriceFeedProviderInterface has no implementation yet.
+        // Section 12: a non-ELEK currency (converted live via the feed and
+        // frozen onto the order, see OrderCreationService) MUST be locked
+        // out whenever no price-feed implementation is configured
+        // server-wide, and even then only for a currency this specific
+        // merchant has actually opted into (merchants.enabled_fiat_currencies,
+        // set at /admin/settings) -- a merchant with no price feed, or one
+        // who never enabled any currency, still gets exactly the old
+        // ELEK-only behavior.
         if ($currency !== 'ELEK') {
-            throw ApiException::validationError(
-                'Only the ELEK currency is currently supported; no price feed is configured yet.'
-            );
+            if (!$priceFeedConfigured) {
+                throw ApiException::validationError(
+                    'Only the ELEK currency is currently supported; no price feed is configured yet.',
+                    'price_feed_not_configured'
+                );
+            }
+            if (!in_array($currency, $merchant->enabledFiatCurrencies, true)) {
+                throw ApiException::validationError(
+                    "This merchant has not enabled {$currency} for fiat-priced orders.",
+                    'currency_not_enabled'
+                );
+            }
         }
 
         if ($merchant->receivingXpub === null || $merchant->receivingXpub === '') {

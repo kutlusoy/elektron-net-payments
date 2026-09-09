@@ -58,6 +58,7 @@ final class MerchantSettingsController
             'default_display_currency' => $merchant->defaultDisplayCurrency,
             'success_url' => $merchant->successUrl,
             'cancel_url' => $merchant->cancelUrl,
+            'enabled_fiat_currencies' => $merchant->enabledFiatCurrencies,
         ]);
     }
 

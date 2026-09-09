@@ -53,6 +53,22 @@
         'TRY' => 'Turkish Lira (TRY)',
         'CNY' => 'Chinese Yuan (CNY)',
     ];
+
+    $enabledFiatCurrencies = $merchant->enabledFiatCurrencies;
+  ?>
+  <label>Accepted currencies at the terminal</label>
+  <div class="theme-presets">
+    <?php foreach ($commonCurrencies as $code => $label): ?>
+      <label class="scope-checkbox">
+        <input type="checkbox" name="enabled_fiat_currencies[]" value="<?php echo $code; ?>"
+               <?php echo in_array($code, $enabledFiatCurrencies, true) ? 'checked' : ''; ?>>
+        <?php echo htmlspecialchars($code, ENT_QUOTES, 'UTF-8'); ?>
+      </label>
+    <?php endforeach; ?>
+  </div>
+  <p class="form-hint form-hint--tight">Section 12: at <a href="/admin/terminal">/admin/terminal</a>, staff can type an amount in any currency checked here instead of ELEK - it is converted live via the price feed and the rate used is frozen permanently onto the order (never recomputed afterward), exactly like any other fiat-priced order. None checked (default) means the terminal only accepts ELEK amounts.</p>
+
+  <?php
     $currentCurrency = $merchant->defaultDisplayCurrency;
     $isCustomCurrency = $currentCurrency !== null && !isset($commonCurrencies[$currentCurrency]);
   ?>

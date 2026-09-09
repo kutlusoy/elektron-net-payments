@@ -27,6 +27,7 @@ use ElektronNet\Payments\PayServer\Http\Controllers\Admin\DashboardController;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\LoginController;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\PlatformSettingsController;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\SettingsController as AdminSettingsController;
+use ElektronNet\Payments\PayServer\Http\Controllers\Admin\TerminalController;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\WalletController;
 use ElektronNet\Payments\PayServer\Http\Controllers\CheckoutController;
 use ElektronNet\Payments\PayServer\Http\Controllers\MerchantSettingsController;
@@ -58,9 +59,6 @@ $auth = new ApiKeyAuthenticator($pdo);
 $merchants = new MerchantRepository($pdo);
 $orders = new OrderRepository($pdo);
 $addressAllocator = new OrderAddressAllocator(new XpubChildKeyDeriver(), $network);
-$orderCreation = new OrderCreationService($pdo, $merchants, $orders, $addressAllocator, $config->escrowEnabled());
-
-$ordersController = new OrdersController($auth, $merchants, $orders, $orderCreation, $config->checkoutBaseUrl());
 
 // Section 12: server-wide, operator-editable at runtime via
 // /admin/platform/price-feed (PlatformSettingsRepository, platform_settings
@@ -69,7 +67,9 @@ $ordersController = new OrdersController($auth, $merchants, $orders, $orderCreat
 // override yet. Either way, empty/disabled means $priceFeed stays null,
 // never a Fallback wrapping zero providers, so $priceFeedConfigured keeps
 // gating base_currency/display-currency exactly like the rest of this
-// codebase already expects.
+// codebase already expects. Built before OrderCreationService below since
+// that also needs it, for converting a fiat-priced order (e.g. from
+// /admin/terminal) at creation time.
 $platformSettings = new PlatformSettingsRepository($pdo);
 $priceFeedSetting = $platformSettings->get(PlatformSettingsController::SETTINGS_KEY);
 if ($priceFeedSetting !== null) {
@@ -81,6 +81,10 @@ if ($priceFeedSetting !== null) {
 }
 $priceFeedConfigured = $priceFeedEnabled && $priceFeedEndpoints !== [];
 $priceFeed = $priceFeedConfigured ? PriceFeedProviderFactory::build($priceFeedEndpoints) : null;
+
+$orderCreation = new OrderCreationService($pdo, $merchants, $orders, $addressAllocator, $config->escrowEnabled(), $priceFeed);
+
+$ordersController = new OrdersController($auth, $merchants, $orders, $orderCreation, $config->checkoutBaseUrl());
 
 $checkoutController = new CheckoutController(
     $orders,
@@ -101,6 +105,7 @@ $walletController = new WalletController($adminSession, $merchants, $adminViews,
 $adminSettingsController = new AdminSettingsController($adminSession, $merchants, $adminViews, $priceFeedConfigured);
 $merchantSettingsController = new MerchantSettingsController($auth, $merchants, $priceFeedConfigured);
 $platformSettingsController = new PlatformSettingsController($adminSession, $platformSettings, $adminViews, $config->priceFeedEndpoints());
+$terminalController = new TerminalController($adminSession, $merchants, $orderCreation, $adminViews);
 
 $router = new Router();
 $router->add('POST', '/v1/orders', [$ordersController, 'create']);
@@ -135,6 +140,8 @@ $router->add('GET', '/admin/orders', [$dashboardController, 'orderList']);
 $router->add('GET', '/admin/orders/new', [$dashboardController, 'newOrderForm']);
 $router->add('POST', '/admin/orders', [$dashboardController, 'createOrder']);
 $router->add('GET', '/admin/orders/{id}', [$dashboardController, 'orderDetail']);
+$router->add('GET', '/admin/terminal', [$terminalController, 'form']);
+$router->add('POST', '/admin/terminal', [$terminalController, 'charge']);
 $router->add('GET', '/admin/wallet', [$walletController, 'form']);
 $router->add('POST', '/admin/wallet', [$walletController, 'update']);
 $router->add('GET', '/admin/branding', [$adminSettingsController, 'brandingForm']);

@@ -16,6 +16,12 @@ final class Order
     public string $expiresAt;
     public int $requiredConfirmations;
     public string $createdAt;
+    /** Set only if this order was priced in fiat and converted at creation time (section 12), e.g. via /admin/terminal. */
+    public ?string $fiatCurrency;
+    public ?string $fiatAmount;
+    public ?string $exchangeRateUsed;
+    public ?string $refundAddress;
+    public ?string $paymentRequestId;
 
     /**
      * @param array<string, mixed> $row
@@ -33,6 +39,11 @@ final class Order
         $order->expiresAt = (string) $row['expires_at'];
         $order->requiredConfirmations = (int) $row['required_confirmations'];
         $order->createdAt = (string) $row['created_at'];
+        $order->fiatCurrency = ($row['fiat_currency'] ?? null) !== null ? (string) $row['fiat_currency'] : null;
+        $order->fiatAmount = ($row['fiat_amount'] ?? null) !== null ? (string) $row['fiat_amount'] : null;
+        $order->exchangeRateUsed = ($row['exchange_rate_used'] ?? null) !== null ? (string) $row['exchange_rate_used'] : null;
+        $order->refundAddress = ($row['refund_address'] ?? null) !== null ? (string) $row['refund_address'] : null;
+        $order->paymentRequestId = ($row['payment_request_id'] ?? null) !== null ? (string) $row['payment_request_id'] : null;
 
         return $order;
     }
@@ -54,6 +65,9 @@ final class Order
             'required_confirmations' => $this->requiredConfirmations,
             'created_at' => $this->createdAt,
             'checkout_url' => $checkoutBaseUrl . '/order/' . $this->id,
+            'fiat_currency' => $this->fiatCurrency,
+            'fiat_amount' => $this->fiatAmount !== null ? (float) $this->fiatAmount : null,
+            'exchange_rate_used' => $this->exchangeRateUsed !== null ? (float) $this->exchangeRateUsed : null,
         ];
     }
 
@@ -97,6 +111,9 @@ final class Order
             'expires_at' => $this->expiresAt,
             'required_confirmations' => $this->requiredConfirmations,
             'created_at' => $this->createdAt,
+            'fiat_currency' => $this->fiatCurrency,
+            'fiat_amount' => $this->fiatAmount,
+            'exchange_rate_used' => $this->exchangeRateUsed,
         ];
     }
 }

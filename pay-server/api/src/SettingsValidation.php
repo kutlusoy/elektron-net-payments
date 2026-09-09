@@ -26,7 +26,8 @@ final class SettingsValidation
      *     underpayment_tolerance_percent: float,
      *     default_display_currency: ?string,
      *     success_url: ?string,
-     *     cancel_url: ?string
+     *     cancel_url: ?string,
+     *     enabled_fiat_currencies: string[]
      * }
      * @throws ApiException on any validation failure
      */
@@ -70,6 +71,28 @@ final class SettingsValidation
             }
         }
 
+        $enabledFiatCurrencies = [];
+        if (!empty($payload['enabled_fiat_currencies'])) {
+            if (!$priceFeedConfigured) {
+                throw ApiException::validationError(
+                    'enabled_fiat_currencies cannot be set: no price feed is configured on this server yet (section 12).',
+                    'price_feed_not_configured'
+                );
+            }
+            if (!is_array($payload['enabled_fiat_currencies'])) {
+                throw ApiException::validationError('enabled_fiat_currencies must be an array of 3-letter ISO currency codes.');
+            }
+            foreach ($payload['enabled_fiat_currencies'] as $code) {
+                $normalized = strtoupper(trim((string) $code));
+                if (!preg_match('/^[A-Z]{3}$/', $normalized)) {
+                    throw ApiException::validationError('enabled_fiat_currencies must contain only 3-letter ISO currency codes.');
+                }
+                if (!in_array($normalized, $enabledFiatCurrencies, true)) {
+                    $enabledFiatCurrencies[] = $normalized;
+                }
+            }
+        }
+
         return [
             'order_expiry_minutes' => $orderExpiryMinutes,
             'default_required_confirmations' => $requiredConfirmations,
@@ -77,6 +100,7 @@ final class SettingsValidation
             'default_display_currency' => $displayCurrency,
             'success_url' => self::requireHttpsOrNull($payload['success_url'] ?? null, 'success_url'),
             'cancel_url' => self::requireHttpsOrNull($payload['cancel_url'] ?? null, 'cancel_url'),
+            'enabled_fiat_currencies' => $enabledFiatCurrencies,
         ];
     }
 
