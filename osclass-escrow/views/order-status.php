@@ -87,7 +87,7 @@ elektron_escrow_table_style();
     // "the same payment page as the buyer". The seller instead gets a
     // status message written for them (MessageCatalog's
     // 'order.awaiting_payment.seller' / 'order.confirming.seller', see
-    // shared/src/I18n/MessageCatalog.php), with no payment details at all.
+    // core/src/I18n/MessageCatalog.php), with no payment details at all.
     ?>
     <?php if ($showPaymentDetails && $isBuyer) { ?>
         <?php

@@ -10,7 +10,7 @@
 
 ---
 
-Multi-platform payment plugin suite for Elektron Net. This repository bundles trustless escrow integrations for third-party e-commerce platforms, starting with Osclass and planned to extend to WooCommerce and others. The escrow rules described below (timeout defaults, no signing or broadcasting by the plugin, fallback chain-data endpoints) are a suite-wide standard defined once in `shared/` and inherited by every platform adapter, not something each integration reinvents.
+Multi-platform payment plugin suite for Elektron Net, plus a standalone, self-hostable payment server. This repository bundles trustless escrow integrations for third-party e-commerce platforms, starting with Osclass and planned to extend to WooCommerce and others; it also bundles `pay-server`, a REST API and watcher daemon any storefront can use directly, without a platform-specific plugin (see [`doc-elektron/guideline-standalone-payment-server.md`](doc-elektron/guideline-standalone-payment-server.md) and [`pay-server/README.MD`](pay-server/README.MD)). The escrow rules described below (timeout defaults, no signing or broadcasting by the plugin, fallback chain-data endpoints) are a suite-wide standard defined once in `core/` and inherited by every platform adapter and by `pay-server` alike, not something each integration reinvents.
 
 ## Overview
 
@@ -28,19 +28,19 @@ A standard payment plugin just forwards funds from buyer to seller. That works f
 
 ```
 elektron-net-payments/
-    osclass-escrow/       Osclass plugin implementing the 2-of-2 escrow flow
-    shared/                Shared library: escrow script logic, watcher daemon client, RPC wrapper
-    scripts/               Build scripts that package a platform adapter into an installable zip
-    .github/workflows/     One release workflow per platform adapter
-    docs/
-        doc-elektron/       Project documentation (guidelines, fix reports)
+    core/                   Shared library: escrow script logic, chain-data access, i18n catalog
+    osclass-escrow/         Osclass plugin implementing the 2-of-2 escrow flow, on top of core/
+    pay-server/             Standalone payment server (pay-api, pay-watcher), on top of core/
+    scripts/                Build/release scripts for each deployable (plugin zip, pay-server images)
+    .github/workflows/      One CI/release workflow per platform adapter and per pay-server
+    doc-elektron/           Project documentation (guidelines, fix reports)
 ```
 
-Each platform integration lives in its own subdirectory and depends on the shared library rather than duplicating escrow logic. This keeps the core escrow behavior consistent across every plugin in the suite, and makes it straightforward to add support for additional platforms later. The timeout defaults, the frozen-per-order rule, and the chain-data fallback list described in this README all live in `shared/`, so a new platform adapter (WooCommerce or otherwise) gets them for free instead of having to reimplement them.
+Each platform integration, and `pay-server` itself, depends on `core/` rather than duplicating escrow logic. This keeps the core escrow behavior consistent across every plugin in the suite, and makes it straightforward to add support for additional platforms later. The timeout defaults, the frozen-per-order rule, and the chain-data fallback list described in this README all live in `core/`, so a new platform adapter (WooCommerce or otherwise) or `pay-server` itself gets them for free instead of having to reimplement them.
 
 ## Packaging and releases
 
-Each platform adapter ships as a plain zip a marketplace operator extracts straight into that platform's plugin directory (for Osclass: `oc-content/plugins/osclass-escrow/`), with its Composer dependencies (the shared core plus whichever third-party libraries it needs) already baked into its own `vendor/` folder. Nobody installing the plugin is expected to run Composer themselves; most Osclass hosting has no shell access to do that anyway.
+Each platform adapter ships as a plain zip a marketplace operator extracts straight into that platform's plugin directory (for Osclass: `oc-content/plugins/osclass-escrow/`), with its Composer dependencies (`core/` plus whichever third-party libraries it needs) already baked into its own `vendor/` folder. Nobody installing the plugin is expected to run Composer themselves; most Osclass hosting has no shell access to do that anyway. `pay-server` ships differently: as `pay-api` and `pay-watcher` Docker images (see [`pay-server/README.MD`](pay-server/README.MD)), since it is a self-hosted service rather than a platform plugin.
 
 - `scripts/build-osclass-plugin.sh [version]` builds that zip locally: installs Composer dependencies with `--no-dev`, copies the shared core in as real files rather than a symlink (`osclass-escrow/composer.json`'s path repository sets `"symlink": false` for exactly this reason, since a symlink into a sibling directory stops resolving the moment the zip is extracted somewhere else), recompiles every `.mo` from its `.po` in case one was edited without recompiling, stamps the given version into `index.php`'s header, strips dev-only files (`composer.json`, `composer.lock`, the `.po`-to-`.mo` fallback compiler), and writes `dist/osclass-escrow-<version>.zip`.
 - `.github/workflows/release-osclass-escrow.yml` runs that same script in CI. Pushing a tag matching `osclass-v*` (e.g. `osclass-v0.1.0`) builds the zip and attaches it to a new GitHub Release; running the workflow manually (`workflow_dispatch`) instead builds a throwaway zip as a downloadable Actions artifact, for trying a build before committing to a real tag.
@@ -114,7 +114,7 @@ The watcher only ever reads chain data; it has no signing or broadcast capabilit
 
 ## Escrow timeout policy
 
-These rules are the suite-wide standard for every platform integration in this repository, defined once in `shared/` so Osclass, WooCommerce, and any future adapter all behave the same way.
+These rules are the suite-wide standard for every platform integration in this repository, defined once in `core/` so Osclass, WooCommerce, `pay-server`, and any future adapter all behave the same way.
 
 ### Defaults
 

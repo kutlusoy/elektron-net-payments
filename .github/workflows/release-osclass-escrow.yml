@@ -10,6 +10,13 @@ on:
   push:
     tags:
       - 'osclass-v*'
+    # Scoped so a pay-server-only change can never trigger this workflow
+    # (and vice versa for ci-pay-server.yml/release-pay-server.yml): the
+    # osclass-escrow adapter's composer.json path-repository pulls in all
+    # of core/, so both paths are listed here.
+    paths:
+      - 'osclass-escrow/**'
+      - 'core/**'
   workflow_dispatch:
     inputs:
       version:

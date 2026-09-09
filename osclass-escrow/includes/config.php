@@ -83,7 +83,7 @@ function elektron_escrow_item_price_elek(array $item): ?float
 
 /**
  * Chain-data provider built from the same config, with automatic failover
- * across every configured endpoint (see shared/README.md, "ChainData\*").
+ * across every configured endpoint (see core/README.md, "ChainData\*").
  */
 function elektron_escrow_chain_data(): FallbackChainDataProvider
 {

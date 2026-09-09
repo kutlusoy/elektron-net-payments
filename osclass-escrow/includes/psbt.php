@@ -17,7 +17,7 @@ use ElektronNet\Payments\Core\Psbt\PsbtRelay;
  * @param array $order EscrowOrderDAO row
  * @return PsbtRelay the unsigned PSBT, wrapped exactly as the shared core
  *     expects it to travel between platform storage and the two parties
- *     (see the shared README, "Wiring a new platform" and PsbtRelay's own
+ *     (see the core README, "Wiring a new platform" and PsbtRelay's own
  *     docblock) -- store $relay->base64() and $relay->signatureCount() (0
  *     at this point) on the order row
  * @throws RuntimeException if either party's xpub is gone (should not

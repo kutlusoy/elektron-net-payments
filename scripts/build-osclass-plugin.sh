@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Builds an installable oc-content/plugins/osclass-escrow zip: a real copy
-# (never a symlink) of the shared core baked into vendor/, dev-only files
+# (never a symlink) of the core library baked into vendor/, dev-only files
 # stripped, ready to extract straight into an Osclass install.
 #
 # Usage: scripts/build-osclass-plugin.sh [version]
@@ -20,11 +20,11 @@ trap 'rm -rf "$BUILD_DIR"' EXIT
 
 echo "Building osclass-escrow ${VERSION} ..."
 
-# Copy both osclass-escrow/ and shared/ preserving their relative layout,
-# since osclass-escrow's composer.json depends on shared/ via a
-# "../shared" path repository.
+# Copy both osclass-escrow/ and core/ preserving their relative layout,
+# since osclass-escrow's composer.json depends on core/ via a
+# "../core" path repository.
 cp -a "$REPO_ROOT/osclass-escrow" "$BUILD_DIR/osclass-escrow"
-cp -a "$REPO_ROOT/shared" "$BUILD_DIR/shared"
+cp -a "$REPO_ROOT/core" "$BUILD_DIR/core"
 
 cd "$BUILD_DIR/osclass-escrow"
 
