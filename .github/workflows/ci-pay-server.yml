@@ -18,10 +18,21 @@ jobs:
           tools: composer
           extensions: pdo, pdo_pgsql, gmp
 
-      - name: Install core dependencies
+      - name: Validate core composer.json
         working-directory: core
-        run: composer install --no-interaction --prefer-dist
+        run: composer validate --no-check-publish
 
+      # Deliberately not running `composer install` inside core/ on its own:
+      # core/README.md, "Using it from a new adapter" explains why the
+      # bitwasp/bitcoin -> lastguest/murmurhash PHP-8 workaround only takes
+      # effect from the *consuming* project's own root composer.json
+      # (Composer's inline-alias syntax has no effect inside a dependency's
+      # own composer.json). Installing core/ standalone here would resolve
+      # against the unaliased lastguest/murmurhash 2.0.0, which requires
+      # PHP ^7 and fails on this job's PHP 8.2. pay-server/composer.json
+      # carries that alias itself (matching osclass-escrow/composer.json's
+      # own working pattern), and its path repository on ../core pulls
+      # core in correctly as part of the same install below.
       - name: Install pay-server dependencies
         working-directory: pay-server
         run: composer install --no-interaction --prefer-dist

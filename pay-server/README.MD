@@ -46,8 +46,13 @@ Everything else in the guideline is still open. In the order section 25's own ch
 # 1. Point PAY_SERVER_DB_DSN at a Postgres instance and apply the schema:
 psql "$DATABASE_URL" -f pay-server/migrations/0001_init.sql
 
-# 2. Install dependencies (from the repo root):
-cd core && composer install && cd ../pay-server && composer install
+# 2. Install dependencies. Only run composer install inside pay-server/,
+#    never standalone inside core/: the bitwasp/bitcoin -> lastguest/murmurhash
+#    PHP-8 alias (see core/README.md, "Using it from a new adapter") only
+#    takes effect from pay-server's own composer.json, which is where it
+#    is declared; core's path repository is resolved as part of this
+#    install, so core never needs (or should get) its own separate install.
+cd pay-server && composer install
 
 # 3. Copy the env examples and fill in real values:
 cp pay-server/docker/pay-api.env.example pay-server/docker/pay-api.env
