@@ -54,6 +54,11 @@ CREATE TABLE merchant_api_keys (
     merchant_id   UUID NOT NULL REFERENCES merchants(id),
     label         VARCHAR(255) NOT NULL,
     key_hash      VARCHAR(255) NOT NULL UNIQUE,
+    -- Last 4 characters of the raw key, stored alongside the hash purely
+    -- so the admin UI's key list (section 14) can show a merchant enough
+    -- to recognize their own key ("...a1b2") without ever being able to
+    -- reconstruct it; the raw key itself is never stored anywhere.
+    key_suffix    VARCHAR(8) NOT NULL,
     scopes        JSONB NOT NULL,
     created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
     last_used_at  TIMESTAMPTZ,

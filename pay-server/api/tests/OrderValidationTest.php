@@ -13,6 +13,10 @@ final class OrderValidationTest extends TestCase
     {
         return Merchant::fromRow(array_merge([
             'id' => 'merchant-1',
+            'name' => 'Demo Merchant',
+            'display_name' => null,
+            'logo_url' => null,
+            'theme_color' => null,
             'base_currency' => 'ELEK',
             'receiving_xpub' => 'xpub6D4BDPcP2GT577Vvch3R8wDkScZWzQzMMUm3PWbmWvVJrZwQY4VUNgqFJPMM3No2dFDFGTsxxpG5uJh7n7epu4trkrX7x7DogT5Uv6fcLW5',
             'order_expiry_minutes' => 15,

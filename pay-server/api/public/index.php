@@ -6,17 +6,27 @@
  * section 5.
  */
 
-require dirname(__DIR__, 3) . '/pay-server/vendor/autoload.php';
+$repoRoot = dirname(__DIR__, 3);
+require $repoRoot . '/pay-server/vendor/autoload.php';
 
 use ElektronNet\Payments\Core\Escrow\ElektronNetworkFactory;
 use ElektronNet\Payments\Core\Escrow\XpubChildKeyDeriver;
+use ElektronNet\Payments\PayServer\Admin\AdminSession;
+use ElektronNet\Payments\PayServer\Admin\ViewRenderer;
 use ElektronNet\Payments\PayServer\Auth\ApiKeyAuthenticator;
 use ElektronNet\Payments\PayServer\Config;
+use ElektronNet\Payments\PayServer\Db\ApiKeyRepository;
 use ElektronNet\Payments\PayServer\Db\Database;
 use ElektronNet\Payments\PayServer\Db\MerchantRepository;
+use ElektronNet\Payments\PayServer\Db\MerchantUserRepository;
 use ElektronNet\Payments\PayServer\Db\OrderRepository;
 use ElektronNet\Payments\PayServer\Http\ApiException;
+use ElektronNet\Payments\PayServer\Http\Controllers\Admin\ApiKeysController;
+use ElektronNet\Payments\PayServer\Http\Controllers\Admin\DashboardController;
+use ElektronNet\Payments\PayServer\Http\Controllers\Admin\LoginController;
+use ElektronNet\Payments\PayServer\Http\Controllers\CheckoutController;
 use ElektronNet\Payments\PayServer\Http\Controllers\OrdersController;
+use ElektronNet\Payments\PayServer\Http\FileResponse;
 use ElektronNet\Payments\PayServer\Http\Request;
 use ElektronNet\Payments\PayServer\Http\Router;
 use ElektronNet\Payments\PayServer\OrderAddressAllocator;
@@ -52,9 +62,51 @@ $ordersController = new OrdersController(
     $config->checkoutBaseUrl()
 );
 
+$checkoutController = new CheckoutController($orders, $merchants, $repoRoot . '/pay-server/checkout/templates');
+
+$adminSession = new AdminSession();
+$adminViews = new ViewRenderer($repoRoot . '/pay-server/admin/templates');
+$merchantUsers = new MerchantUserRepository($pdo);
+$apiKeyRepository = new ApiKeyRepository($pdo);
+
+$loginController = new LoginController($adminSession, $merchantUsers, $adminViews);
+$dashboardController = new DashboardController($adminSession, $merchants, $orders, $adminViews);
+$apiKeysController = new ApiKeysController($adminSession, $merchants, $apiKeyRepository, $adminViews);
+
 $router = new Router();
 $router->add('POST', '/v1/orders', [$ordersController, 'create']);
 $router->add('GET', '/v1/orders/{id}', [$ordersController, 'get']);
+$router->add('GET', '/v1/orders/{id}/public', [$checkoutController, 'publicStatus']);
+$router->add('GET', '/v1/orders/{id}/events', [$checkoutController, 'events']);
+
+// Section 2's architecture: pay-api also serves the checkout pages and
+// (see the admin routes below) the admin UI, all from one process.
+$router->add('GET', '/order/{id}', [$checkoutController, 'page']);
+
+// Fixed, hardcoded paths only (Http\FileResponse never takes a
+// user-supplied path) -- a real deployment would typically have its
+// reverse proxy serve these same routes directly and never reach PHP.
+$checkoutAssets = $repoRoot . '/pay-server/checkout/assets';
+$router->add('GET', '/assets/checkout/style.css', fn () => new FileResponse($checkoutAssets . '/style.css', 'text/css'));
+$router->add('GET', '/assets/checkout/checkout.js', fn () => new FileResponse($checkoutAssets . '/checkout.js', 'application/javascript'));
+$router->add('GET', '/assets/checkout/vendor/qrcode.js', fn () => new FileResponse($checkoutAssets . '/vendor/qrcode.js', 'application/javascript'));
+
+// Admin UI (section 21): merchant login, order list/detail, API key
+// management. Session-cookie authenticated -- a different auth model
+// from both the Bearer-token /v1/* API and the capability-token checkout
+// pages, on purpose (see Admin\AdminSession's docblock).
+$router->add('GET', '/admin', fn () => new \ElektronNet\Payments\PayServer\Http\RedirectResponse('/admin/orders'));
+$router->add('GET', '/admin/login', [$loginController, 'showForm']);
+$router->add('POST', '/admin/login', [$loginController, 'submit']);
+$router->add('POST', '/admin/logout', [$loginController, 'logout']);
+$router->add('GET', '/admin/orders', [$dashboardController, 'orderList']);
+$router->add('GET', '/admin/orders/{id}', [$dashboardController, 'orderDetail']);
+$router->add('GET', '/admin/api-keys', [$apiKeysController, 'index']);
+$router->add('POST', '/admin/api-keys', [$apiKeysController, 'create']);
+$router->add('POST', '/admin/api-keys/{id}/revoke', [$apiKeysController, 'revoke']);
+
+$adminAssets = $repoRoot . '/pay-server/admin/assets';
+$router->add('GET', '/assets/admin/style.css', fn () => new FileResponse($adminAssets . '/style.css', 'text/css'));
 
 $request = Request::fromGlobals();
 
