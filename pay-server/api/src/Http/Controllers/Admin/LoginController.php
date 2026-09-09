@@ -50,7 +50,7 @@ final class LoginController
         if ($this->session->verifyCsrf(is_string($csrf) ? $csrf : null)) {
             $user = $this->users->findByEmail($email);
             if ($user !== null && $user->passwordHash !== null && password_verify($password, $user->passwordHash)) {
-                $this->session->login($user->id, $user->merchantId);
+                $this->session->login($user->id, $user->merchantId, $user->isPlatformAdmin);
                 return new RedirectResponse('/admin/orders');
             }
         }

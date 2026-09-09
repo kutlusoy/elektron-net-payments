@@ -19,11 +19,12 @@ final class AdminSession
         }
     }
 
-    public function login(string $merchantUserId, string $merchantId): void
+    public function login(string $merchantUserId, string $merchantId, bool $isPlatformAdmin = false): void
     {
         session_regenerate_id(true);
         $_SESSION['merchant_user_id'] = $merchantUserId;
         $_SESSION['merchant_id'] = $merchantId;
+        $_SESSION['is_platform_admin'] = $isPlatformAdmin;
     }
 
     public function logout(): void
@@ -45,6 +46,16 @@ final class AdminSession
     public function merchantUserId(): ?string
     {
         return isset($_SESSION['merchant_user_id']) ? (string) $_SESSION['merchant_user_id'] : null;
+    }
+
+    /**
+     * Section 12: the price feed (and any future server-wide setting) is
+     * gated on this, not on a separate login system -- a platform admin
+     * is a merchant_users row like any other, just with one extra flag.
+     */
+    public function isPlatformAdmin(): bool
+    {
+        return $this->isAuthenticated() && !empty($_SESSION['is_platform_admin']);
     }
 
     public function csrfToken(): string

@@ -24,6 +24,9 @@
       <a href="/admin/branding" class="<?php echo $active === 'branding' ? 'is-active' : ''; ?>">Branding</a>
       <a href="/admin/settings" class="<?php echo $active === 'settings' ? 'is-active' : ''; ?>">Settings</a>
       <a href="/admin/api-keys" class="<?php echo $active === 'api-keys' ? 'is-active' : ''; ?>">API keys</a>
+      <?php if (!empty($_SESSION['is_platform_admin'])): ?>
+        <a href="/admin/platform/price-feed" class="admin-nav__platform-link <?php echo $active === 'platform-price-feed' ? 'is-active' : ''; ?>">Platform: Price feed</a>
+      <?php endif; ?>
     </nav>
     <form method="post" action="/admin/logout" class="admin-nav__logout">
       <span class="admin-nav__merchant"><?php echo htmlspecialchars($merchantName, ENT_QUOTES, 'UTF-8'); ?></span>

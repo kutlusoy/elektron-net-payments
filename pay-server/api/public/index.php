@@ -20,10 +20,12 @@ use ElektronNet\Payments\PayServer\Db\Database;
 use ElektronNet\Payments\PayServer\Db\MerchantRepository;
 use ElektronNet\Payments\PayServer\Db\MerchantUserRepository;
 use ElektronNet\Payments\PayServer\Db\OrderRepository;
+use ElektronNet\Payments\PayServer\Db\PlatformSettingsRepository;
 use ElektronNet\Payments\PayServer\Http\ApiException;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\ApiKeysController;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\DashboardController;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\LoginController;
+use ElektronNet\Payments\PayServer\Http\Controllers\Admin\PlatformSettingsController;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\SettingsController as AdminSettingsController;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\WalletController;
 use ElektronNet\Payments\PayServer\Http\Controllers\CheckoutController;
@@ -60,14 +62,24 @@ $orderCreation = new OrderCreationService($pdo, $merchants, $orders, $addressAll
 
 $ordersController = new OrdersController($auth, $merchants, $orders, $orderCreation, $config->checkoutBaseUrl());
 
-// Section 12: PAY_SERVER_PRICE_FEED_ENDPOINTS is opt-in and empty by
-// default (ELEK is not listed on any platform today), so an unconfigured
-// deployment still runs with no price feed exactly as before -
-// $priceFeed stays null, never a Fallback wrapping zero providers, so
-// $priceFeedConfigured keeps gating base_currency/display-currency
-// exactly like the rest of this codebase already expects.
-$priceFeedEndpoints = $config->priceFeedEndpoints();
-$priceFeedConfigured = $priceFeedEndpoints !== [];
+// Section 12: server-wide, operator-editable at runtime via
+// /admin/platform/price-feed (PlatformSettingsRepository, platform_settings
+// table) rather than only through PAY_SERVER_PRICE_FEED_ENDPOINTS - that
+// env var remains the seed default for a fresh install with no saved
+// override yet. Either way, empty/disabled means $priceFeed stays null,
+// never a Fallback wrapping zero providers, so $priceFeedConfigured keeps
+// gating base_currency/display-currency exactly like the rest of this
+// codebase already expects.
+$platformSettings = new PlatformSettingsRepository($pdo);
+$priceFeedSetting = $platformSettings->get(PlatformSettingsController::SETTINGS_KEY);
+if ($priceFeedSetting !== null) {
+    $priceFeedEnabled = !empty($priceFeedSetting['enabled']);
+    $priceFeedEndpoints = is_array($priceFeedSetting['endpoints'] ?? null) ? $priceFeedSetting['endpoints'] : [];
+} else {
+    $priceFeedEndpoints = $config->priceFeedEndpoints();
+    $priceFeedEnabled = $priceFeedEndpoints !== [];
+}
+$priceFeedConfigured = $priceFeedEnabled && $priceFeedEndpoints !== [];
 $priceFeed = $priceFeedConfigured ? PriceFeedProviderFactory::build($priceFeedEndpoints) : null;
 
 $checkoutController = new CheckoutController(
@@ -88,6 +100,7 @@ $apiKeysController = new ApiKeysController($adminSession, $merchants, $apiKeyRep
 $walletController = new WalletController($adminSession, $merchants, $adminViews, $network, new XpubChildKeyDeriver());
 $adminSettingsController = new AdminSettingsController($adminSession, $merchants, $adminViews, $priceFeedConfigured);
 $merchantSettingsController = new MerchantSettingsController($auth, $merchants, $priceFeedConfigured);
+$platformSettingsController = new PlatformSettingsController($adminSession, $platformSettings, $adminViews, $config->priceFeedEndpoints());
 
 $router = new Router();
 $router->add('POST', '/v1/orders', [$ordersController, 'create']);
@@ -131,6 +144,8 @@ $router->add('POST', '/admin/settings', [$adminSettingsController, 'updateGenera
 $router->add('GET', '/admin/api-keys', [$apiKeysController, 'index']);
 $router->add('POST', '/admin/api-keys', [$apiKeysController, 'create']);
 $router->add('POST', '/admin/api-keys/{id}/revoke', [$apiKeysController, 'revoke']);
+$router->add('GET', '/admin/platform/price-feed', [$platformSettingsController, 'priceFeedForm']);
+$router->add('POST', '/admin/platform/price-feed', [$platformSettingsController, 'updatePriceFeed']);
 
 // REST surface for the same branding/settings management (section 5's
 // table), scoped branding:write/settings:write, for a merchant's own

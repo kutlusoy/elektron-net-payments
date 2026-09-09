@@ -13,6 +13,7 @@ final class MerchantUser
     public string $merchantId;
     public string $email;
     public ?string $passwordHash;
+    public bool $isPlatformAdmin;
 
     /**
      * @param array<string, mixed> $row
@@ -24,6 +25,7 @@ final class MerchantUser
         $user->merchantId = (string) $row['merchant_id'];
         $user->email = (string) $row['email'];
         $user->passwordHash = $row['password_hash'] !== null ? (string) $row['password_hash'] : null;
+        $user->isPlatformAdmin = (bool) ($row['is_platform_admin'] ?? false);
 
         return $user;
     }
