@@ -11,13 +11,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?php echo htmlspecialchars($title, ENT_QUOTES, 'UTF-8'); ?> - pay-server admin</title>
+<title><?php echo htmlspecialchars($title, ENT_QUOTES, 'UTF-8'); ?> - Elektron Pay Server admin</title>
 <link rel="stylesheet" href="/assets/admin/style.css">
 </head>
 <body>
 <div class="admin-shell">
   <aside class="admin-nav">
-    <div class="admin-nav__brand">pay-server</div>
+    <div class="admin-nav__brand">Elektron Pay Server</div>
     <nav>
       <a href="/admin/orders" class="<?php echo $active === 'orders' ? 'is-active' : ''; ?>">Orders</a>
       <a href="/admin/api-keys" class="<?php echo $active === 'api-keys' ? 'is-active' : ''; ?>">API keys</a>
