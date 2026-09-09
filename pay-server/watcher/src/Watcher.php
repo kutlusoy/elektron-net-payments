@@ -25,13 +25,13 @@ use PDO;
 final class Watcher
 {
     private PDO $pdo;
-    private ChainDataProviderInterface $chainData;
+    private ChainDataProviderFactory $chainDataFactory;
     private OrderRepository $orders;
 
-    public function __construct(PDO $pdo, ChainDataProviderInterface $chainData, OrderRepository $orders)
+    public function __construct(PDO $pdo, ChainDataProviderFactory $chainDataFactory, OrderRepository $orders)
     {
         $this->pdo = $pdo;
-        $this->chainData = $chainData;
+        $this->chainDataFactory = $chainDataFactory;
         $this->orders = $orders;
     }
 
@@ -51,12 +51,24 @@ final class Watcher
     }
 
     /**
+     * Joined with merchants (section 7: per-merchant chain_endpoints
+     * override; underpayment_tolerance_percent) so each order is
+     * evaluated against its own merchant's configuration without an N+1
+     * query per order.
+     *
      * @return array<int, array<string, mixed>>
      */
     private function fetchNonTerminalOrders(int $batchSize): array
     {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM orders WHERE status IN ('new', 'processing') ORDER BY created_at ASC LIMIT :limit"
+            "SELECT o.*,
+                    m.chain_endpoints AS merchant_chain_endpoints,
+                    m.underpayment_tolerance_percent AS merchant_underpayment_tolerance_percent
+             FROM orders o
+             JOIN merchants m ON m.id = o.merchant_id
+             WHERE o.status IN ('new', 'processing')
+             ORDER BY o.created_at ASC
+             LIMIT :limit"
         );
         $stmt->bindValue('limit', $batchSize, PDO::PARAM_INT);
         $stmt->execute();
@@ -73,8 +85,11 @@ final class Watcher
         $status = (string) $row['status'];
         $expiresAt = new \DateTimeImmutable((string) $row['expires_at']);
         $now = new \DateTimeImmutable();
+        $chainData = $this->chainDataFactory->forMerchant(
+            $row['merchant_chain_endpoints'] !== null ? (string) $row['merchant_chain_endpoints'] : null
+        );
 
-        $outputs = $this->chainData->getFundingOutputs((string) $row['address']);
+        $outputs = $chainData->getFundingOutputs((string) $row['address']);
         $receivedLep = array_sum(array_map(fn ($output) => $output->amountLep(), $outputs));
         $requiredLep = (int) $row['amount_lep'];
 
@@ -85,7 +100,7 @@ final class Watcher
             return;
         }
 
-        $confirmations = $this->minConfirmations($outputs);
+        $confirmations = $this->minConfirmations($chainData, $outputs);
         $requiredConfirmations = (int) $row['required_confirmations'];
 
         if ($receivedLep < $requiredLep) {
@@ -98,11 +113,28 @@ final class Watcher
                 }
                 return;
             }
-            // Underpayment tolerance percentage lives on the merchant
-            // record; the watcher's DB access here is kept to the orders
-            // table only for this first slice, so a short amount is
-            // treated as processing rather than settled or invalid until
-            // the tolerance check is wired in.
+
+            $tolerancePercent = (float) ($row['merchant_underpayment_tolerance_percent'] ?? 0);
+            $shortfallPercent = (($requiredLep - $receivedLep) / $requiredLep) * 100;
+            if ($tolerancePercent > 0 && $shortfallPercent <= $tolerancePercent) {
+                $this->transition($orderId, OrderStatus::SETTLED, [
+                    'received_lep' => $receivedLep,
+                    'confirmations' => $confirmations,
+                    'underpaid_within_tolerance' => true,
+                    'shortfall_percent' => round($shortfallPercent, 4),
+                ]);
+                return;
+            }
+
+            // Confirmed but short beyond the merchant's own tolerance:
+            // stays processing (the merchant's admin order view still
+            // shows the received amount via this event) rather than
+            // auto-settling or auto-invalidating -- resolving a genuine
+            // underpayment beyond tolerance is a merchant decision this
+            // slice does not make for them.
+            if ($status === OrderStatus::NEW) {
+                $this->transition($orderId, OrderStatus::PROCESSING, ['received_lep' => $receivedLep]);
+            }
             return;
         }
 
@@ -122,7 +154,7 @@ final class Watcher
     /**
      * @param array<int, mixed> $outputs
      */
-    private function minConfirmations(array $outputs): int
+    private function minConfirmations(ChainDataProviderInterface $chainData, array $outputs): int
     {
         if ($outputs === []) {
             return 0;
@@ -130,7 +162,7 @@ final class Watcher
 
         $min = null;
         foreach ($outputs as $output) {
-            $confirmations = $this->chainData->getConfirmations($output->txid());
+            $confirmations = $chainData->getConfirmations($output->txid());
             $min = $min === null ? $confirmations : min($min, $confirmations);
         }
 

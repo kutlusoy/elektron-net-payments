@@ -8,30 +8,18 @@
 
 require dirname(__DIR__, 3) . '/pay-server/vendor/autoload.php';
 
-use ElektronNet\Payments\Core\ChainData\EsploraChainDataProvider;
-use ElektronNet\Payments\Core\ChainData\FallbackChainDataProvider;
 use ElektronNet\Payments\PayServer\Config;
 use ElektronNet\Payments\PayServer\Db\Database;
 use ElektronNet\Payments\PayServer\Db\OrderRepository;
+use ElektronNet\Payments\PayWatcher\ChainDataProviderFactory;
 use ElektronNet\Payments\PayWatcher\Watcher;
 
 $config = Config::fromEnv();
 $pdo = Database::connect($config);
 
-$providers = [];
-foreach ($config->defaultChainEndpoints() as $endpoint) {
-    if (($endpoint['type'] ?? null) === 'esplora') {
-        $providers[] = new EsploraChainDataProvider((string) $endpoint['base_url']);
-    }
-    // 'electrum' endpoints (section 7's future tier) need
-    // ElectrumChainDataProvider, which does not exist yet; entries of that
-    // type are skipped here rather than erroring, matching section 7's
-    // "not a blocker for launch" note.
-}
-$chainData = new FallbackChainDataProvider($providers);
-
+$chainDataFactory = new ChainDataProviderFactory($config->defaultChainEndpoints());
 $orders = new OrderRepository($pdo);
-$watcher = new Watcher($pdo, $chainData, $orders);
+$watcher = new Watcher($pdo, $chainDataFactory, $orders);
 
 $pollIntervalSeconds = (int) (getenv('PAY_WATCHER_POLL_INTERVAL_SECONDS') ?: 30);
 $batchSize = (int) (getenv('PAY_WATCHER_BATCH_SIZE') ?: 100);

@@ -106,6 +106,8 @@ $title = htmlspecialchars($merchant->displayName, ENT_QUOTES, 'UTF-8') . ' - Ord
   window.ORDER_ID = <?php echo json_encode($order->id); ?>;
   window.ORDER_STATUS = <?php echo json_encode($order->status); ?>;
   window.PAYMENT_URI = <?php echo json_encode($paymentUri); ?>;
+  window.SUCCESS_URL = <?php echo json_encode($merchant->successUrl); ?>;
+  window.CANCEL_URL = <?php echo json_encode($merchant->cancelUrl); ?>;
 </script>
 <script src="/assets/checkout/checkout.js"></script>
 </body>

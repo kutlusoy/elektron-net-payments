@@ -85,6 +85,22 @@
     invalid: 'Payment problem',
   };
 
+  // Section 17: "success_url and cancel_url let the merchant's own site
+  // regain control of the buyer's browser once an order finishes or is
+  // abandoned." A short delay so the buyer actually sees the final
+  // status (e.g. "Paid") before being sent away, rather than an
+  // instant, jarring redirect.
+  var REDIRECT_DELAY_MS = 4000;
+
+  function redirectAfterDelay(url) {
+    if (!url) {
+      return;
+    }
+    setTimeout(function () {
+      window.location.href = url;
+    }, REDIRECT_DELAY_MS);
+  }
+
   function applyStatus(status) {
     document.documentElement.setAttribute('data-status', status);
     var badge = document.getElementById('status-badge');
@@ -97,6 +113,12 @@
       var countdownEl = document.getElementById('countdown');
       if (countdownEl) {
         countdownEl.textContent = '';
+      }
+
+      if (status === 'settled') {
+        redirectAfterDelay(window.SUCCESS_URL);
+      } else if (status === 'expired' || status === 'invalid') {
+        redirectAfterDelay(window.CANCEL_URL);
       }
     }
   }
@@ -157,6 +179,11 @@
     }
     if (window.ORDER_STATUS === 'new' || window.ORDER_STATUS === 'processing') {
       startLiveStatus(window.ORDER_ID);
+    } else {
+      // Landed directly on an already-terminal order (e.g. reopening an
+      // old link after paying) -- still honor the redirect rather than
+      // only doing so on a live transition.
+      applyStatus(window.ORDER_STATUS);
     }
   });
 })();

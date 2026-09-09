@@ -24,7 +24,10 @@ use ElektronNet\Payments\PayServer\Http\ApiException;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\ApiKeysController;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\DashboardController;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\LoginController;
+use ElektronNet\Payments\PayServer\Http\Controllers\Admin\SettingsController as AdminSettingsController;
+use ElektronNet\Payments\PayServer\Http\Controllers\Admin\WalletController;
 use ElektronNet\Payments\PayServer\Http\Controllers\CheckoutController;
+use ElektronNet\Payments\PayServer\Http\Controllers\MerchantSettingsController;
 use ElektronNet\Payments\PayServer\Http\Controllers\OrdersController;
 use ElektronNet\Payments\PayServer\Http\FileResponse;
 use ElektronNet\Payments\PayServer\Http\Request;
@@ -56,7 +59,17 @@ $orderCreation = new OrderCreationService($pdo, $merchants, $orders, $addressAll
 
 $ordersController = new OrdersController($auth, $merchants, $orders, $orderCreation, $config->checkoutBaseUrl());
 
-$checkoutController = new CheckoutController($orders, $merchants, $repoRoot . '/pay-server/checkout/templates');
+// No PriceFeedProviderInterface implementation ships with core/ yet
+// (section 12); every real deployment runs with none configured today.
+$priceFeed = null;
+$priceFeedConfigured = $priceFeed !== null;
+
+$checkoutController = new CheckoutController(
+    $orders,
+    $merchants,
+    $repoRoot . '/pay-server/checkout/templates',
+    $priceFeed
+);
 
 $adminSession = new AdminSession();
 $adminViews = new ViewRenderer($repoRoot . '/pay-server/admin/templates');
@@ -66,6 +79,9 @@ $apiKeyRepository = new ApiKeyRepository($pdo);
 $loginController = new LoginController($adminSession, $merchantUsers, $adminViews);
 $dashboardController = new DashboardController($adminSession, $merchants, $orders, $orderCreation, $adminViews);
 $apiKeysController = new ApiKeysController($adminSession, $merchants, $apiKeyRepository, $adminViews);
+$walletController = new WalletController($adminSession, $merchants, $adminViews, $network, new XpubChildKeyDeriver());
+$adminSettingsController = new AdminSettingsController($adminSession, $merchants, $adminViews, $priceFeedConfigured);
+$merchantSettingsController = new MerchantSettingsController($auth, $merchants, $priceFeedConfigured);
 
 $router = new Router();
 $router->add('POST', '/v1/orders', [$ordersController, 'create']);
@@ -100,9 +116,22 @@ $router->add('GET', '/admin/orders', [$dashboardController, 'orderList']);
 $router->add('GET', '/admin/orders/new', [$dashboardController, 'newOrderForm']);
 $router->add('POST', '/admin/orders', [$dashboardController, 'createOrder']);
 $router->add('GET', '/admin/orders/{id}', [$dashboardController, 'orderDetail']);
+$router->add('GET', '/admin/wallet', [$walletController, 'form']);
+$router->add('POST', '/admin/wallet', [$walletController, 'update']);
+$router->add('GET', '/admin/branding', [$adminSettingsController, 'brandingForm']);
+$router->add('POST', '/admin/branding', [$adminSettingsController, 'updateBranding']);
+$router->add('GET', '/admin/settings', [$adminSettingsController, 'generalForm']);
+$router->add('POST', '/admin/settings', [$adminSettingsController, 'updateGeneral']);
 $router->add('GET', '/admin/api-keys', [$apiKeysController, 'index']);
 $router->add('POST', '/admin/api-keys', [$apiKeysController, 'create']);
 $router->add('POST', '/admin/api-keys/{id}/revoke', [$apiKeysController, 'revoke']);
+
+// REST surface for the same branding/settings management (section 5's
+// table), scoped branding:write/settings:write, for a merchant's own
+// tooling rather than a human at the admin dashboard.
+$router->add('PUT', '/v1/merchants/{id}/branding', [$merchantSettingsController, 'updateBranding']);
+$router->add('GET', '/v1/merchants/{id}/settings', [$merchantSettingsController, 'getSettings']);
+$router->add('PUT', '/v1/merchants/{id}/settings', [$merchantSettingsController, 'updateSettings']);
 
 $adminAssets = $repoRoot . '/pay-server/admin/assets';
 $router->add('GET', '/assets/admin/style.css', fn () => new FileResponse($adminAssets . '/style.css', 'text/css'));

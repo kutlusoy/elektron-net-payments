@@ -20,6 +20,9 @@
     <div class="admin-nav__brand">Elektron Pay Server</div>
     <nav>
       <a href="/admin/orders" class="<?php echo $active === 'orders' ? 'is-active' : ''; ?>">Orders</a>
+      <a href="/admin/wallet" class="<?php echo $active === 'wallet' ? 'is-active' : ''; ?>">Wallet</a>
+      <a href="/admin/branding" class="<?php echo $active === 'branding' ? 'is-active' : ''; ?>">Branding</a>
+      <a href="/admin/settings" class="<?php echo $active === 'settings' ? 'is-active' : ''; ?>">Settings</a>
       <a href="/admin/api-keys" class="<?php echo $active === 'api-keys' ? 'is-active' : ''; ?>">API keys</a>
     </nav>
     <form method="post" action="/admin/logout" class="admin-nav__logout">

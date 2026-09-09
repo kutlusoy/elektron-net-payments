@@ -42,12 +42,45 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
 .admin-content h2 { font-size: 16px; margin: 32px 0 12px; }
 .admin-sub { color: var(--text-dim); font-size: 13px; margin: -8px 0 16px; }
 .admin-sub-row { display: flex; align-items: center; justify-content: space-between; margin: -8px 0 16px; }
-.form-hint { color: var(--text-dim); font-size: 13px; margin-top: 16px; max-width: 420px; }
+.form-hint { color: var(--text-dim); font-size: 13px; margin-top: 16px; max-width: 480px; }
+.form-hint--tight { margin-top: 6px; }
 .btn-link {
   display: inline-block; padding: 8px 14px; border-radius: 8px; background: var(--brand); color: #fff;
   text-decoration: none; font-weight: 600; font-size: 13px;
 }
+
+.detail-grid--spaced { margin-bottom: 24px; }
+
+.wallet-warning {
+  background: #fff7e0; border: 1px solid #f0d78c; color: #8a6d1a;
+  border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; font-size: 13px;
+}
+
+.help-details { margin-top: 24px; max-width: 480px; }
+.help-details summary { cursor: pointer; font-weight: 600; font-size: 13px; color: var(--brand); margin-bottom: 10px; }
+.code-block {
+  background: #14161a; color: #e6edf3; padding: 12px 14px; border-radius: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px;
+  overflow-x: auto; white-space: pre; margin: 0 0 4px;
+}
 .empty-state { color: var(--text-dim); font-size: 14px; }
+
+.color-field-row { display: flex; gap: 8px; align-items: center; }
+.color-swatch-input {
+  width: 40px; height: 38px; padding: 2px; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--card-bg); cursor: pointer; flex-shrink: 0;
+}
+.theme-presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.theme-preset {
+  display: flex; align-items: center; gap: 6px; padding: 6px 10px 6px 6px;
+  border: 1px solid var(--border); border-radius: 999px; background: var(--card-bg);
+  cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text);
+}
+.theme-preset::before {
+  content: ""; display: block; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--swatch); flex-shrink: 0;
+}
+.theme-preset:hover { border-color: var(--brand); }
 
 .admin-table { width: 100%; border-collapse: collapse; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
 .admin-table th, .admin-table td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; }
