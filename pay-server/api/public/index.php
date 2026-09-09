@@ -30,6 +30,7 @@ use ElektronNet\Payments\PayServer\Http\FileResponse;
 use ElektronNet\Payments\PayServer\Http\Request;
 use ElektronNet\Payments\PayServer\Http\Router;
 use ElektronNet\Payments\PayServer\OrderAddressAllocator;
+use ElektronNet\Payments\PayServer\OrderCreationService;
 
 $config = Config::fromEnv();
 $pdo = Database::connect($config);
@@ -51,16 +52,9 @@ $auth = new ApiKeyAuthenticator($pdo);
 $merchants = new MerchantRepository($pdo);
 $orders = new OrderRepository($pdo);
 $addressAllocator = new OrderAddressAllocator(new XpubChildKeyDeriver(), $network);
+$orderCreation = new OrderCreationService($pdo, $merchants, $orders, $addressAllocator, $config->escrowEnabled());
 
-$ordersController = new OrdersController(
-    $pdo,
-    $auth,
-    $merchants,
-    $orders,
-    $addressAllocator,
-    $config->escrowEnabled(),
-    $config->checkoutBaseUrl()
-);
+$ordersController = new OrdersController($auth, $merchants, $orders, $orderCreation, $config->checkoutBaseUrl());
 
 $checkoutController = new CheckoutController($orders, $merchants, $repoRoot . '/pay-server/checkout/templates');
 
@@ -70,7 +64,7 @@ $merchantUsers = new MerchantUserRepository($pdo);
 $apiKeyRepository = new ApiKeyRepository($pdo);
 
 $loginController = new LoginController($adminSession, $merchantUsers, $adminViews);
-$dashboardController = new DashboardController($adminSession, $merchants, $orders, $adminViews);
+$dashboardController = new DashboardController($adminSession, $merchants, $orders, $orderCreation, $adminViews);
 $apiKeysController = new ApiKeysController($adminSession, $merchants, $apiKeyRepository, $adminViews);
 
 $router = new Router();
@@ -100,6 +94,11 @@ $router->add('GET', '/admin/login', [$loginController, 'showForm']);
 $router->add('POST', '/admin/login', [$loginController, 'submit']);
 $router->add('POST', '/admin/logout', [$loginController, 'logout']);
 $router->add('GET', '/admin/orders', [$dashboardController, 'orderList']);
+// Registered before /admin/orders/{id}: the router matches routes in
+// registration order, and {id}'s pattern would otherwise also match the
+// literal path segment "new".
+$router->add('GET', '/admin/orders/new', [$dashboardController, 'newOrderForm']);
+$router->add('POST', '/admin/orders', [$dashboardController, 'createOrder']);
 $router->add('GET', '/admin/orders/{id}', [$dashboardController, 'orderDetail']);
 $router->add('GET', '/admin/api-keys', [$apiKeysController, 'index']);
 $router->add('POST', '/admin/api-keys', [$apiKeysController, 'create']);

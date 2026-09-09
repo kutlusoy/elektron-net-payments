@@ -35,10 +35,6 @@ Worked through step by step in the order below; each item is checked off here as
 
 ### Checkout frontend (`pay-server/checkout/`)
 
-- [ ] `checkout/public/index.php` front controller: `GET /order/{id}`
-- [ ] Order template: amount, address, countdown to `expires_at`, status badge, merchant branding (display name/logo/theme color, section 17)
-- [ ] QR code (desktop) vs. tap-to-pay button (mobile) via device detection (section 10.A)
-- [ ] Live status: `EventSource` against `/v1/orders/{id}/events`, falling back to polling `GET /v1/orders/{id}/public` on error (section 10.C)
 - [x] `checkout/public/index.php` front controller: `GET /order/{id}` (served from `pay-server/api/public/index.php`, matching section 2's architecture diagram - "pay-api: REST API, checkout pages, admin UI" is one process, not three)
 - [x] Order template: amount, address, countdown to `expires_at`, status badge, merchant branding (display name/logo/theme color, section 17)
 - [x] QR code (desktop) vs. tap-to-pay button (mobile) via device detection (section 10.A)
@@ -79,3 +75,12 @@ Not scoped or started; captured here so a future pass has a concrete starting li
 - **Rate rule expressions for the price feed** - BTCPay's rate rule syntax (e.g. preferring one source, falling back to another with a spread) is a reasonable model to adopt once `PriceFeedProviderInterface` (section 12) gets a real implementation, rather than inventing a narrower config format later.
 
 Not every BTCPay concept fits here and pulling in anything BTCPay-specific to Lightning, multiple on-chain assets, or its plugin/app marketplace should be treated with more scrutiny than the list above -- this project is single-asset (ELEK) and self-hosted-first, so only borrow the parts that solve a problem this guideline already has, not BTCPay's whole surface area.
+
+## 5. Follow-up items closed after the initial pass
+
+The checklist above covered the first build-out pass end to end. Two gaps surfaced afterward and were closed in the same style (real code, verified locally, not a mockup):
+
+- [x] **Merchant "type an amount, click through" workflow** - before this, the only way to create an order at all was `POST /v1/orders` with a Bearer token; the admin dashboard could list orders but not create one. Added `GET`/`POST /admin/orders` (`admin/templates/order-new.php`) and a "Show this to the buyer" QR panel on the order-detail page. Extracted the validation/idempotency/persistence logic `OrdersController::create()` already had into `api/src/OrderCreationService.php` so the admin form and the REST API share one implementation instead of two copies drifting apart.
+- [x] **`PriceFeedProviderInterface`** (section 12, previously an open item) - defined for real in `core/src/PriceFeed/`, mirroring `ChainDataProviderInterface`'s pattern as the guideline asks. `CheckoutController` takes one optionally; with none configured (still the case for every real deployment -- no implementation ships), the checkout page's optional fiat readout simply never renders, matching section 12 exactly. Verified locally with a demo fixed-rate provider (135 USD/ELEK): the checkout page shows "≈ 337.50 USD (approx.)" under a 2.5 ELEK order, clearly secondary to the ELEK amount and never affecting `amount_lep`.
+
+Verified locally: real form submission through the new admin route (including a rejected zero-amount attempt, showing `OrderValidation`'s real error message), the resulting order's QR panel on its detail page, and the fiat-readout checkout page with a demo price feed. Screenshots taken; no code paths here were only described, not run.

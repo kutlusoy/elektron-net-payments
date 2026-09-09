@@ -2,6 +2,7 @@
 
 namespace ElektronNet\Payments\PayServer\Http\Controllers;
 
+use ElektronNet\Payments\Core\PriceFeed\PriceFeedProviderInterface;
 use ElektronNet\Payments\PayServer\Bip21;
 use ElektronNet\Payments\PayServer\Db\MerchantRepository;
 use ElektronNet\Payments\PayServer\Db\OrderRepository;
@@ -24,12 +25,25 @@ final class CheckoutController
     private OrderRepository $orders;
     private MerchantRepository $merchants;
     private string $templateDir;
+    private ?PriceFeedProviderInterface $priceFeed;
 
-    public function __construct(OrderRepository $orders, MerchantRepository $merchants, string $templateDir)
-    {
+    /**
+     * $priceFeed is optional and defaults to none: section 12 requires
+     * that with no PriceFeedProviderInterface implementation configured
+     * server-wide (true for every deployment today -- core/ ships none),
+     * a merchant's optional fiat readout simply never appears, which is
+     * this class's default behavior, not a degraded one.
+     */
+    public function __construct(
+        OrderRepository $orders,
+        MerchantRepository $merchants,
+        string $templateDir,
+        ?PriceFeedProviderInterface $priceFeed = null
+    ) {
         $this->orders = $orders;
         $this->merchants = $merchants;
         $this->templateDir = rtrim($templateDir, '/');
+        $this->priceFeed = $priceFeed;
     }
 
     /**
@@ -54,7 +68,39 @@ final class CheckoutController
             'merchant' => $merchant,
             'paymentUri' => $paymentUri,
             'amountDisplay' => $amountDisplay,
+            'fiatDisplay' => $this->fiatDisplay($order->amountLep, $merchant->defaultDisplayCurrency),
         ]));
+    }
+
+    /**
+     * Section 12: "an optional informational conversion target when
+     * base_currency is ELEK ... computed live from the feed at display
+     * time, clearly marked as approximate and never authoritative, never
+     * frozen, never affecting amount_lep." Returns null (renders nothing)
+     * whenever the merchant has not set a display currency, or no price
+     * feed provider is configured, or the configured one has no rate
+     * right now -- every one of those is a normal, expected state, not
+     * an error.
+     *
+     * @return array{currency: string, amount: string}|null
+     */
+    private function fiatDisplay(int $amountLep, ?string $displayCurrency): ?array
+    {
+        if ($displayCurrency === null || $this->priceFeed === null) {
+            return null;
+        }
+
+        $rate = $this->priceFeed->getElekPriceInFiat($displayCurrency);
+        if ($rate === null) {
+            return null;
+        }
+
+        $amountElek = $amountLep / OrderRepository::LEP_PER_ELEK;
+
+        return [
+            'currency' => $displayCurrency,
+            'amount' => number_format($amountElek * $rate, 2),
+        ];
     }
 
     /**

@@ -16,6 +16,7 @@ final class Merchant
     public ?string $logoUrl;
     public ?string $themeColor;
     public string $baseCurrency;
+    public ?string $defaultDisplayCurrency;
     public ?string $receivingXpub;
     public int $orderExpiryMinutes;
     public int $defaultRequiredConfirmations;
@@ -36,6 +37,9 @@ final class Merchant
         $merchant->logoUrl = $row['logo_url'] !== null ? (string) $row['logo_url'] : null;
         $merchant->themeColor = $row['theme_color'] !== null ? (string) $row['theme_color'] : null;
         $merchant->baseCurrency = (string) $row['base_currency'];
+        $merchant->defaultDisplayCurrency = ($row['default_display_currency'] ?? null) !== null
+            ? (string) $row['default_display_currency']
+            : null;
         $merchant->receivingXpub = $row['receiving_xpub'] !== null ? (string) $row['receiving_xpub'] : null;
         $merchant->orderExpiryMinutes = (int) $row['order_expiry_minutes'];
         $merchant->defaultRequiredConfirmations = (int) $row['default_required_confirmations'];

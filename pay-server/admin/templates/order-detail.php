@@ -2,11 +2,13 @@
 /**
  * @var \ElektronNet\Payments\PayServer\Db\Order $order
  * @var array<int, array{type: string, payload: array<string, mixed>, created_at: string}> $events
+ * @var string $paymentUri
  */
 use ElektronNet\Payments\PayServer\Bip21;
 ?>
 <p><a href="/admin/orders">&larr; Back to orders</a></p>
 
+<div class="order-detail-layout">
 <dl class="detail-grid">
   <dt>Order id</dt><dd><code><?php echo htmlspecialchars($order->id, ENT_QUOTES, 'UTF-8'); ?></code></dd>
   <dt>Status</dt><dd><span class="status-pill status-pill--<?php echo htmlspecialchars($order->status, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($order->status, ENT_QUOTES, 'UTF-8'); ?></span></dd>
@@ -19,6 +21,24 @@ use ElektronNet\Payments\PayServer\Bip21;
   <dt>Created at</dt><dd><?php echo htmlspecialchars($order->createdAt, ENT_QUOTES, 'UTF-8'); ?></dd>
   <dt>Checkout link</dt><dd><a href="/order/<?php echo urlencode($order->id); ?>">/order/<?php echo htmlspecialchars($order->id, ENT_QUOTES, 'UTF-8'); ?></a></dd>
 </dl>
+
+<?php if (in_array($order->status, ['new', 'processing'], true)): ?>
+<div class="show-to-customer">
+  <p class="form-hint">Show this to the buyer, or open the full checkout page on another screen:</p>
+  <div id="admin-qrcode"></div>
+  <a class="btn-link" href="/order/<?php echo urlencode($order->id); ?>" target="_blank" rel="noopener">Open checkout page &rarr;</a>
+</div>
+<script src="/assets/checkout/vendor/qrcode.js"></script>
+<script>
+  (function () {
+    var qr = qrcode(0, 'M');
+    qr.addData(<?php echo json_encode($paymentUri); ?>);
+    qr.make();
+    document.getElementById('admin-qrcode').innerHTML = qr.createSvgTag({ scalable: true, margin: 2 });
+  })();
+</script>
+<?php endif; ?>
+</div>
 
 <h2>Event log</h2>
 <?php if (empty($events)): ?>

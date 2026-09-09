@@ -5,10 +5,13 @@
  */
 use ElektronNet\Payments\PayServer\Bip21;
 ?>
-<p class="admin-sub"><?php echo (int) $total; ?> order<?php echo $total === 1 ? '' : 's'; ?> total</p>
+<p class="admin-sub-row">
+  <span><?php echo (int) $total; ?> order<?php echo $total === 1 ? '' : 's'; ?> total</span>
+  <a class="btn-link" href="/admin/orders/new">+ New order</a>
+</p>
 
 <?php if (empty($orders)): ?>
-  <p class="empty-state">No orders yet. Orders created via <code>POST /v1/orders</code> will show up here.</p>
+  <p class="empty-state">No orders yet. Create one above, or via <code>POST /v1/orders</code> from a storefront integration.</p>
 <?php else: ?>
 <table class="admin-table">
   <thead>

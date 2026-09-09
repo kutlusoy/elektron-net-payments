@@ -12,6 +12,7 @@
  * @var \ElektronNet\Payments\PayServer\Db\Merchant $merchant
  * @var string $paymentUri
  * @var string $amountDisplay
+ * @var array{currency: string, amount: string}|null $fiatDisplay
  */
 
 $statusLabels = [
@@ -54,6 +55,16 @@ $title = htmlspecialchars($merchant->displayName, ENT_QUOTES, 'UTF-8') . ' - Ord
       <span id="amount-value"><?php echo htmlspecialchars($amountDisplay, ENT_QUOTES, 'UTF-8'); ?></span>
       <span class="amount-currency">ELEK</span>
     </p>
+    <?php if ($fiatDisplay !== null): ?>
+      <!-- Section 12: purely informational, never authoritative, never
+           what the buyer is expected to pay exactly -- amount_lep (and so
+           the QR/address above) is unaffected by this readout. -->
+      <p class="amount-fiat">
+        &asymp; <?php echo htmlspecialchars($fiatDisplay['amount'], ENT_QUOTES, 'UTF-8'); ?>
+        <?php echo htmlspecialchars($fiatDisplay['currency'], ENT_QUOTES, 'UTF-8'); ?>
+        <span class="amount-fiat-note">(approx.)</span>
+      </p>
+    <?php endif; ?>
 
     <div class="pay-area" id="pay-area">
       <div class="qr-wrap" id="qr-wrap">
