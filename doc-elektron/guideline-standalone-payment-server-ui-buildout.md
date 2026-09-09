@@ -64,3 +64,18 @@ Worked through step by step in the order below; each item is checked off here as
 ## 3. What stays out of scope for this pass
 
 Documented so nobody mistakes silence for "done": branding editor UI, merchant settings editor (T1/T2, currency, chain endpoints), payment-requests UI, order-messages UI, webhook configuration UI, `merchant_users` self-service (inviting additional admin users), and everything escrow-mode-specific in either surface. These remain listed as open in `pay-server/README.MD`'s "What is not implemented yet".
+
+## 4. Backlog: ideas worth borrowing from BTCPay Server
+
+Not scoped or started; captured here so a future pass has a concrete starting list instead of re-deriving it. `pay-server` already shares BTCPay's basic vocabulary (section 13's order states are explicitly modeled on BTCPay's own invoice states), so leaning on more of its conventions where they fit is a reasonable default rather than inventing new ones. None of this changes anything already implemented; each item would extend a section the main guideline already defines a home for:
+
+- **Store users with roles** (BTCPay: owner/manager/guest per store) - extends the already-flagged `merchant_users` self-service gap (section 21) beyond a single login per merchant.
+- **Webhook delivery log with manual redelivery** in the admin UI - `order_events` already doubles as that log (section 4's note); BTCPay's "redeliver" button on a failed delivery is a small, concrete UI to add once webhook delivery itself (still open) exists.
+- **Pull payments / payout processor** - BTCPay's model for merchant-initiated outbound payments with an approval step; relevant to section 15's refund flow, which today is purely self-reported with no in-app payout tracking at all.
+- **A simple point-of-sale / payment-button app** - a merchant-configurable, embeddable "pay X amount" widget; overlaps heavily with section 16's reusable payment requests, which already has a data model (`payment_requests`) but no UI yet.
+- **Per-store custom checkout CSS/embed** - BTCPay lets a store override checkout appearance beyond logo/color; would extend section 17's branding once a branding editor UI exists (currently only the data model + checkout-page rendering do).
+- **2FA on the admin login** - BTCPay supports TOTP for dashboard logins; section 21's open question 8 already asks this exact question ("whether any form of two-factor is required").
+- **Receipt / "thank you" page state** distinct from the live order-status page - BTCPay shows a dedicated receipt view once an invoice settles; today a settled order just shows the same page with the QR/pay-area hidden (see `checkout.js`'s `applyStatus()`), which works but is minimal.
+- **Rate rule expressions for the price feed** - BTCPay's rate rule syntax (e.g. preferring one source, falling back to another with a spread) is a reasonable model to adopt once `PriceFeedProviderInterface` (section 12) gets a real implementation, rather than inventing a narrower config format later.
+
+Not every BTCPay concept fits here and pulling in anything BTCPay-specific to Lightning, multiple on-chain assets, or its plugin/app marketplace should be treated with more scrutiny than the list above -- this project is single-asset (ELEK) and self-hosted-first, so only borrow the parts that solve a problem this guideline already has, not BTCPay's whole surface area.
