@@ -12,7 +12,7 @@ use ElektronNet\Payments\Core\Escrow\OrderStatus;
  * ElektronNet\Payments\Core\Escrow\OrderStatus constants; `redeem_script_hex`,
  * `buyer_refund_locktime`, and `seller_release_locktime` are copied verbatim
  * from the EscrowAddress returned at order creation and are never
- * recomputed later (see shared/README.md).
+ * recomputed later (see core/README.md).
  */
 class EscrowOrderDAO extends DAO
 {

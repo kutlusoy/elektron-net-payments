@@ -235,7 +235,7 @@ if ($isBuyer && Params::getParam('submit_signed_psbt') === '1') {
 // Seller-only: records that the cooperative release has actually happened
 // (both parties signed and broadcast a spend from the escrow address to the
 // seller's own wallet, outside this plugin -- see ReleasePsbtBuilderInterface's
-// docblock in ../shared: there is no reference implementation yet, so this
+// docblock in ../core: there is no reference implementation yet, so this
 // plugin cannot build or relay that PSBT itself today). This is a pure
 // database status change with no on-chain effect of its own; it exists
 // because RELEASE_PENDING_SELLER_SIGNATURE otherwise has no way to ever

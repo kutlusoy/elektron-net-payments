@@ -1,7 +1,7 @@
 <?php
 /**
  * One-time recovery tool for orders created with the current nonce-prefixed
- * escrow script (see shared/src/Escrow/BitwaspEscrowScriptBuilder.php).
+ * escrow script (see core/src/Escrow/BitwaspEscrowScriptBuilder.php).
  *
  * WHY THIS EXISTS: that script cannot be signed by the real Elektron Net
  * wallet (its signing flow only recognizes plain descriptor-based scripts,
