@@ -2,7 +2,7 @@
 
 namespace ElektronNet\Payments\PayServer\Http;
 
-final class JsonResponse
+final class JsonResponse implements Responder
 {
     public int $statusCode;
     /** @var array<string, mixed> */

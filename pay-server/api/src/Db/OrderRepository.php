@@ -111,6 +111,55 @@ final class OrderRepository
     }
 
     /**
+     * Admin order list (section 21), most recent first.
+     *
+     * @return Order[]
+     */
+    public function findByMerchant(string $merchantId, int $limit = 50, int $offset = 0): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT * FROM orders WHERE merchant_id = :merchant_id ORDER BY created_at DESC LIMIT :limit OFFSET :offset'
+        );
+        $stmt->bindValue('merchant_id', $merchantId);
+        $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue('offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return array_map(fn (array $row) => Order::fromRow($row), $stmt->fetchAll());
+    }
+
+    public function countByMerchant(string $merchantId): int
+    {
+        $stmt = $this->pdo->prepare('SELECT count(*) FROM orders WHERE merchant_id = :merchant_id');
+        $stmt->execute(['merchant_id' => $merchantId]);
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    /**
+     * Order detail page's event log (section 4: order_events doubles as
+     * the audit trail).
+     *
+     * @return array<int, array{type: string, payload: array<string, mixed>, created_at: string}>
+     */
+    public function eventsForOrder(string $orderId): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT type, payload, created_at FROM order_events WHERE order_id = :order_id ORDER BY created_at ASC'
+        );
+        $stmt->execute(['order_id' => $orderId]);
+
+        return array_map(function (array $row) {
+            $payload = json_decode((string) $row['payload'], true);
+            return [
+                'type' => (string) $row['type'],
+                'payload' => is_array($payload) ? $payload : [],
+                'created_at' => (string) $row['created_at'],
+            ];
+        }, $stmt->fetchAll());
+    }
+
+    /**
      * @param array<string, mixed> $payload
      */
     public function recordEvent(string $orderId, string $type, array $payload = []): void

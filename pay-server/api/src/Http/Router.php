@@ -31,7 +31,7 @@ final class Router
     /**
      * @throws ApiException 404 if no route matches
      */
-    public function dispatch(Request $request): JsonResponse
+    public function dispatch(Request $request): Responder
     {
         foreach ($this->routes as $route) {
             if ($route['method'] !== $request->method) {
