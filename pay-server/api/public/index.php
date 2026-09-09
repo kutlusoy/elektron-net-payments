@@ -34,6 +34,7 @@ use ElektronNet\Payments\PayServer\Http\Request;
 use ElektronNet\Payments\PayServer\Http\Router;
 use ElektronNet\Payments\PayServer\OrderAddressAllocator;
 use ElektronNet\Payments\PayServer\OrderCreationService;
+use ElektronNet\Payments\PayServer\PriceFeedProviderFactory;
 
 $config = Config::fromEnv();
 $pdo = Database::connect($config);
@@ -59,10 +60,15 @@ $orderCreation = new OrderCreationService($pdo, $merchants, $orders, $addressAll
 
 $ordersController = new OrdersController($auth, $merchants, $orders, $orderCreation, $config->checkoutBaseUrl());
 
-// No PriceFeedProviderInterface implementation ships with core/ yet
-// (section 12); every real deployment runs with none configured today.
-$priceFeed = null;
-$priceFeedConfigured = $priceFeed !== null;
+// Section 12: PAY_SERVER_PRICE_FEED_ENDPOINTS is opt-in and empty by
+// default (ELEK is not listed on any platform today), so an unconfigured
+// deployment still runs with no price feed exactly as before -
+// $priceFeed stays null, never a Fallback wrapping zero providers, so
+// $priceFeedConfigured keeps gating base_currency/display-currency
+// exactly like the rest of this codebase already expects.
+$priceFeedEndpoints = $config->priceFeedEndpoints();
+$priceFeedConfigured = $priceFeedEndpoints !== [];
+$priceFeed = $priceFeedConfigured ? PriceFeedProviderFactory::build($priceFeedEndpoints) : null;
 
 $checkoutController = new CheckoutController(
     $orders,

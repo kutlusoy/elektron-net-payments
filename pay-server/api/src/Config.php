@@ -18,9 +18,12 @@ final class Config
     private string $checkoutBaseUrl;
     /** @var array<int, array<string, mixed>> */
     private array $defaultChainEndpoints;
+    /** @var array<int, array<string, mixed>> */
+    private array $priceFeedEndpoints;
 
     /**
      * @param array<int, array<string, mixed>> $defaultChainEndpoints
+     * @param array<int, array<string, mixed>> $priceFeedEndpoints
      */
     public function __construct(
         string $network,
@@ -29,7 +32,8 @@ final class Config
         string $dbPassword,
         bool $escrowEnabled,
         string $checkoutBaseUrl,
-        array $defaultChainEndpoints
+        array $defaultChainEndpoints,
+        array $priceFeedEndpoints = []
     ) {
         $this->network = $network;
         $this->dbDsn = $dbDsn;
@@ -38,6 +42,7 @@ final class Config
         $this->escrowEnabled = $escrowEnabled;
         $this->checkoutBaseUrl = rtrim($checkoutBaseUrl, '/');
         $this->defaultChainEndpoints = $defaultChainEndpoints;
+        $this->priceFeedEndpoints = $priceFeedEndpoints;
     }
 
     public static function fromEnv(): self
@@ -57,6 +62,18 @@ final class Config
             $endpoints = is_array($decoded) ? $decoded : [];
         }
 
+        // Section 12: no hardcoded default -- ELEK is not listed on any
+        // platform today, so an unset env var means "no price feed
+        // configured" (an empty list), not a guess at a URL that would
+        // 404. An operator opts in by pointing this at a real endpoint,
+        // e.g. `[{"type":"simple_price","base_url":"https://api.coingecko.com/api/v3","coin_id":"elektron-net"}]`.
+        $rawPriceFeedEndpoints = getenv('PAY_SERVER_PRICE_FEED_ENDPOINTS');
+        $priceFeedEndpoints = [];
+        if ($rawPriceFeedEndpoints !== false && trim($rawPriceFeedEndpoints) !== '') {
+            $decodedPriceFeed = json_decode($rawPriceFeedEndpoints, true);
+            $priceFeedEndpoints = is_array($decodedPriceFeed) ? $decodedPriceFeed : [];
+        }
+
         return new self(
             (string) (getenv('PAY_SERVER_NETWORK') ?: 'mainnet'),
             (string) (getenv('PAY_SERVER_DB_DSN') ?: 'pgsql:host=127.0.0.1;port=5432;dbname=pay_server'),
@@ -64,7 +81,8 @@ final class Config
             (string) (getenv('PAY_SERVER_DB_PASSWORD') ?: ''),
             filter_var(getenv('PAY_SERVER_ESCROW_ENABLED') ?: 'false', FILTER_VALIDATE_BOOLEAN),
             (string) (getenv('PAY_SERVER_CHECKOUT_BASE_URL') ?: 'https://pay.elektron-net.org'),
-            $endpoints
+            $endpoints,
+            $priceFeedEndpoints
         );
     }
 
@@ -109,5 +127,13 @@ final class Config
     public function defaultChainEndpoints(): array
     {
         return $this->defaultChainEndpoints;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function priceFeedEndpoints(): array
+    {
+        return $this->priceFeedEndpoints;
     }
 }
