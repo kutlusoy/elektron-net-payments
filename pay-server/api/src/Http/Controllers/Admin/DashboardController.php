@@ -5,7 +5,9 @@ namespace ElektronNet\Payments\PayServer\Http\Controllers\Admin;
 use ElektronNet\Payments\PayServer\Admin\AdminSession;
 use ElektronNet\Payments\PayServer\Admin\ViewRenderer;
 use ElektronNet\Payments\PayServer\Bip21;
+use ElektronNet\Payments\PayServer\Db\Merchant;
 use ElektronNet\Payments\PayServer\Db\MerchantRepository;
+use ElektronNet\Payments\PayServer\Db\Order;
 use ElektronNet\Payments\PayServer\Db\OrderMessageRepository;
 use ElektronNet\Payments\PayServer\Db\OrderRepository;
 use ElektronNet\Payments\PayServer\Http\ApiException;
@@ -139,23 +141,31 @@ final class DashboardController
             ]));
         }
 
-        $paymentUri = Bip21::paymentUri(
-            $order->address,
-            $order->amountLep,
-            $merchant !== null ? $merchant->displayName : 'Elektron Net order'
-        );
+        return new HtmlResponse(200, $this->renderOrderDetail($order, $merchant));
+    }
 
-        $html = $this->views->renderPage('Order detail', 'orders', 'order-detail.php', [
-            'order' => $order,
-            'events' => $this->orders->eventsForOrder($order->id),
-            'messages' => $this->messages->findByOrder($order->id),
-            'messageError' => null,
-            'paymentUri' => $paymentUri,
-            'csrfToken' => $this->session->csrfToken(),
-            'merchantName' => $merchant !== null ? $merchant->displayName : '',
-        ]);
+    /**
+     * `POST /admin/orders/{id}/mark-refunded` (section 15): "self-reported,
+     * explicitly, not a verified one" - see OrdersController::markRefunded()
+     * for the same effect via the REST API.
+     */
+    public function markRefunded(Request $request): Responder
+    {
+        if (!$this->session->isAuthenticated()) {
+            return new RedirectResponse('/admin/login');
+        }
+        $merchantId = $this->session->merchantId();
+        $order = $this->orders->find($request->params['id']);
+        if ($order === null || $order->merchantId !== $merchantId) {
+            return new RedirectResponse('/admin/orders');
+        }
 
-        return new HtmlResponse(200, $html);
+        $csrf = $_POST['csrf_token'] ?? null;
+        if ($this->session->verifyCsrf(is_string($csrf) ? $csrf : null)) {
+            $this->orders->recordEvent($order->id, 'marked_refunded', ['self_reported' => true]);
+        }
+
+        return new RedirectResponse('/admin/orders/' . $order->id . '#refund');
     }
 
     /**
@@ -198,20 +208,39 @@ final class DashboardController
             return new RedirectResponse('/admin/orders/' . $order->id . '#messages');
         }
 
+        return new HtmlResponse(422, $this->renderOrderDetail($order, $merchant, $error));
+    }
+
+    private function renderOrderDetail(Order $order, ?Merchant $merchant, ?string $messageError = null): string
+    {
         $paymentUri = Bip21::paymentUri(
             $order->address,
             $order->amountLep,
             $merchant !== null ? $merchant->displayName : 'Elektron Net order'
         );
+        $events = $this->orders->eventsForOrder($order->id);
 
-        return new HtmlResponse(422, $this->views->renderPage('Order detail', 'orders', 'order-detail.php', [
+        $overpaymentLep = null;
+        $isMarkedRefunded = false;
+        foreach (array_reverse($events) as $event) {
+            if ($overpaymentLep === null && $event['type'] === 'settled' && !empty($event['payload']['overpaid'])) {
+                $overpaymentLep = (int) $event['payload']['overpayment_lep'];
+            }
+            if ($event['type'] === 'marked_refunded') {
+                $isMarkedRefunded = true;
+            }
+        }
+
+        return $this->views->renderPage('Order detail', 'orders', 'order-detail.php', [
             'order' => $order,
-            'events' => $this->orders->eventsForOrder($order->id),
+            'events' => $events,
             'messages' => $this->messages->findByOrder($order->id),
-            'messageError' => $error,
+            'messageError' => $messageError,
+            'overpaymentLep' => $overpaymentLep,
+            'isMarkedRefunded' => $isMarkedRefunded,
             'paymentUri' => $paymentUri,
             'csrfToken' => $this->session->csrfToken(),
             'merchantName' => $merchant !== null ? $merchant->displayName : '',
-        ]));
+        ]);
     }
 }

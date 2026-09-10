@@ -4,7 +4,9 @@ namespace ElektronNet\Payments\PayServer\Http\Controllers;
 
 use ElektronNet\Payments\Core\PriceFeed\PriceFeedProviderInterface;
 use ElektronNet\Payments\PayServer\Bip21;
+use ElektronNet\Payments\PayServer\Db\Merchant;
 use ElektronNet\Payments\PayServer\Db\MerchantRepository;
+use ElektronNet\Payments\PayServer\Db\Order;
 use ElektronNet\Payments\PayServer\Db\OrderMessageRepository;
 use ElektronNet\Payments\PayServer\Db\OrderRepository;
 use ElektronNet\Payments\PayServer\Http\ApiException;
@@ -15,6 +17,7 @@ use ElektronNet\Payments\PayServer\Http\Request;
 use ElektronNet\Payments\PayServer\Http\Responder;
 use ElektronNet\Payments\PayServer\Http\SseResponse;
 use ElektronNet\Payments\PayServer\OrderMessageValidation;
+use ElektronNet\Payments\PayServer\OrderRefundValidation;
 
 /**
  * Buyer-facing order status (section 21: "the order id itself is the
@@ -70,18 +73,7 @@ final class CheckoutController
             return new HtmlResponse(404, $this->render('not-found.php', []));
         }
 
-        $paymentUri = Bip21::paymentUri($order->address, $order->amountLep, $merchant->displayName);
-        $amountDisplay = Bip21::plainAmount($order->amountLep);
-
-        return new HtmlResponse(200, $this->render('order.php', [
-            'order' => $order,
-            'merchant' => $merchant,
-            'paymentUri' => $paymentUri,
-            'amountDisplay' => $amountDisplay,
-            'fiatDisplay' => $this->fiatDisplay($order->amountLep, $merchant->defaultDisplayCurrency),
-            'messages' => $this->messages->findByOrder($order->id),
-            'messageError' => null,
-        ]));
+        return $this->renderOrderPage($order, $merchant, 200);
     }
 
     /**
@@ -115,17 +107,92 @@ final class CheckoutController
             return new RedirectResponse('/order/' . $order->id . '#messages');
         }
 
-        $paymentUri = Bip21::paymentUri($order->address, $order->amountLep, $merchant->displayName);
+        return $this->renderOrderPage($order, $merchant, 422, ['messageError' => $error]);
+    }
 
-        return new HtmlResponse(422, $this->render('order.php', [
+    /**
+     * `POST /order/{id}/refund-address` (section 15, HTML-form flavor of
+     * `POST /v1/orders/{id}/refund-address` below - same validation, same
+     * repository call, redirect-on-success instead of JSON for a buyer
+     * using the checkout page directly).
+     */
+    public function submitRefundAddress(Request $request): Responder
+    {
+        $order = $this->orders->find($request->params['id']);
+        $merchant = $order !== null ? $this->merchants->find($order->merchantId) : null;
+        if ($order === null || $merchant === null) {
+            return new HtmlResponse(404, $this->render('not-found.php', []));
+        }
+
+        try {
+            $address = OrderRefundValidation::validateAddress(['refund_address' => $_POST['refund_address'] ?? '']);
+        } catch (ApiException $e) {
+            return $this->renderOrderPage($order, $merchant, 422, ['refundError' => $e->getMessage()]);
+        }
+
+        $this->orders->setRefundAddress($order->id, $address);
+        $this->orders->recordEvent($order->id, 'refund_address_set', ['refund_address' => $address]);
+
+        return new RedirectResponse('/order/' . $order->id . '#refund');
+    }
+
+    /**
+     * `POST /v1/orders/{id}/refund-address` (section 5's table): "No
+     * scope needed; capability-token authenticated like the checkout page
+     * itself" - JSON flavor for a merchant's own tooling/a custom checkout
+     * frontend rather than this hosted page.
+     */
+    public function submitRefundAddressJson(Request $request): JsonResponse
+    {
+        $order = $this->orders->find($request->params['id']);
+        if ($order === null) {
+            throw ApiException::notFound('Order not found.');
+        }
+
+        $address = OrderRefundValidation::validateAddress($request->body);
+        $this->orders->setRefundAddress($order->id, $address);
+        $this->orders->recordEvent($order->id, 'refund_address_set', ['refund_address' => $address]);
+
+        return new JsonResponse(200, ['refund_address' => $address]);
+    }
+
+    /**
+     * @param array{messageError?: string|null, refundError?: string|null} $overrides
+     */
+    private function renderOrderPage(Order $order, Merchant $merchant, int $statusCode, array $overrides = []): HtmlResponse
+    {
+        $paymentUri = Bip21::paymentUri($order->address, $order->amountLep, $merchant->displayName);
+        $latestOverpayment = $this->latestOverpaymentLep($order->id);
+
+        return new HtmlResponse($statusCode, $this->render('order.php', array_merge([
             'order' => $order,
             'merchant' => $merchant,
             'paymentUri' => $paymentUri,
             'amountDisplay' => Bip21::plainAmount($order->amountLep),
             'fiatDisplay' => $this->fiatDisplay($order->amountLep, $merchant->defaultDisplayCurrency),
             'messages' => $this->messages->findByOrder($order->id),
-            'messageError' => $error,
-        ]));
+            'messageError' => null,
+            'refundError' => null,
+            'overpaymentLep' => $latestOverpayment,
+        ], $overrides)));
+    }
+
+    /**
+     * Section 13/15: the settled event's own payload is the source of
+     * truth for whether this order was overpaid (Watcher::evaluateOrder()
+     * sets it there) - scanning order_events rather than adding a new
+     * orders column keeps this consistent with how order_events already
+     * doubles as the audit trail for every other state transition detail.
+     */
+    private function latestOverpaymentLep(string $orderId): ?int
+    {
+        foreach (array_reverse($this->orders->eventsForOrder($orderId)) as $event) {
+            if ($event['type'] === 'settled' && !empty($event['payload']['overpaid'])) {
+                return (int) $event['payload']['overpayment_lep'];
+            }
+        }
+
+        return null;
     }
 
     /**

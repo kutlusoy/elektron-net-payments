@@ -136,11 +136,16 @@ $router->add('GET', '/v1/orders/{id}/events', [$checkoutController, 'events']);
 // OrderMessagesController's docblock.
 $router->add('POST', '/v1/orders/{id}/messages', [$orderMessagesController, 'post']);
 $router->add('GET', '/v1/orders/{id}/messages', [$orderMessagesController, 'get']);
+// Section 15: refund-address is capability-token authenticated like the
+// checkout page (no scope); mark-refunded is a merchant action (Bearer, scope orders:create).
+$router->add('POST', '/v1/orders/{id}/refund-address', [$checkoutController, 'submitRefundAddressJson']);
+$router->add('POST', '/v1/orders/{id}/mark-refunded', [$ordersController, 'markRefunded']);
 
 // Section 2's architecture: pay-api also serves the checkout pages and
 // (see the admin routes below) the admin UI, all from one process.
 $router->add('GET', '/order/{id}', [$checkoutController, 'page']);
 $router->add('POST', '/order/{id}/messages', [$checkoutController, 'postMessage']);
+$router->add('POST', '/order/{id}/refund-address', [$checkoutController, 'submitRefundAddress']);
 
 // Section 16: reusable payment requests, public (the request id is the
 // only credential, same model as /order/{id}).
@@ -173,6 +178,7 @@ $router->add('GET', '/admin/orders/new', [$dashboardController, 'newOrderForm'])
 $router->add('POST', '/admin/orders', [$dashboardController, 'createOrder']);
 $router->add('GET', '/admin/orders/{id}', [$dashboardController, 'orderDetail']);
 $router->add('POST', '/admin/orders/{id}/messages', [$dashboardController, 'postMessage']);
+$router->add('POST', '/admin/orders/{id}/mark-refunded', [$dashboardController, 'markRefunded']);
 $router->add('GET', '/admin/terminal', [$terminalController, 'form']);
 $router->add('POST', '/admin/terminal', [$terminalController, 'charge']);
 $router->add('GET', '/admin/wallet', [$walletController, 'form']);

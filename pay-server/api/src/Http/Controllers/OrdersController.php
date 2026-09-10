@@ -73,4 +73,26 @@ final class OrdersController
 
         return new JsonResponse(200, $order->toApiArray($this->checkoutBaseUrl));
     }
+
+    /**
+     * `POST /v1/orders/{id}/mark-refunded` (section 5, section 15):
+     * "self-reported, explicitly, not a verified one" - the server never
+     * watches for or verifies an outgoing merchant transaction, this just
+     * records that the merchant says they sent one, from their own wallet,
+     * outside this system entirely.
+     */
+    public function markRefunded(Request $request): JsonResponse
+    {
+        $key = $this->auth->authenticate($request->bearerToken());
+        $this->auth->requireScope($key, 'orders:create');
+
+        $order = $this->orders->find($request->params['id']);
+        if ($order === null || $order->merchantId !== $key->merchantId) {
+            throw ApiException::notFound('Order not found.');
+        }
+
+        $this->orders->recordEvent($order->id, 'marked_refunded', ['self_reported' => true]);
+
+        return new JsonResponse(200, ['order_id' => $order->id, 'marked_refunded' => true]);
+    }
 }

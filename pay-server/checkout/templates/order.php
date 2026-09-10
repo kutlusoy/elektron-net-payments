@@ -15,7 +15,11 @@
  * @var array{currency: string, amount: string}|null $fiatDisplay
  * @var \ElektronNet\Payments\PayServer\Db\OrderMessage[] $messages
  * @var string|null $messageError
+ * @var string|null $refundError
+ * @var int|null $overpaymentLep
  */
+
+use ElektronNet\Payments\PayServer\Bip21;
 
 $statusLabels = [
     'new' => 'Waiting for payment',
@@ -96,6 +100,28 @@ $title = htmlspecialchars($merchant->displayName, ENT_QUOTES, 'UTF-8') . ' - Ord
     <p class="countdown" id="countdown" data-expires-at="<?php echo htmlspecialchars($order->expiresAt, ENT_QUOTES, 'UTF-8'); ?>"></p>
 
     <p class="order-id">Order <?php echo htmlspecialchars($order->id, ENT_QUOTES, 'UTF-8'); ?></p>
+
+    <?php if ($overpaymentLep !== null): ?>
+      <div class="overpayment-notice">
+        This order was overpaid by <?php echo htmlspecialchars(Bip21::plainAmount($overpaymentLep), ENT_QUOTES, 'UTF-8'); ?> ELEK. If you would like the excess refunded, submit a return address below.
+      </div>
+    <?php endif; ?>
+
+    <section class="refund-section" id="refund">
+      <h2 class="message-thread-title">Refund address</h2>
+      <?php if ($order->refundAddress !== null): ?>
+        <p class="message-empty">On file: <code><?php echo htmlspecialchars($order->refundAddress, ENT_QUOTES, 'UTF-8'); ?></code>. Submitting a new one below replaces it.</p>
+      <?php else: ?>
+        <p class="message-empty">Optional. If this order needs a refund (e.g. an overpayment, or a cancelled purchase), give the merchant a return address here - self-reported, format-checked only, never treated as anything more sensitive.</p>
+      <?php endif; ?>
+      <?php if (!empty($refundError)): ?>
+        <p class="payment-request-error"><?php echo htmlspecialchars($refundError, ENT_QUOTES, 'UTF-8'); ?></p>
+      <?php endif; ?>
+      <form method="post" action="/order/<?php echo urlencode($order->id); ?>/refund-address" class="refund-form">
+        <input type="text" name="refund_address" maxlength="100" placeholder="Your ELEK address" required>
+        <button type="submit">Save</button>
+      </form>
+    </section>
 
     <section class="message-thread" id="messages">
       <h2 class="message-thread-title">Messages</h2>

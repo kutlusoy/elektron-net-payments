@@ -145,10 +145,20 @@ final class Watcher
             return;
         }
 
-        $this->transition($orderId, OrderStatus::SETTLED, [
+        $settledPayload = [
             'received_lep' => $receivedLep,
             'confirmations' => $confirmations,
-        ]);
+        ];
+        // Section 13: "Overpayment is always accepted as settled; the
+        // excess amount MUST be flagged clearly to the merchant (surfaced
+        // via order_events and the admin order view) since it is the
+        // natural trigger for the refund flow in section 15."
+        if ($receivedLep > $requiredLep) {
+            $settledPayload['overpaid'] = true;
+            $settledPayload['overpayment_lep'] = $receivedLep - $requiredLep;
+        }
+
+        $this->transition($orderId, OrderStatus::SETTLED, $settledPayload);
     }
 
     /**

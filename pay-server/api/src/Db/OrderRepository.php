@@ -193,6 +193,16 @@ final class OrderRepository
     }
 
     /**
+     * Section 15: buyer-supplied, format-validated only (OrderRefundValidation),
+     * never treated as anything more sensitive.
+     */
+    public function setRefundAddress(string $orderId, string $address): void
+    {
+        $stmt = $this->pdo->prepare('UPDATE orders SET refund_address = :address WHERE id = :id');
+        $stmt->execute(['address' => $address, 'id' => $orderId]);
+    }
+
+    /**
      * @param array<string, mixed> $payload
      */
     public function recordEvent(string $orderId, string $type, array $payload = []): void

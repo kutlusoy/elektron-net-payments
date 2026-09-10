@@ -164,6 +164,18 @@ body.is-mobile .tap-to-pay { display: block; }
 }
 .payment-request-submit { display: block; border: none; font-size: 15px; cursor: pointer; }
 
+.overpayment-notice { width: 100%; text-align: left; background: #fff7e0; border: 1px solid #f0d78c; color: #8a6d1a; border-radius: 8px; padding: 10px 12px; font-size: 13px; }
+
+.refund-section { width: 100%; text-align: left; border-top: 1px solid var(--border); padding-top: 16px; margin-top: 4px; }
+.refund-form { display: flex; gap: 8px; }
+.refund-form input {
+  flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px;
+}
+.refund-form button {
+  padding: 9px 14px; border: none; border-radius: 8px; background: var(--brand-color); color: #fff;
+  font-weight: 600; cursor: pointer;
+}
+
 .message-thread { width: 100%; text-align: left; border-top: 1px solid var(--border); padding-top: 16px; margin-top: 4px; }
 .message-thread-title { margin: 0 0 10px; font-size: 14px; }
 .message-empty { margin: 0 0 10px; font-size: 13px; color: var(--text-dim); }
