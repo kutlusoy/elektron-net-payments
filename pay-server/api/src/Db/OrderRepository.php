@@ -83,7 +83,8 @@ final class OrderRepository
         int $requiredConfirmations,
         ?string $fiatCurrency = null,
         ?float $fiatAmount = null,
-        ?float $exchangeRateUsed = null
+        ?float $exchangeRateUsed = null,
+        ?string $paymentRequestId = null
     ): Order {
         $id = $this->generateUuid();
         $nonceHex = bin2hex(random_bytes(16));
@@ -92,11 +93,11 @@ final class OrderRepository
             'INSERT INTO orders (
                 id, merchant_id, mode, status, amount_lep, address,
                 order_nonce_hex, external_reference, expires_at, required_confirmations,
-                fiat_currency, fiat_amount, exchange_rate_used
+                fiat_currency, fiat_amount, exchange_rate_used, payment_request_id
             ) VALUES (
                 :id, :merchant_id, :mode, :status, :amount_lep, :address,
                 :order_nonce_hex, :external_reference, :expires_at, :required_confirmations,
-                :fiat_currency, :fiat_amount, :exchange_rate_used
+                :fiat_currency, :fiat_amount, :exchange_rate_used, :payment_request_id
             )'
         );
         $stmt->execute([
@@ -113,6 +114,7 @@ final class OrderRepository
             'fiat_currency' => $fiatCurrency,
             'fiat_amount' => $fiatAmount,
             'exchange_rate_used' => $exchangeRateUsed,
+            'payment_request_id' => $paymentRequestId,
         ]);
 
         $order = $this->find($id);
@@ -139,6 +141,22 @@ final class OrderRepository
         $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue('offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
+
+        return array_map(fn (array $row) => Order::fromRow($row), $stmt->fetchAll());
+    }
+
+    /**
+     * Section 16 checklist: "Admin UI: ... view aggregate history (all
+     * orders spawned from) a payment request."
+     *
+     * @return Order[]
+     */
+    public function findByPaymentRequest(string $paymentRequestId): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT * FROM orders WHERE payment_request_id = :payment_request_id ORDER BY created_at DESC'
+        );
+        $stmt->execute(['payment_request_id' => $paymentRequestId]);
 
         return array_map(fn (array $row) => Order::fromRow($row), $stmt->fetchAll());
     }

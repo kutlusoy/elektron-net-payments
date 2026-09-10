@@ -21,6 +21,7 @@
     <nav>
       <a href="/admin/orders" class="<?php echo $active === 'orders' ? 'is-active' : ''; ?>">Orders</a>
       <a href="/admin/terminal">Terminal</a>
+      <a href="/admin/payment-requests" class="<?php echo $active === 'payment-requests' ? 'is-active' : ''; ?>">Payment requests</a>
       <a href="/admin/wallet" class="<?php echo $active === 'wallet' ? 'is-active' : ''; ?>">Wallet</a>
       <a href="/admin/branding" class="<?php echo $active === 'branding' ? 'is-active' : ''; ?>">Branding</a>
       <a href="/admin/settings" class="<?php echo $active === 'settings' ? 'is-active' : ''; ?>">Settings</a>

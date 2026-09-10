@@ -20,11 +20,13 @@ use ElektronNet\Payments\PayServer\Db\Database;
 use ElektronNet\Payments\PayServer\Db\MerchantRepository;
 use ElektronNet\Payments\PayServer\Db\MerchantUserRepository;
 use ElektronNet\Payments\PayServer\Db\OrderRepository;
+use ElektronNet\Payments\PayServer\Db\PaymentRequestRepository;
 use ElektronNet\Payments\PayServer\Db\PlatformSettingsRepository;
 use ElektronNet\Payments\PayServer\Http\ApiException;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\ApiKeysController;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\DashboardController;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\LoginController;
+use ElektronNet\Payments\PayServer\Http\Controllers\Admin\PaymentRequestsController as AdminPaymentRequestsController;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\PlatformSettingsController;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\SettingsController as AdminSettingsController;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\TerminalController;
@@ -32,6 +34,7 @@ use ElektronNet\Payments\PayServer\Http\Controllers\Admin\WalletController;
 use ElektronNet\Payments\PayServer\Http\Controllers\CheckoutController;
 use ElektronNet\Payments\PayServer\Http\Controllers\MerchantSettingsController;
 use ElektronNet\Payments\PayServer\Http\Controllers\OrdersController;
+use ElektronNet\Payments\PayServer\Http\Controllers\PaymentRequestController;
 use ElektronNet\Payments\PayServer\Http\FileResponse;
 use ElektronNet\Payments\PayServer\Http\Request;
 use ElektronNet\Payments\PayServer\Http\Router;
@@ -93,6 +96,16 @@ $checkoutController = new CheckoutController(
     $priceFeed
 );
 
+$paymentRequests = new PaymentRequestRepository($pdo);
+$paymentRequestController = new PaymentRequestController(
+    $paymentRequests,
+    $merchants,
+    $orders,
+    $orderCreation,
+    $auth,
+    $repoRoot . '/pay-server/checkout/templates'
+);
+
 $adminSession = new AdminSession();
 $adminViews = new ViewRenderer($repoRoot . '/pay-server/admin/templates');
 $merchantUsers = new MerchantUserRepository($pdo);
@@ -106,6 +119,7 @@ $adminSettingsController = new AdminSettingsController($adminSession, $merchants
 $merchantSettingsController = new MerchantSettingsController($auth, $merchants, $priceFeedConfigured);
 $platformSettingsController = new PlatformSettingsController($adminSession, $platformSettings, $adminViews, $config->priceFeedEndpoints());
 $terminalController = new TerminalController($adminSession, $merchants, $orderCreation, $adminViews);
+$adminPaymentRequestsController = new AdminPaymentRequestsController($adminSession, $merchants, $paymentRequests, $orders, $adminViews);
 
 $router = new Router();
 $router->add('POST', '/v1/orders', [$ordersController, 'create']);
@@ -116,6 +130,13 @@ $router->add('GET', '/v1/orders/{id}/events', [$checkoutController, 'events']);
 // Section 2's architecture: pay-api also serves the checkout pages and
 // (see the admin routes below) the admin UI, all from one process.
 $router->add('GET', '/order/{id}', [$checkoutController, 'page']);
+
+// Section 16: reusable payment requests, public (the request id is the
+// only credential, same model as /order/{id}).
+$router->add('GET', '/pay/{id}', [$paymentRequestController, 'page']);
+$router->add('POST', '/pay/{id}', [$paymentRequestController, 'pay']);
+$router->add('POST', '/v1/payment-requests', [$paymentRequestController, 'create']);
+$router->add('GET', '/v1/payment-requests/{id}', [$paymentRequestController, 'publicJson']);
 
 // Fixed, hardcoded paths only (Http\FileResponse never takes a
 // user-supplied path) -- a real deployment would typically have its
@@ -153,6 +174,11 @@ $router->add('POST', '/admin/api-keys', [$apiKeysController, 'create']);
 $router->add('POST', '/admin/api-keys/{id}/revoke', [$apiKeysController, 'revoke']);
 $router->add('GET', '/admin/platform/price-feed', [$platformSettingsController, 'priceFeedForm']);
 $router->add('POST', '/admin/platform/price-feed', [$platformSettingsController, 'updatePriceFeed']);
+$router->add('GET', '/admin/payment-requests', [$adminPaymentRequestsController, 'list']);
+$router->add('GET', '/admin/payment-requests/new', [$adminPaymentRequestsController, 'newForm']);
+$router->add('POST', '/admin/payment-requests', [$adminPaymentRequestsController, 'create']);
+$router->add('GET', '/admin/payment-requests/{id}', [$adminPaymentRequestsController, 'detail']);
+$router->add('POST', '/admin/payment-requests/{id}/archive', [$adminPaymentRequestsController, 'archive']);
 
 // REST surface for the same branding/settings management (section 5's
 // table), scoped branding:write/settings:write, for a merchant's own

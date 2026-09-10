@@ -47,9 +47,10 @@ final class OrderCreationService
 
     /**
      * @param array<string, mixed> $payload same shape as POST /v1/orders' body
+     * @param string|null $paymentRequestId section 16: set when this order was spawned from a payment request
      * @throws Http\ApiException on any validation failure (typed error codes, see OrderValidation)
      */
-    public function createDirectOrder(Merchant $merchant, array $payload): OrderCreationResult
+    public function createDirectOrder(Merchant $merchant, array $payload, ?string $paymentRequestId = null): OrderCreationResult
     {
         OrderValidation::validateCreateOrderPayload($payload, $merchant, $this->escrowEnabled, $this->priceFeed !== null);
 
@@ -117,7 +118,8 @@ final class OrderCreationService
                 $merchant->defaultRequiredConfirmations,
                 $fiatCurrency,
                 $fiatAmount,
-                $exchangeRateUsed
+                $exchangeRateUsed,
+                $paymentRequestId
             );
 
             $this->pdo->commit();
