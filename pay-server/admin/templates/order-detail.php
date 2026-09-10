@@ -2,7 +2,10 @@
 /**
  * @var \ElektronNet\Payments\PayServer\Db\Order $order
  * @var array<int, array{type: string, payload: array<string, mixed>, created_at: string}> $events
+ * @var \ElektronNet\Payments\PayServer\Db\OrderMessage[] $messages
+ * @var string|null $messageError
  * @var string $paymentUri
+ * @var string $csrfToken
  */
 use ElektronNet\Payments\PayServer\Bip21;
 ?>
@@ -60,3 +63,32 @@ use ElektronNet\Payments\PayServer\Bip21;
   </tbody>
 </table>
 <?php endif; ?>
+
+<div class="admin-sub-row" id="messages">
+  <h2>Messages</h2>
+  <button type="button" class="btn-link" onclick="window.print()">Print / export log</button>
+</div>
+<p class="form-hint form-hint--tight print-hidden">Section 11: an append-only, timestamped record both sides can see - the buyer sees this exact thread on their own order-status page. Never a live chat feature; nothing here can be edited or removed once sent.</p>
+
+<?php if (empty($messages)): ?>
+  <p class="empty-state">No messages yet.</p>
+<?php else: ?>
+<ul class="admin-message-list">
+  <?php foreach ($messages as $message): ?>
+    <li class="admin-message admin-message--<?php echo htmlspecialchars($message->sender, ENT_QUOTES, 'UTF-8'); ?>">
+      <span class="admin-message-meta"><?php echo $message->sender === 'merchant' ? 'You' : 'Buyer'; ?> &middot; <?php echo htmlspecialchars($message->createdAt, ENT_QUOTES, 'UTF-8'); ?></span>
+      <p class="admin-message-body"><?php echo nl2br(htmlspecialchars($message->body, ENT_QUOTES, 'UTF-8')); ?></p>
+    </li>
+  <?php endforeach; ?>
+</ul>
+<?php endif; ?>
+
+<?php if (!empty($messageError)): ?>
+  <p class="login-error print-hidden"><?php echo htmlspecialchars($messageError, ENT_QUOTES, 'UTF-8'); ?></p>
+<?php endif; ?>
+
+<form method="post" action="/admin/orders/<?php echo urlencode($order->id); ?>/messages" class="admin-message-form print-hidden">
+  <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
+  <textarea name="body" rows="2" maxlength="2000" placeholder="Write a message to the buyer&hellip;" required></textarea>
+  <button type="submit">Send</button>
+</form>

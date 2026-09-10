@@ -13,6 +13,8 @@
  * @var string $paymentUri
  * @var string $amountDisplay
  * @var array{currency: string, amount: string}|null $fiatDisplay
+ * @var \ElektronNet\Payments\PayServer\Db\OrderMessage[] $messages
+ * @var string|null $messageError
  */
 
 $statusLabels = [
@@ -94,6 +96,32 @@ $title = htmlspecialchars($merchant->displayName, ENT_QUOTES, 'UTF-8') . ' - Ord
     <p class="countdown" id="countdown" data-expires-at="<?php echo htmlspecialchars($order->expiresAt, ENT_QUOTES, 'UTF-8'); ?>"></p>
 
     <p class="order-id">Order <?php echo htmlspecialchars($order->id, ENT_QUOTES, 'UTF-8'); ?></p>
+
+    <section class="message-thread" id="messages">
+      <h2 class="message-thread-title">Messages</h2>
+      <?php if (empty($messages)): ?>
+        <p class="message-empty">No messages yet. If something needs clarifying about this order, write it here rather than over email - it stays attached to the order for both sides.</p>
+      <?php else: ?>
+        <ul class="message-list">
+          <?php foreach ($messages as $message): ?>
+            <li class="message message--<?php echo htmlspecialchars($message->sender, ENT_QUOTES, 'UTF-8'); ?>">
+              <span class="message-sender"><?php echo $message->sender === 'buyer' ? 'You' : htmlspecialchars($merchant->displayName, ENT_QUOTES, 'UTF-8'); ?></span>
+              <p class="message-body"><?php echo nl2br(htmlspecialchars($message->body, ENT_QUOTES, 'UTF-8')); ?></p>
+              <span class="message-time"><?php echo htmlspecialchars($message->createdAt, ENT_QUOTES, 'UTF-8'); ?></span>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+      <?php endif; ?>
+
+      <?php if (!empty($messageError)): ?>
+        <p class="payment-request-error"><?php echo htmlspecialchars($messageError, ENT_QUOTES, 'UTF-8'); ?></p>
+      <?php endif; ?>
+
+      <form method="post" action="/order/<?php echo urlencode($order->id); ?>/messages" class="message-form">
+        <textarea name="body" rows="2" maxlength="2000" placeholder="Write a message about this order&hellip;" required></textarea>
+        <button type="submit">Send</button>
+      </form>
+    </section>
   </main>
 
   <footer class="page-footer">

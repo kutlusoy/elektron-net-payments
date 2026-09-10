@@ -5,13 +5,16 @@ namespace ElektronNet\Payments\PayServer\Http\Controllers;
 use ElektronNet\Payments\Core\PriceFeed\PriceFeedProviderInterface;
 use ElektronNet\Payments\PayServer\Bip21;
 use ElektronNet\Payments\PayServer\Db\MerchantRepository;
+use ElektronNet\Payments\PayServer\Db\OrderMessageRepository;
 use ElektronNet\Payments\PayServer\Db\OrderRepository;
 use ElektronNet\Payments\PayServer\Http\ApiException;
 use ElektronNet\Payments\PayServer\Http\HtmlResponse;
 use ElektronNet\Payments\PayServer\Http\JsonResponse;
+use ElektronNet\Payments\PayServer\Http\RedirectResponse;
 use ElektronNet\Payments\PayServer\Http\Request;
 use ElektronNet\Payments\PayServer\Http\Responder;
 use ElektronNet\Payments\PayServer\Http\SseResponse;
+use ElektronNet\Payments\PayServer\OrderMessageValidation;
 
 /**
  * Buyer-facing order status (section 21: "the order id itself is the
@@ -24,8 +27,13 @@ final class CheckoutController
 {
     private OrderRepository $orders;
     private MerchantRepository $merchants;
+    private OrderMessageRepository $messages;
     private string $templateDir;
     private ?PriceFeedProviderInterface $priceFeed;
+
+    /** Section 11 checklist: "basic rate limiting", not a general API limiter. */
+    private const RATE_LIMIT_WINDOW_SECONDS = 60;
+    private const RATE_LIMIT_MAX_MESSAGES = 5;
 
     /**
      * $priceFeed is optional and defaults to none: section 12 requires
@@ -37,11 +45,13 @@ final class CheckoutController
     public function __construct(
         OrderRepository $orders,
         MerchantRepository $merchants,
+        OrderMessageRepository $messages,
         string $templateDir,
         ?PriceFeedProviderInterface $priceFeed = null
     ) {
         $this->orders = $orders;
         $this->merchants = $merchants;
+        $this->messages = $messages;
         $this->templateDir = rtrim($templateDir, '/');
         $this->priceFeed = $priceFeed;
     }
@@ -69,6 +79,52 @@ final class CheckoutController
             'paymentUri' => $paymentUri,
             'amountDisplay' => $amountDisplay,
             'fiatDisplay' => $this->fiatDisplay($order->amountLep, $merchant->defaultDisplayCurrency),
+            'messages' => $this->messages->findByOrder($order->id),
+            'messageError' => null,
+        ]));
+    }
+
+    /**
+     * `POST /order/{id}/messages` (buyer side of section 11/section 5's
+     * `POST /v1/orders/{id}/messages` - see OrderMessagesController's
+     * docblock for why the buyer path is unauthenticated: the order id
+     * itself is the capability token, same as this whole page).
+     */
+    public function postMessage(Request $request): Responder
+    {
+        $order = $this->orders->find($request->params['id']);
+        $merchant = $order !== null ? $this->merchants->find($order->merchantId) : null;
+        if ($order === null || $merchant === null) {
+            return new HtmlResponse(404, $this->render('not-found.php', []));
+        }
+
+        $error = null;
+        $recentCount = $this->messages->countRecentByOrder($order->id, self::RATE_LIMIT_WINDOW_SECONDS);
+        if ($recentCount >= self::RATE_LIMIT_MAX_MESSAGES) {
+            $error = 'Too many messages posted to this order recently; please wait a moment.';
+        } else {
+            try {
+                $body = OrderMessageValidation::validateBody(['body' => $_POST['body'] ?? '']);
+                $this->messages->create($order->id, 'buyer', $body);
+            } catch (ApiException $e) {
+                $error = $e->getMessage();
+            }
+        }
+
+        if ($error === null) {
+            return new RedirectResponse('/order/' . $order->id . '#messages');
+        }
+
+        $paymentUri = Bip21::paymentUri($order->address, $order->amountLep, $merchant->displayName);
+
+        return new HtmlResponse(422, $this->render('order.php', [
+            'order' => $order,
+            'merchant' => $merchant,
+            'paymentUri' => $paymentUri,
+            'amountDisplay' => Bip21::plainAmount($order->amountLep),
+            'fiatDisplay' => $this->fiatDisplay($order->amountLep, $merchant->defaultDisplayCurrency),
+            'messages' => $this->messages->findByOrder($order->id),
+            'messageError' => $error,
         ]));
     }
 

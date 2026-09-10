@@ -19,6 +19,7 @@ use ElektronNet\Payments\PayServer\Db\ApiKeyRepository;
 use ElektronNet\Payments\PayServer\Db\Database;
 use ElektronNet\Payments\PayServer\Db\MerchantRepository;
 use ElektronNet\Payments\PayServer\Db\MerchantUserRepository;
+use ElektronNet\Payments\PayServer\Db\OrderMessageRepository;
 use ElektronNet\Payments\PayServer\Db\OrderRepository;
 use ElektronNet\Payments\PayServer\Db\PaymentRequestRepository;
 use ElektronNet\Payments\PayServer\Db\PlatformSettingsRepository;
@@ -33,6 +34,7 @@ use ElektronNet\Payments\PayServer\Http\Controllers\Admin\TerminalController;
 use ElektronNet\Payments\PayServer\Http\Controllers\Admin\WalletController;
 use ElektronNet\Payments\PayServer\Http\Controllers\CheckoutController;
 use ElektronNet\Payments\PayServer\Http\Controllers\MerchantSettingsController;
+use ElektronNet\Payments\PayServer\Http\Controllers\OrderMessagesController;
 use ElektronNet\Payments\PayServer\Http\Controllers\OrdersController;
 use ElektronNet\Payments\PayServer\Http\Controllers\PaymentRequestController;
 use ElektronNet\Payments\PayServer\Http\FileResponse;
@@ -86,12 +88,15 @@ $priceFeedConfigured = $priceFeedEnabled && $priceFeedEndpoints !== [];
 $priceFeed = $priceFeedConfigured ? PriceFeedProviderFactory::build($priceFeedEndpoints) : null;
 
 $orderCreation = new OrderCreationService($pdo, $merchants, $orders, $addressAllocator, $config->escrowEnabled(), $priceFeed);
+$orderMessages = new OrderMessageRepository($pdo);
 
 $ordersController = new OrdersController($auth, $merchants, $orders, $orderCreation, $config->checkoutBaseUrl());
+$orderMessagesController = new OrderMessagesController($orders, $orderMessages, $auth);
 
 $checkoutController = new CheckoutController(
     $orders,
     $merchants,
+    $orderMessages,
     $repoRoot . '/pay-server/checkout/templates',
     $priceFeed
 );
@@ -112,7 +117,7 @@ $merchantUsers = new MerchantUserRepository($pdo);
 $apiKeyRepository = new ApiKeyRepository($pdo);
 
 $loginController = new LoginController($adminSession, $merchantUsers, $adminViews);
-$dashboardController = new DashboardController($adminSession, $merchants, $orders, $orderCreation, $adminViews);
+$dashboardController = new DashboardController($adminSession, $merchants, $orders, $orderCreation, $orderMessages, $adminViews);
 $apiKeysController = new ApiKeysController($adminSession, $merchants, $apiKeyRepository, $adminViews);
 $walletController = new WalletController($adminSession, $merchants, $adminViews, $network, new XpubChildKeyDeriver());
 $adminSettingsController = new AdminSettingsController($adminSession, $merchants, $adminViews, $priceFeedConfigured);
@@ -126,10 +131,16 @@ $router->add('POST', '/v1/orders', [$ordersController, 'create']);
 $router->add('GET', '/v1/orders/{id}', [$ordersController, 'get']);
 $router->add('GET', '/v1/orders/{id}/public', [$checkoutController, 'publicStatus']);
 $router->add('GET', '/v1/orders/{id}/events', [$checkoutController, 'events']);
+// Section 11: one endpoint pair, either a Bearer key (merchant) or none
+// at all (buyer, order id as the capability token) - see
+// OrderMessagesController's docblock.
+$router->add('POST', '/v1/orders/{id}/messages', [$orderMessagesController, 'post']);
+$router->add('GET', '/v1/orders/{id}/messages', [$orderMessagesController, 'get']);
 
 // Section 2's architecture: pay-api also serves the checkout pages and
 // (see the admin routes below) the admin UI, all from one process.
 $router->add('GET', '/order/{id}', [$checkoutController, 'page']);
+$router->add('POST', '/order/{id}/messages', [$checkoutController, 'postMessage']);
 
 // Section 16: reusable payment requests, public (the request id is the
 // only credential, same model as /order/{id}).
@@ -161,6 +172,7 @@ $router->add('GET', '/admin/orders', [$dashboardController, 'orderList']);
 $router->add('GET', '/admin/orders/new', [$dashboardController, 'newOrderForm']);
 $router->add('POST', '/admin/orders', [$dashboardController, 'createOrder']);
 $router->add('GET', '/admin/orders/{id}', [$dashboardController, 'orderDetail']);
+$router->add('POST', '/admin/orders/{id}/messages', [$dashboardController, 'postMessage']);
 $router->add('GET', '/admin/terminal', [$terminalController, 'form']);
 $router->add('POST', '/admin/terminal', [$terminalController, 'charge']);
 $router->add('GET', '/admin/wallet', [$walletController, 'form']);

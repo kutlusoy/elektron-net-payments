@@ -164,6 +164,25 @@ body.is-mobile .tap-to-pay { display: block; }
 }
 .payment-request-submit { display: block; border: none; font-size: 15px; cursor: pointer; }
 
+.message-thread { width: 100%; text-align: left; border-top: 1px solid var(--border); padding-top: 16px; margin-top: 4px; }
+.message-thread-title { margin: 0 0 10px; font-size: 14px; }
+.message-empty { margin: 0 0 10px; font-size: 13px; color: var(--text-dim); }
+.message-list { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-direction: column; gap: 10px; max-height: 260px; overflow-y: auto; }
+.message { padding: 8px 10px; border-radius: 8px; background: var(--bg); }
+.message--merchant { background: #eef2ff; }
+.message-sender { display: block; font-size: 11px; font-weight: 700; color: var(--text-dim); margin-bottom: 2px; }
+.message-body { margin: 0; font-size: 13px; white-space: pre-wrap; word-break: break-word; }
+.message-time { display: block; font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+.message-form { display: flex; gap: 8px; align-items: flex-end; }
+.message-form textarea {
+  flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px;
+  font-family: inherit; font-size: 13px; resize: vertical;
+}
+.message-form button {
+  padding: 9px 14px; border: none; border-radius: 8px; background: var(--brand-color); color: #fff;
+  font-weight: 600; cursor: pointer;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #0d1117;

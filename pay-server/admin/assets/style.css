@@ -112,6 +112,20 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
 .show-to-customer .form-hint { margin: 0; }
 #admin-qrcode svg { width: 160px; height: 160px; display: block; }
 
+.admin-message-list { list-style: none; margin: 0 0 16px; padding: 0; display: flex; flex-direction: column; gap: 10px; max-width: 600px; }
+.admin-message { padding: 10px 14px; border-radius: 8px; background: var(--card-bg); border: 1px solid var(--border); }
+.admin-message--buyer { background: #fff7e0; }
+.admin-message-meta { display: block; font-size: 11px; font-weight: 700; color: var(--text-dim); margin-bottom: 4px; }
+.admin-message-body { margin: 0; font-size: 13px; white-space: pre-wrap; word-break: break-word; }
+.admin-message-form { display: flex; gap: 10px; align-items: flex-end; max-width: 600px; }
+.admin-message-form textarea { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 13px; resize: vertical; }
+.admin-message-form button { padding: 9px 16px; border: none; border-radius: 8px; background: var(--brand); color: #fff; font-weight: 600; cursor: pointer; }
+
+@media print {
+  .admin-nav, .print-hidden { display: none !important; }
+  .admin-content { max-width: none; }
+}
+
 .new-key-banner { background: #e7f8ee; border: 1px solid #b7e4c7; border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; }
 .new-key-value { display: block; margin-top: 8px; font-size: 13px; word-break: break-all; }
 
